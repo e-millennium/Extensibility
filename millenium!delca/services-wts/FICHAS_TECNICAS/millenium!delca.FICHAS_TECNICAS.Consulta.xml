@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="FICHAS_TECNICAS">
+    <METHOD NAME="Consulta" DESCRIPTION="" VERSION="19" INTFTYPE="6" TRIGGEROF="FICHAS_TECNICAS.CONSULTA" TRIGGERTYPE="0" THREADSAFE="0">
+      <PARAMS/>
+      <FIELDS>
+        <GROUPS>
+          <GROUP NAME="Inspe&#231;&#245;es" STYLE="1"/>
+        </GROUPS>
+        <FIELD NAME="INSPECOES" FORMAT="R" FLAGS="1" STYLE="3" PROJECTION="0" ORDER="1" FIELDLABEL="Inspecoes" NESTEDNAME="MILLENIUM!DELCA.FICHAS_TECNICAS.INSPECAO" GROUPNAME="Inspe&#231;&#245;es" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT *
+      #ROWSET({SELECT:INSPECOES FICHA_TEC_INSP,
+                                DESCRICAO,
+                                ESPECIFICACAO,
+                                FERRAMENTA,
+                                OBSERVACAO
+               FROM DCA_FICHAS_TEC_INSP
+               WHERE FICHA_TECNICA =:WTSSYS_OBJECT })
+FROM DUAL;
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

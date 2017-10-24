@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<root>
+	<_currentid>DELCA_1</_currentid>
+	<_name>RULES.DELCA</_name>
+
+	<link category="Produção\Cadastros\Ferramentas" target="standard.tdataedit" _id="DELCA_1">
+		 <OBJECT>MILLENIUM!DELCA.FERRAMENTAS</OBJECT>
+	</link>
+	
+	<link category="Produção\Frequência de Inspeções\Ficha" target="standard.tdataedit" _id="DELCA_4">
+		 <OBJECT>MILLENIUM!DELCA.FREQUENCIAS_INSPECOES</OBJECT>
+	</link>		
+	
+	<link category="Produção\Frequência de Inspeções\Inspeções" target="standard.tdataedit" _id="DELCA_2">
+		 <METHOD>MILLENIUM!DELCA.INSPECOES.LISTA</METHOD>
+		 
+	     <link target="standard.tdataedit" _id="DELCA_3" caption="Inspecionar" DEFAULTEDIT="1">
+	          <METHOD>MILLENIUM!DELCA.INSPECOES.INCLUIR</METHOD>
+	          <PARAM DATA="{$data.FICHA_TECNICA}" >FICHA_TECNICA</PARAM>
+	          <PARAM DATA="{$data.PRODUCAO}" >PRODUCAO</PARAM>
+	          <PARAM DATA="{$data.FASE}" >FASE</PARAM>
+			  <PARAM DATA="{$data.QUANTIDADE}" >QUANTIDADE_FASE</PARAM>
+	          <Option>CloseOnSubmit</Option>
+	     </link>		 
+	</link>
+
+	<link category="Produção\Frequência de Inspeções\Histórico" target="standard.tdataedit" _id="DELCA_5">
+		 <METHOD>MILLENIUM!DELCA.INSPECOES.LISTAHISTORICOINSPECOES</METHOD>
+		 
+	     <link target="standard.tdataedit" _id="DELCA_6" caption="Detalhes" DEFAULTEDIT="1">
+	          <METHOD>MILLENIUM!DELCA.INSPECOES.DETALHESINSPECAO</METHOD>
+	          <PARAM DATA="{$data.INSPECAO}" >INSPECAO</PARAM>
+			  <Option>ReadOnly</Option>
+			  <Option>AutoRefresh</Option>
+	     </link>			 
+	</link>	
+	
+	<link category="Vendas\Orçamentos\Orçamento" target="standard.tdataedit" _id="DELCA_7">
+		 <OBJECT>MILLENIUM!DELCA.ORCAMENTOS</OBJECT>			 
+	</link>		
+
+	<link category="Vendas\Orçamentos\Cadastros\Despesas" target="standard.tdataedit" _id="DELCA_8">
+		 <OBJECT>MILLENIUM!DELCA.ORCAMENTOS.DEPESAS</OBJECT>			 
+	</link>		
+	
+	<link category="Vendas\Orçamentos\Cadastros\Impostos" target="standard.tdataedit" _id="DELCA_9">
+		 <OBJECT>MILLENIUM!DELCA.ORCAMENTOS.IMPOSTOS</OBJECT>			 
+	</link>			
+
+</root>
+
+
+

@@ -1,0 +1,10 @@
+<dbdic.objects.objects>
+  <ROW NAME="DCA_IMPOSTOS" CREATE_BLANK="FALSE" ORDER="0">
+    <FIELDS NAME="IMPOSTO" DATATYPE="3"/>
+    <FIELDS NAME="DESCRICAO" DATATYPE="1" SIZE="50"/>
+    <FIELDS NAME="PERCENTUAL" DATATYPE="6"/>
+    <INDEXES>
+      <FIELDS>IMPOSTO</FIELDS>
+    </INDEXES>
+  </ROW>
+</dbdic.objects.objects>

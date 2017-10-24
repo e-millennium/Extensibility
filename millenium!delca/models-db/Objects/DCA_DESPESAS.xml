@@ -1,0 +1,12 @@
+<dbdic.objects.objects>
+  <ROW NAME="DCA_DESPESAS" CREATE_BLANK="FALSE" ORDER="0">
+    <FIELDS NAME="DESPESA" DATATYPE="3"/>
+    <FIELDS NAME="DESCRICAO" DATATYPE="1" SIZE="50"/>
+    <FIELDS NAME="PERCENTUAL" DATATYPE="6"/>
+    <INDEXES>
+      <FIELDS>DESPESA</FIELDS>
+      <FLAGS> AQ==
+</FLAGS>
+    </INDEXES>
+  </ROW>
+</dbdic.objects.objects>

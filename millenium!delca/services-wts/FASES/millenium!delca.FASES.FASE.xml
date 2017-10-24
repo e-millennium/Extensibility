@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="FASES">
+    <METHOD NAME="FASE" DESCRIPTION="" VERSION="5" INTFTYPE="10" TRIGGEROF="FASES.FASE" TRIGGERTYPE="0" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP NAME="Configura&#231;&#245;es"/>
+        </GROUPS>
+        <PARAM NAME="DCA_PERMITE_INSPECAO" FORMAT="B" SIZE="1" FLAGS="17" DEFAULT="0" PROJECTION="0" ORDER="1" FIELDLABEL="Permite Inspe&#231;&#227;o" GROUPNAME="Configura&#231;&#245;es" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

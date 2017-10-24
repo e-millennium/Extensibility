@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<root>
+  <dimension>
+    <outriggers>
+      <outrigger fullname="dca_frequencias_inspecoes$dca_frequencias_inspecoes">
+        <relation cardinality="N-0">
+           <condition  left="produto" right="dca_frequencias_inspecoes$dca_frequencias_inspecoes.produto"/>
+        </relation>
+      </outrigger>	 	 
+    </outriggers>
+  </dimension>
+</root>

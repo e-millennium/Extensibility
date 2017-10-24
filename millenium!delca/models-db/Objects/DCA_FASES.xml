@@ -1,0 +1,13 @@
+<dbdic.objects.objects>
+  <ROW NAME="DCA_FASES" CREATE_BLANK="FALSE" ORDER="0">
+    <FIELDS NAME="FASE" DATATYPE="3"/>
+    <FIELDS NAME="PERMITE_INSPECAO" DATATYPE="1" SIZE="1">
+      <DEFAULT>F</DEFAULT>
+    </FIELDS>
+    <INDEXES>
+      <FIELDS>FASE</FIELDS>
+      <FLAGS> AQ==
+</FLAGS>
+    </INDEXES>
+  </ROW>
+</dbdic.objects.objects>

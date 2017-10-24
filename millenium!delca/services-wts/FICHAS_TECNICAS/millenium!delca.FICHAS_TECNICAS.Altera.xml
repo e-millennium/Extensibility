@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="FICHAS_TECNICAS">
+    <METHOD NAME="Altera" DESCRIPTION="" VERSION="30" INTFTYPE="2" TRIGGEROF="FICHAS_TECNICAS.ALTERA" TRIGGERTYPE="0" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP NAME="Inspe&#231;&#245;es" STYLE="1"/>
+        </GROUPS>
+        <PARAM NAME="INSPECOES" FORMAT="R" FLAGS="1" STYLE="3" PROJECTION="0" ORDER="1" FIELDLABEL="Inspecoes" NESTEDNAME="MILLENIUM!DELCA.FICHAS_TECNICAS.INSPECAO" GROUPNAME="Inspe&#231;&#245;es" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>DELETE FROM DCA_FICHAS_TEC_INSP WHERE FICHA_TECNICA=:WTSSYS_OBJECT;
+
+#EACH() INSPECOES AS INSP;
+        #SELECT(INSP.FICHA_TEC_INSP,NULL:{},ELSE:{
+                                                   INSERT INTO DCA_FICHAS_TEC_INSP (FICHA_TEC_INSP,FICHA_TECNICA,DESCRICAO,ESPECIFICACAO,FERRAMENTA,OBSERVACAO)
+                                                          VALUES (:INSP.FICHA_TEC_INSP,:WTSSYS_OBJECT,:INSP.DESCRICAO,:INSP.ESPECIFICACAO,:INSP.FERRAMENTA,:INSP.OBSERVACAO)
+                                                   }
+
+                                                   );
+                                                   
+                                                   
+#EACH() INSPECOES AS INS;
+        #SELECT(INS.FICHA_TEC_INSP,NULL:{INSERT INTO DCA_FICHAS_TEC_INSP (FICHA_TECNICA,DESCRICAO,ESPECIFICACAO,FERRAMENTA,OBSERVACAO)
+                                                   VALUES (:WTSSYS_OBJECT,:INS.DESCRICAO,:INS.ESPECIFICACAO,:INS.FERRAMENTA,:INS.OBSERVACAO)
+                                                   #RETURN(FICHA_TEC_INSP)},ELSE:{});
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

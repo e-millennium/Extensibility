@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<root>
+  <dimension>
+    <tables>
+      <table name="DCA_FREQUENCIAS_INSPECOES"/>
+    </tables>
+    <relations/>
+    <wtsmappings/>
+    <attributes>
+    <level name="dca_frequencias_inspecoes">
+      <attribute name="PRODUTO"/>
+      <attribute name="SEQUENCIA" caption="Sequencia"/>
+      <attribute name="DIMENSAO" caption="Dimensao"/>
+      <attribute name="ESPECIFICACAO" caption="Especificacao"/>
+      <attribute name="FREQ_INSPECAO" caption="Frequencia Inspecao"/>
+      <attribute name="FREQ_ANOTACAO" caption="Frequencia Anotacao"/>
+      <attribute name="TECNICA_MEDICAO" caption="Tecnica Medicao"/>
+    </level>
+    </attributes>
+  </dimension>
+</root>

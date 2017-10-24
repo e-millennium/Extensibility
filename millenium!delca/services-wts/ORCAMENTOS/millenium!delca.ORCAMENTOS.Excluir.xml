@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="ORCAMENTOS">
+    <METHOD NAME="Excluir" DESCRIPTION="Excluir" VERSION="124" INTFTYPE="3" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="ORCAMENTO" FORMAT="+" SIZE="8" FLAGS="1024" PROJECTION="0" FIELDLABEL="Orcamento" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+          <GROUP NAME="Dimen&#245;es"/>
+          <GROUP NAME="Mat&#233;rias Primas" STYLE="1"/>
+          <GROUP NAME="Processos" STYLE="1"/>
+          <GROUP NAME="Servi&#231;os" STYLE="1"/>
+          <GROUP NAME="Impostos" STYLE="1"/>
+          <GROUP NAME="Outros Custos" STYLE="1"/>
+          <GROUP NAME="Resumo\Totais" STYLE="1"/>
+          <GROUP NAME="Totais Custos Unit&#225;rio"/>
+          <GROUP NAME="Totais Outros Custos"/>
+          <GROUP NAME="Pre&#231;o Venda"/>
+        </GROUPS>
+      </FIELDS>
+      <ACTIONSCRIPT>UPDATE DCA_ORCAMENTOS SET EXCLUIDO = TRUE, USUARIO_EXCLUSAO=#USER(),DATA_EXCLUSAO=#NOW()
+WHERE ORCAMENTO =:ORCAMENTO;
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>
