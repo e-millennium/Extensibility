@@ -664,7 +664,7 @@ begin
             'INNER JOIN NF ON (NF.TIPO_OPERACAO = M.TIPO_OPERACAO) AND '+
             '                 (NF.COD_OPERACAO = M.COD_OPERACAO) AND '+
             '                 (NF.CANCELADA = FALSE) '+
-            'WHERE ORDEM_SERVICO IN #MAKELIST(OSS,ORDEM_SERVICO)');
+            'WHERE ORDEM_SERVICO IN #MAKELIST(OSS,ORDEM_SERVICO) AND (M.EVENTO=:EVENTO)');
    if not C.EOF then
      raise Exception.Create('Nota fiscal já emitida para este evento. NF: '+C.GetFieldAsString('NOTA'));         
 
