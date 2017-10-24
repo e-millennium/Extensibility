@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="SOLICITACOES_COMPRA">
+    <METHOD NAME="ListaPedidosCompra" DESCRIPTION="" VERSION="4" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PEDIDOC" FORMAT="N" SIZE="8" FLAGS="2" PROJECTION="0" FIELDLABEL="Pedidoc" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="PEDIDOC" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Pedidov" CTAB="0"/>
+        <FIELD NAME="COD_PEDIDOC" SIZE="20" PROJECTION="0" FIELDLABEL="Cod Pedidoc" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT PEDIDOC, COD_PEDIDOC FROM PEDIDO_COMPRA PC
+WHERE [PC.PEDIDOC=:PEDIDOC];
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

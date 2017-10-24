@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="SOLICITACOES_COMPRA">
+    <METHOD NAME="Canelar" DESCRIPTION="Cancelar Solicita&#231;&#227;o de Compra" VERSION="147" INTFTYPE="3" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="SOLICITACAO_COMPRA" FORMAT="+" SIZE="8" FLAGS="1024" PROJECTION="0" FIELDLABEL="Solicitacao Compra" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+          <GROUP NAME="Controle Or&#231;ament&#225;rio"/>
+          <GROUP NAME="Indica Fornecedor"/>
+          <GROUP NAME="Produtos"/>
+          <GROUP/>
+          <GROUP NAME="Cota&#231;&#245;es" STYLE="1"/>
+          <GROUP NAME="Finaliza&#231;&#227;o Compra"/>
+          <GROUP NAME="Fluxo" STYLE="1"/>
+        </GROUPS>
+      </FIELDS>
+      <ACTIONSCRIPT>UPDATE SF_SOLICITACOES_COMPRA SET CANCELADO=TRUE,MOTIVO_CANCELAMENTO=:MOTIVO_CANCELAMENTO
+WHERE SOLICITACAO_COMPRA=:SOLICITACAO_COMPRA;
+
+#SELECT(FORCAR,FALSE:{
+                      #CHECK("SELECT COUNT(*) AS N FROM SF_SOLICITACOES_COMPRA WHERE SOLICITACAO_COMPRA=:SOLICITACAO_COMPRA AND APROVADO = 'T'",N>0,"Cancelamento n&#227;o permitido, Solicita&#231;&#227;o aprovada!");
+                      },ELSE:{});
+
+#CALL MILLENIUM!SHOP.SOLICITACOES_COMPRA.EV_CANCELADO(SOLICITACAO_COMPRA=:SOLICITACAO_COMPRA);
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

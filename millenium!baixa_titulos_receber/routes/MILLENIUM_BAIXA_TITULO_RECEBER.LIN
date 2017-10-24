@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<root>
+<_currentid>BTR_001</_currentid>
+<_name>RULES.BTR</_name>
+
+<link category="Financeiro\Receber\Titulos\Baixa Mutiplos" target="standard.tdataedit" Caption="Baixa Mutiplos" id="BTR_001" _parentid="89" _tag="12" _visible="FALSE">
+	<METHOD>MILLENIUM!BAIXA_TITULOS_RECEBER.TITULO_RECEBER.BAIXAMULTIPLOS</METHOD>
+	<PARAM DATA="{$data.LANCAMENTO[]}">LANCAMENTOS.ITEM</PARAM>		
+    <Option>CloseOnSubmit</Option>
+</link>
+
+</root>

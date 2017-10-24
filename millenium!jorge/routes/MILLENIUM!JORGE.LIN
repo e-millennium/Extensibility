@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<root>
+<_currentid>JORGE_8</_currentid>
+<_name>RULES.JORGE</_name>
+
+<link category="PROCESSOS INTERNOS\Vendas\Aprovação Pedidos Boleto" target="standard.tdataedit" _id="jorge_1" Caption="Aprovação Pedidos Boleto">
+     <METHOD>MILLENIUM!JORGE.VENDAS.PEDIDOS_APROVACAO_BOLETO</METHOD>
+
+     <link target="_blank,standard.tdataedit" _id="shop_8" caption="Aprovação Pedidos Boleto">
+          <METHOD>millenium.pedido_venda.aprovar</METHOD>
+          <PARAM DATA="{$data.pedidov}" >pedidov</PARAM>
+          <Option>CloseOnSubmit</Option>
+
+     </link>
+
+</link>
+
+<link category="PROCESSOS INTERNOS\Vendas\Lista Movimento por Transportadora" target="standard.tdataedit" _id="jorge_2" Caption="Lista Movimento popr Transportadora">
+     <METHOD>MILLENIUM!JORGE.VENDAS.Lista_Movimento_transportadora</METHOD>
+</link>
+
+
+<link category="PROCESSOS INTERNOS\Logística\Informar Separador" target="standard.tdataedit" _id="jorge_3" Caption="Informar Separador">
+     <METHOD>MILLENIUM!JORGE.PREFATURAMENTOS.INFORMAR_SEPARADOR</METHOD>
+
+     
+</link>
+
+
+<link category="PROCESSOS INTERNOS\Logística\Permite Conferência " target="standard.tdataedit" _id="jorge_4" Caption="Permite Conferência">
+     <METHOD>MILLENIUM!JORGE.PREFATURAMENTOS.PERMITE_CONFERENCIA</METHOD>
+	 <Option>CloseOnSubmit</Option>
+
+     
+</link>
+
+
+<link category="PROCESSOS INTERNOS\Vendas\Apagar SRO " target="standard.tdataedit" _id="jorge_5" Caption="Apagar SRO">
+     <METHOD>MILLENIUM!JORGE.VENDAS.Apagar_SRO_NF</METHOD>
+</link>
+
+<link category="PROCESSOS INTERNOS\Vendas\Lista Comissão por Vendedor" target="standard.tdataedit" _id="jorge_6" Caption="Lista Comissão por Vendedor">
+     <METHOD>MILLENIUM!JORGE.VENDAS.LISTA_COMISSAO</METHOD>
+</link>
+
+
+<link category="PROCESSOS INTERNOS\Vitrine\Lista Produtos da Vitrine" target="standard.tdataedit" _id="jorge_7" Caption="Lista Produtos da Vitrine">
+     <METHOD>MILLENIUM!JORGE.VITRINES.LISTA_PRODUTOS_VITRINE</METHOD>
+</link>
+
+
+<link category="PROCESSOS INTERNOS\Fiscal\Lista Notas Fiscais Partilha" target="standard.tdataedit" _id="jorge_8" Caption="Lista Notas Fiscais Partilha">
+     <METHOD>MILLENIUM!JORGE.NFE.LISTA_STATUS</METHOD>
+</link>
+
+
+
+
+</root>

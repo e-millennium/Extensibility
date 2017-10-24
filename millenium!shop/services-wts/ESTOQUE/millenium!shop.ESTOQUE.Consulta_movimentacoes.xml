@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="ESTOQUE">
+    <METHOD NAME="Consulta_movimentacoes" DESCRIPTION="Lista Movimenta&#231;&#245;es de Estoque (Shopfisio)" VERSION="21" INTFTYPE="5" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PRODUTO" SIZE="20" FLAGS="17" PROJECTION="0" ORDER="5" FIELDLABEL="Produto" CTAB="0"/>
+        <PARAM NAME="COR" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="C&#243;digo Cor" CTAB="0"/>
+        <PARAM NAME="LOTE" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Lote / Numero de S&#233;rie" CTAB="0"/>
+        <PARAM NAME="FILIAL" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="C&#243;digo Filial" CTAB="0"/>
+        <PARAM NAME="DATA_INICIAL" FORMAT="D" SIZE="10" FLAGS="1" DEFAULT="today-360" PROJECTION="0" ORDER="2" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="DATA_FINAL" FORMAT="D" SIZE="10" FLAGS="1" DEFAULT="today+10" PROJECTION="0" ORDER="3" FIELDLABEL="Data Final" CTAB="0"/>
+        <PARAM NAME="ESTAMPA" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="C&#243;digo Estampa" CTAB="0"/>
+        <PARAM NAME="TAMANHO" SIZE="5" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Tamanho" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="PRODUTO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Produto" CTAB="0"/>
+        <FIELD NAME="COR" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="13" FIELDLABEL="Cor" CTAB="0"/>
+        <FIELD NAME="ESTAMPA" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="14" FIELDLABEL="Estampa" CTAB="0"/>
+        <FIELD NAME="TAMANHO" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="15" FIELDLABEL="Tamanho" CTAB="0"/>
+        <FIELD NAME="LOTE" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="16" FIELDLABEL="Lote" CTAB="0"/>
+        <FIELD NAME="QUANTIDADE" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="17" FIELDLABEL="Quantidade" CTAB="0"/>
+        <FIELD NAME="EMPENHO" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="18" FIELDLABEL="Empenho" CTAB="0"/>
+        <FIELD NAME="DATA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Data" CTAB="0"/>
+        <FIELD NAME="HISTORICO" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="21" FIELDLABEL="Historico" CTAB="0"/>
+        <FIELD NAME="TIPO_ORIGEM" SIZE="2" FLAGS="1" PROJECTION="0" ORDER="24" FIELDLABEL="Tipo Origem" CTAB="0"/>
+        <FIELD NAME="NUMDOCTO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="23" FIELDLABEL="Numdocto" CTAB="0"/>
+        <FIELD NAME="DESC_EVENTO" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="20" FIELDLABEL="Evento" CTAB="0"/>
+        <FIELD NAME="USUARIO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="25" FIELDLABEL="Usuario" CTAB="0"/>
+        <FIELD NAME="NOTA" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="22" FIELDLABEL="Nota" CTAB="0"/>
+        <FIELD NAME="FILIAL" SIZE="5" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Filial" CTAB="0"/>
+        <FIELD NAME="RECEBIMENTO" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="19" FIELDLABEL="Recebimento" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT:MOVIMENTACOES
+       p.cod_produto               as produto,
+       c.descricao                 as cor,
+       e.descricao                 as estampa,
+       me.tamanho                  as tamanho,
+       me.lote                     as lote   ,
+       sum(me.quantidade)          as quantidade,
+       sum(me.empenho)             as empenho,
+       sum(me.recebimento)         as recebimento,
+       me.data                     as data   ,
+       me.motivo                   as motivo   ,
+       trim(me.historico)||    (select '  FILIAL ORIGEM: '||f.cod_filial||'  FILIAL DESTINO:  '||F2.COD_FILIAL  from movimento m
+                    inner join filiais f on f.filial=m.filial
+                    inner join filiais f2 on f2.filial=m.filial_destino
+
+                    where m.cod_operacao=me.origem and m.tipo_operacao=me.tipo_origem)
+          as historico,
+       me.tipo_origem              as tipo_origem,
+       me.origem                   as origem,
+       me.numdocto                 as numdocto   ,
+       f.cod_filial                as filial,
+       min(inf_est.documento)      as documento,
+       min(inf_est.desc_evento)    as desc_evento,
+       min(inf_est.evento)         as evento,
+       min(inf_est.usuario)        as usuario,
+       min(inf_est.usu_exc)        as usu_exc,
+       min(inf_est.nota)           as nota
+
+
+
+ from mov_estoque me
+ inner join filiais f on f.filial = me.filial
+ inner join produtos p on p.produto=me.produto
+ inner join cores c on c.cor =me.cor
+ inner join estampas e on e.estampa=me.estampa
+ left join inf_estoque inf_est on ( inf_est.origem = me.origem and inf_est.tipo_origem = me.tipo_origem)
+
+
+ where
+     p.cod_produto = :produto
+     [and c.cod_cor = :cor]
+     [and me.tamanho = :tamanho]
+     [and me.lote=:lote]
+     [and f.cod_filial=:FILIAL]
+     [and me.data >= :data_inicial]
+     [and me.data &lt;= :data_final]
+
+ group by
+       me.mov_estoque,
+       p.cod_produto,
+       c.descricao,
+       e.descricao,
+       me.tamanho,
+       me.lote,
+       me.data,
+       me.motivo,
+       me.historico,
+       me.tipo_origem,
+       me.origem,
+       me.numdocto,
+       f.cod_filial
+
+ order by
+       me.data,
+       me.mov_estoque
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

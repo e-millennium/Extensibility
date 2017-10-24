@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="SOLICITACOES_COMPRA">
+    <METHOD NAME="Excluir" DESCRIPTION="" VERSION="73" INTFTYPE="3" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="SOLICITACAO_COMPRA" FORMAT="+" SIZE="8" FLAGS="1024" PROJECTION="0" FIELDLABEL="Solicitacao Compra" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+          <GROUP NAME="Controle Or&#231;ament&#225;rio"/>
+          <GROUP NAME="Indica Fornecedor"/>
+          <GROUP NAME="Produtos"/>
+          <GROUP/>
+          <GROUP NAME="Cota&#231;&#245;es" STYLE="1"/>
+          <GROUP NAME="Finaliza&#231;&#227;o Compra"/>
+          <GROUP NAME="Fluxo" STYLE="1"/>
+        </GROUPS>
+      </FIELDS>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

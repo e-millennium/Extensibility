@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<root>
+<_currentid>SHOP_20</_currentid>
+<_name>RULES.SHOP</_name>
+
+<link category="Internos\Shopfisio\Logística\Consulta Conciliação Frete" target="standard.tdataedit" _id="shop_1" Caption="Conciliação Frete">
+     <METHOD>MILLENIUM!SHOP.RECEB_EMBARQUE_COMPRA.LISTA_VALIDACAO_FRETE</METHOD>
+</link>
+
+
+<link category="Internos\Shopfisio\Logística\Consulta Consulta Ocorrências" target="standard.tdataedit" _id="shop_2" Caption="Consulta Ocorrências">
+     <METHOD>MILLENIUM!SHOP.RECEB_EMBARQUE_COMPRA.LISTA_OCORRENCIAS</METHOD>
+</link>
+
+
+<link category="Internos\Shopfisio\Logística\Consulta Entregas Realizadas" target="standard.tdataedit" _id="shop_3" Caption="Consulta Entregas Realizadas">
+     <METHOD>MILLENIUM!SHOP.RECEB_EMBARQUE_COMPRA.Validacao_entregas_realizadas</METHOD>
+</link>
+
+
+<link category="Internos\Shopfisio\Logística\Consulta Movimentacao Estoque" target="standard.tdataedit" _id="shop_4" Caption="Consulta Movimentações Estoque">
+     <METHOD>MILLENIUM!SHOP.ESTOQUE.CONSULTA_MOVIMENTACOES</METHOD>
+</link>
+
+
+<link category="Internos\Shopfisio\Vendas\Pedidos para Reversão" target="standard.tdataedit" _id="shop_5" Caption="Pedidos para Reversão">
+     <METHOD>MILLENIUM!SHOP.VENDAS.PEDIDOS_REVERSAO</METHOD>
+
+     <link target="_blank,standard.tdataedit" _id="shop_8" caption="Altera Vendedor">
+          <METHOD>MILLENIUM!SHOP.VENDAS.alterar_vendedor</METHOD>
+          <PARAM DATA="{$data.pedidov}" >pedidov</PARAM>
+          <Option>CloseOnSubmit</Option>
+
+     </link>
+
+
+
+</link>
+
+<link category="Internos\Shopfisio\Administrador\Monitorar E-mail" target="standard.tdataedit" _id="shop_9" Caption="Monitorar E-mail">
+     <METHOD>MILLENIUM!SHOP.EMAIL.LISTA_EMAIL</METHOD>
+     
+	 <link target="_blank,standard.tdataedit" _id="SHOP_10" caption="Alterar e-mail">
+          <METHOD>MILLENIUM!SHOP.EMAIL.ALTERAR_EMAIL</METHOD>	 	 
+          <PARAM DATA="{$data.id}" >id</PARAM>
+          <Option>CloseOnSubmit</Option>	  		  
+     </link>
+
+	 <link target="_blank,standard.tdataedit" _id="SHOP_11" caption="Excluir e-mail">
+          <METHOD>MILLENIUM!SHOP.EMAIL.EXCLUIR_EMAIL</METHOD>	 	 
+          <PARAM DATA="{$data.id}" >id</PARAM>
+          <Option>CloseOnSubmit</Option>	  		  
+     </link>
+	 
+</link>
+
+
+<link category="Internos\Shopfisio\Sac\Resumo de Chamados por Atendente" target="standard.tdataedit" _id="shop_12" Caption="Resumo de Chamados por Atendente">
+     <METHOD>MILLENIUM!SHOP.SAC.CONTROLE_CHAMADOS</METHOD>
+</link>
+
+<link category="Internos\Shopfisio\Compras\Solicitações de Compra" target="standard.tdataedit" _id="SHOP_20" _tag="0" Caption="Solicitações de Compra">
+     <OBJECT>MILLENIUM!SHOP.SOLICITACOES_COMPRA</OBJECT>
+</link>
+
+
+
+</root>

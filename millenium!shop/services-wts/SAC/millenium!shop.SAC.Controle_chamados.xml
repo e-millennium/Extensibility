@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="SAC">
+    <METHOD NAME="Controle_chamados" DESCRIPTION="Resumo de Chamados Abertos e Fechados por Atendente" VERSION="8" INTFTYPE="5" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="DATAI" FORMAT="D" SIZE="10" FLAGS="17" DEFAULT="today" PROJECTION="0" ORDER="1" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="DATAF" FORMAT="D" SIZE="10" FLAGS="17" DEFAULT="today+1" PROJECTION="0" ORDER="2" FIELDLABEL="Data Final" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="usuario_atendente" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Usuario Atendente" CTAB="0"/>
+        <FIELD NAME="abertos_no_periodo" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Abertos No Periodo" CTAB="0"/>
+        <FIELD NAME="pendentes_do_periodo" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Pendentes Do Periodo" CTAB="0"/>
+        <FIELD NAME="fechadas_do_periodo" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Fechadas Do Periodo" CTAB="0"/>
+        <FIELD NAME="penentes_geral" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Penentes Geral" CTAB="0"/>
+        <FIELD NAME="fechadas_no_periodo" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Fechadas No Periodo" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select  usuario_atendente,
+        sum(abertos_no_periodo)     as abertos_no_periodo,
+        sum(pendentes_do_periodo)   as pendentes_do_periodo,
+        sum(fechadas_do_periodo)    as fechadas_do_periodo,
+        sum(penentes_geral)         as penentes_geral,
+        sum(fechadas_no_periodo)    as fechadas_no_periodo
+from
+
+(select
+    c.usuario_atendente,
+    count(*) as abertos_no_periodo,
+    0 as pendentes_do_periodo,
+    0 as fechadas_do_periodo,
+    0 as penentes_geral,
+    0 as fechadas_no_periodo
+
+
+ from chamados c
+
+ where c.data_abertura between :datai and :dataf
+
+ group by 1
+
+ union all
+
+ select
+    c.usuario_atendente,
+    0 as abertos_no_periodo,
+    count(*) as pendentes_do_periodo,
+    0 as fechadas_do_periodo,
+    0 as penentes_geral,
+    0 as fechadas_no_periodo
+
+ from chamados c
+
+ where
+ c.situacao=0
+ and  c.data_abertura between :datai and :dataf
+
+ group by 1
+
+ union all
+
+  select
+    c.usuario_atendente,
+    0 as abertos_no_periodo,
+    0 as pendentes_do_periodo,
+    count(*) as fechadas_do_periodo,
+    0 as penentes_geral,
+    0 as fechadas_no_periodo
+ from chamados c
+
+ where
+ c.situacao=1
+ and  c.data_abertura between :datai and :dataf
+
+ group by 1
+
+ union all
+
+   select
+    c.usuario_atendente,
+    0 as abertos_no_periodo,
+    0 as pendentes_do_periodo,
+    0 as fechadas_do_periodo,
+    count(*) as penentes_geral,
+    0 as fechadas_no_periodo
+
+ from chamados c
+
+ where
+ c.situacao=0
+ group by 1
+union all
+
+  select
+    c.usuario_atendente,
+    0 as abertos_no_periodo,
+    0 as pendentes_do_periodo,
+    0 as fechadas_do_periodo,
+    0 as penentes_geral,
+    count(*) as fechadas_no_periodo
+
+ from chamados c
+
+ where
+ c.situacao=1
+ and  c.data_fechamento between :datai and :dataf
+
+ group by 1
+
+
+
+ )
+
+ group by 1
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

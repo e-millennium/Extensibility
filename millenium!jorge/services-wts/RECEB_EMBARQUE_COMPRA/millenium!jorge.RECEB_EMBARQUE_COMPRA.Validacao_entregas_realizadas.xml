@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="RECEB_EMBARQUE_COMPRA">
+    <METHOD NAME="Validacao_entregas_realizadas" DESCRIPTION="Validar Entregas Realizadas" VERSION="9" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="COD_TRANSP" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="3" FIELDLABEL="C&#243;digo Transportadora" CTAB="0"/>
+        <PARAM NAME="DATAI" FORMAT="D" SIZE="10" FLAGS="17" DEFAULT="TODAY" PROJECTION="0" ORDER="1" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="DATAF" FORMAT="D" SIZE="10" FLAGS="17" DEFAULT="TODAY" PROJECTION="0" ORDER="2" FIELDLABEL="Data Final" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="DATA_NF" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Data NF-e" CTAB="0"/>
+        <FIELD NAME="NUMERO_NOTA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Numero Nota" CTAB="0"/>
+        <FIELD NAME="CLIENTE" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Cliente" CTAB="0"/>
+        <FIELD NAME="ESTADO" SIZE="5" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Estado" CTAB="0"/>
+        <FIELD NAME="CIDADE" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Cidade" CTAB="0"/>
+        <FIELD NAME="CEP" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Cep" CTAB="0"/>
+        <FIELD NAME="TRANSPORTADORA" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Transportadora" CTAB="0"/>
+        <FIELD NAME="PEDIDO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Pedido" CTAB="0"/>
+        <FIELD NAME="DATA_ENTREGA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="14" FIELDLABEL="Data Entrega" CTAB="0"/>
+        <FIELD NAME="DATA_PEDIDO" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="13" FIELDLABEL="Data Pedido (Prometida)" CTAB="0"/>
+        <FIELD NAME="TRANSITO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="17" FIELDLABEL="Transito" CTAB="0"/>
+        <FIELD NAME="ATRASADO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="16" FIELDLABEL="Atrasado" CTAB="0"/>
+        <FIELD NAME="ADIANTADO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="15" FIELDLABEL="Adiantado" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>Select
+        data_nf,
+        numero_nota,
+        cliente,
+        estado,
+        cidade,
+        cep,
+        transportadora,
+        pedido,
+        data_entrega,
+        data_pedido,
+        data_entrega-data_nf as transito,
+        case when
+                data_entrega-data_pedido>0
+                then
+                    data_entrega-data_pedido
+                else 0
+         end   as atrasado,
+
+        case when
+                data_entrega-data_pedido&lt;0
+                then
+                    (data_entrega-data_pedido)*-1
+                else 0
+         end   as adiantado
+
+
+from
+
+(select
+        s.data as data_nf,
+        s.saida,
+        nf.numero_nota,
+        c.cod_cliente||' - '||c.nome as cliente,
+        ec.estado,
+        ec.cidade,
+        ec.cep,
+        t.cod_transportadora||' - '||t.fantasia as transportadora,
+        (select max(cod_pedidov) from pedido_venda pv
+                inner join produtos_eventos pe on pe.pedido=pv.pedidov
+                where pe.cod_operacao=s.saida and pe.tipo_operacao='S'
+                )   as pedido,
+
+        s.data_entrega,
+
+(select max(data_entrega) from pedido_venda pv
+                inner join produtos_eventos pe on pe.pedido=pv.pedidov
+                where pe.cod_operacao=s.saida and pe.tipo_operacao='S'
+                )   as data_pedido
+from
+saidas s
+inner join nf on nf.cod_operacao=s.saida and nf.tipo_operacao='S'
+inner join transportadoras t on t.transportadora=s.transportadora
+inner join clientes c on c.cliente=s.cliente
+inner join enderecos_cadastro ec on ec.gerador=c.gerador and ec.endereco_nota='T'
+
+where
+
+[s.data between :DATAI AND :DATAF]
+[and   s.entregue_transp='T']
+[and t.cod_transportadora=:COD_TRANSP]
+)
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

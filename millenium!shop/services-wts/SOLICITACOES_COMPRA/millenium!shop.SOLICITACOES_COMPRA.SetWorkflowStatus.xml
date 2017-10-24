@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="SOLICITACOES_COMPRA">
+    <METHOD NAME="SetWorkflowStatus" DESCRIPTION="" VERSION="2" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="SOLICITACAO_COMPRA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" FIELDLABEL="Solicitacao Compra" CTAB="0"/>
+        <PARAM NAME="STATUS" SIZE="30" FLAGS="1" PROJECTION="0" FIELDLABEL="Status" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>update sf_solicitacoes_compra set status_workflow=(select status_workflow from status_workflow where descricao=:status)
+where SOLICITACAO_COMPRA=:SOLICITACAO_COMPRA;
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

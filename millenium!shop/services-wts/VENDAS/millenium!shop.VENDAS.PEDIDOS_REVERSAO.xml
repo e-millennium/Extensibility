@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="VENDAS">
+    <METHOD NAME="PEDIDOS_REVERSAO" DESCRIPTION="Pedidos para Revers&#227;o" VERSION="34" INTFTYPE="4" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="DATAI" FORMAT="D" SIZE="10" FLAGS="1" DEFAULT="TODAY-90" PROJECTION="0" ORDER="3" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="DATAF" FORMAT="D" SIZE="10" FLAGS="1" DEFAULT="TODAY" PROJECTION="0" ORDER="4" FIELDLABEL="Data Data Final" CTAB="0"/>
+        <PARAM NAME="TIPO_PEDIDO" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="2" LOOKUP="VENDAS.TIPOS_PEDIDO" LOOKUPKEY="TIPO_PEDIDO" LOOKUPDISPLAY="DESCRICAO" FIELDLABEL="Tipo Pedido" CTAB="0"/>
+        <PARAM NAME="PEDIDO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Pedido" CTAB="0"/>
+        <PARAM NAME="DICA" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" HINT="Nesta lista de pedidos s&#227;o apresentados apenas pedidos n&#227;o aprovados, pedidos j&#225; aprovados n&#227;o podem ter o vendedor alterado." ORDER="5" FIELDLABEL="Dica" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="PEDIDO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Pedido" CTAB="0"/>
+        <FIELD NAME="CLIENTE" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Cliente" CTAB="0"/>
+        <FIELD NAME="EMISSAO" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Emissao" CTAB="0"/>
+        <FIELD NAME="ENTREGA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Entrega" CTAB="0"/>
+        <FIELD NAME="TIPO_PEDIDO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Tipo Pedido" CTAB="0"/>
+        <FIELD NAME="VENDEDOR" SIZE="30" FLAGS="1" PROJECTION="0" ORDER="13" FIELDLABEL="Vendedor" CTAB="0"/>
+        <FIELD NAME="STATUS" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Status" CTAB="0"/>
+        <FIELD NAME="CONDICAO_PGTO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="14" FIELDLABEL="Condicao Pgto" CTAB="0"/>
+        <FIELD NAME="DATA_BOLETO" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="15" FIELDLABEL="Data Boleto" CTAB="0"/>
+        <FIELD NAME="VALOR" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="16" FIELDLABEL="Valor" CTAB="0"/>
+        <FIELD NAME="PEDIDOV" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Pedidov" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select
+        pedidov,
+        max(cod_pedidov)    as pedido,
+        max(c.cod_cliente|| ' - '||c.nome) as cliente,
+        max(data_emissao)   as emissao,
+        max(data_entrega)   as entrega,
+        max(tp.descricao)   as tipo_pedido,
+        max(f.nome)         as vendedor,
+        max(wf.descricao)   as status,
+        max(cp.descricao)   as condicao_pgto,
+        max((select max(l.data_vencimento) from lancamentos l
+                                        inner join tipos_pgtos tpg on tpg.tipo_pgto=l.tipo_pgto
+                                        where tpg.natureza='2' and l.tipo='R' and
+                                        l.origem=pv.pedidov and l.tipo_origem='V')) as DATA_BOLETO,
+
+        sum(ppv.quantidade*ppv.preco) as valor
+from pedido_venda pv
+inner join tipos_pedido tp on tp.tipo_pedido=pv.tipo_pedido
+inner join produto_pedidov ppv on ppv.pedidov=pv.pedidov
+left join funcionarios f on f.funcionario=pv.vendedor
+left join status_workflow wf on wf.status_workflow=pv.status_workflow
+inner join condicoes_pgto cp on pv.condicoes_pgto =cp.condicoes_pgto
+inner join clientes c on c.cliente=pv.cliente
+where
+pv.efetuado='F'
+and pv.aprovado='F'
+and pv.origem_pedido like '%WEB%'
+AND PV.DATA_EMISSAO BETWEEN :DATAI AND :DATAF
+[AND PV.TIPO_PEDIDO IN #REPLACE(TIPO_PEDIDO)]
+[AND PV.COD_PEDIDOV=:PEDIDO]
+and (exists
+(select * from lancamentos l
+inner join tipos_pgtos tp on tp.tipo_pgto=l.tipo_pgto and tp.natureza in ('101')
+where
+l.efetuado='F' and l.transacao_aprovada='F' and l.data_emissao>'today'-180
+and l.status_aprova_facil&lt;>0
+and l.tipo_origem='V' and l.origem=pv.pedidov) or (exists (select * from lancamentos l
+inner join tipos_pgtos tp on tp.tipo_pgto=l.tipo_pgto and tp.natureza in ('2')
+where
+l.efetuado='F'
+//and  l.data_vencimento&lt;'today'
+and l.tipo_origem='V' and l.origem=pv.pedidov)   ))
+
+
+
+
+group by 1
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

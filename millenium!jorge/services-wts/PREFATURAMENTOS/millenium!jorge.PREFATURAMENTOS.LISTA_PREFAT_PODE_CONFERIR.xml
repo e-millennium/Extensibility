@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PREFATURAMENTOS">
+    <METHOD NAME="LISTA_PREFAT_PODE_CONFERIR" DESCRIPTION="Lista Pr&#233;-Faturamentos Permite Confer&#235;ncia" VERSION="10" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PREFATURAMENTO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Prefaturamento" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="PREFATURAMENTO" FORMAT="N" SIZE="8" PROJECTION="0" ORDER="7" FIELDLABEL="Prefaturamento" CTAB="0"/>
+        <FIELD NAME="NUMERO" SIZE="15" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Numero" CTAB="0"/>
+        <FIELD NAME="PEDIDO" SIZE="15" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Pedido" CTAB="0"/>
+        <FIELD NAME="CODIGO" SIZE="15" FLAGS="1" PROJECTION="0" ORDER="3" FIELDLABEL="Codigo" CTAB="0"/>
+        <FIELD NAME="NOME" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Nome" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select
+    PF.PREFATURAMENTO,
+    PF.numero,
+    pv.cod_pedidov  as pedido,
+    c.cod_cliente   as codigo,
+    c.nome          as nome
+
+from prefaturamentos pf
+inner join pedido_venda pv on pv.pedidov=pf.pedidov
+inner join clientes c on c.cliente=pf.cliente
+
+where
+[pf.numero=:PREFATURAMENTO]
+and pf.expedicao='T'
+and pf.excluido='F'
+and pf.podeconferir='T'
+and pf.conferindo='F'
+and pf.entregue='F'
+and pf.conferido='F'
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

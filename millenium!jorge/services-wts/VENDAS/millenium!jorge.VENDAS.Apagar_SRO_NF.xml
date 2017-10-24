@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="VENDAS">
+    <METHOD NAME="Apagar_SRO_NF" DESCRIPTION="Apagar SRO de NF-e" VERSION="10" INTFTYPE="5" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="NF" FORMAT="N" SIZE="8" FLAGS="17" PROJECTION="0" ORDER="1" FIELDLABEL="NF-e" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>update volumes_evento ve set VE.numero_objeto=NULL where  exists
+
+(select * from nf where
+nf.nota=:nf
+and nf.cup_fis='F'
+and ve.cod_operacao=nf.cod_operacao and ve.tipo_operacao=nf.tipo_operacao) ;
+ 
+
+
+ update saidas s set s.numero_objeto=NULL where  exists
+
+(select * from nf where
+nf.nota=:nf
+and nf.cup_fis='F'
+and s.saida=nf.cod_operacao and nf.tipo_operacao='S')
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

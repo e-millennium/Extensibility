@@ -1,0 +1,12 @@
+library millenium_jorge;
+
+
+uses
+
+  millenium_jorge_nfe in 'millenium_jorge_nfe.pas';
+
+{$R *.RES}
+
+begin
+end.
+ 

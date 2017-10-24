@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="VENDAS">
+    <METHOD NAME="Lista_Movimento_transportadora" DESCRIPTION="Lista Notas por Transportadora" VERSION="19" INTFTYPE="5" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="datai" FORMAT="D" SIZE="10" FLAGS="1" DEFAULT="today" PROJECTION="0" ORDER="2" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="dataf" FORMAT="D" SIZE="10" FLAGS="1" DEFAULT="today" PROJECTION="0" ORDER="3" FIELDLABEL="Data Final" CTAB="0"/>
+        <PARAM NAME="TRANSPORTADORA" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="1" LOOKUP="VENDAS.Lista_transportadora" LOOKUPKEY="TRANSPORTADORA" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_TRANSPORTADORA" FIELDLABEL="Transportadora" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="SAIDA" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Saida" CTAB="0"/>
+        <FIELD NAME="DATA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Data" CTAB="0"/>
+        <FIELD NAME="NOTA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Nota" CTAB="0"/>
+        <FIELD NAME="TRANSPORTADORA" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Transportadora" CTAB="0"/>
+        <FIELD NAME="TIPO_FRETE" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Tipo Frete" CTAB="0"/>
+        <FIELD NAME="CLIENTE" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Cliente" CTAB="0"/>
+        <FIELD NAME="VALOR" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="11" FIELDLABEL="Valor Nota" CTAB="0"/>
+        <FIELD NAME="QUANTIDADE" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Quantidade" CTAB="0"/>
+        <FIELD NAME="PESO" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="13" FIELDLABEL="Peso" CTAB="0"/>
+        <FIELD NAME="VOLUMES" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="14" FIELDLABEL="Volumes" CTAB="0"/>
+        <FIELD NAME="VALOR_FRETE" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="15" FIELDLABEL="Valor Inicial Frete" CTAB="0"/>
+        <FIELD NAME="PERC_NOTA" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="16" FIELDLABEL="% Nota" CTAB="0"/>
+        <FIELD NAME="VALOR_FINAL_FRETE" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="17" FIELDLABEL="Valor Final Frete" CTAB="0"/>
+        <FIELD NAME="PEDIDO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Pedido" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select
+        saida,
+        data,
+        nota,
+        transportadora,
+        tipo_frete,
+        cliente,
+        valor,
+        quantidade,
+        peso,
+        volumes,
+        valor_frete,
+        perc_nota,
+        (valor_frete+perc_nota)*1.05 as valor_final_frete,
+        pedido
+
+from
+(SELECT
+            SAIDA,
+            data,
+            nota,
+            transportadora,
+            tipo_frete,
+            cliente,
+            valor,
+            quantidade,
+            peso,
+            volumes,
+            pedido,
+
+            CASE    WHEN PESO&lt;=1 then 6.72
+                    WHEN PESO>1 AND PESO&lt;=2 then 7.77
+                    WHEN PESO>2 AND PESO&lt;=3 then 8.46
+                    WHEN PESO>3 AND PESO&lt;=4 then 9.15
+                    WHEN PESO>4 AND PESO&lt;=5 then 9.84
+                    WHEN PESO>5 AND PESO&lt;=6 then 10.54
+                    WHEN PESO>6 AND PESO&lt;=7 then 11.23
+                    WHEN PESO>7 AND PESO&lt;=8 then 11.92
+                    WHEN PESO>8 AND PESO&lt;=9 then 12.61
+                    WHEN PESO>9 AND PESO&lt;=10 then 13.33
+                    WHEN PESO>10 AND PESO&lt;=11 then 14.68
+                    WHEN PESO>11 AND PESO&lt;=12 then 15.27
+                    WHEN PESO>12 AND PESO&lt;=13 then 15.87
+                    WHEN PESO>13 AND PESO&lt;=14 then 16.46
+                    WHEN PESO>14 AND PESO&lt;=15 then 17.07
+                    WHEN PESO>15 AND PESO&lt;=16 then 17.66
+                    WHEN PESO>16 AND PESO&lt;=17 then 18.26
+                    WHEN PESO>17 AND PESO&lt;=18 then 18.83
+                    WHEN PESO>18 AND PESO&lt;=19 then 19.46
+                    WHEN PESO>19 AND PESO&lt;=20 then 20.05
+                    WHEN PESO>20 AND PESO&lt;=21 then 21.23
+                    WHEN PESO>21 AND PESO&lt;=22 then 21.83
+                    WHEN PESO>22 AND PESO&lt;=23 then 22.42
+                    WHEN PESO>23 AND PESO&lt;=24 then 23.03
+                    WHEN PESO>24 AND PESO&lt;=25 then 23.62
+                    WHEN PESO>25 AND PESO&lt;=26 then 24.22
+                    WHEN PESO>26 AND PESO&lt;=27 then 24.81
+                    WHEN PESO>27 AND PESO&lt;=28 then 25.42
+                    WHEN PESO>28 AND PESO&lt;=29 then 26.02
+                    WHEN PESO>29 AND PESO&lt;=30 then 26.60
+            else 0
+            END  as valor_frete,
+            (valor*0.003) as perc_nota
+
+FROM
+
+(select
+        s.saida,
+        min(s.data )            as data,
+        min(nf.nota )           as nota,
+        min(c.cod_cliente||' - '||c.nome)             as cliente,
+        min(t.nome)             as transportadora,
+        min(tf.descricao)       as tipo_frete,
+        min(s.valor_final)      as valor,
+        min(s.qtde)             as quantidade,
+        sum(ve.pesokg)          as peso,
+        count(ve.volume_evento) as volumes,
+        min((select min(pv.cod_pedidov) from  produtos_eventos pe
+                        inner join pedido_venda pv on pv.pedidov=pe.pedido
+                        where pe.cod_operacao=s.saida and pe.tipo_operacao='S') ) as pedido
+
+from saidas s
+inner join nf on nf.cod_operacao=s.saida and nf.tipo_operacao='S'
+inner join transportadoras t on t.transportadora=s.transportadora
+left join volumes_evento ve on ve.cod_operacao=s.saida and ve.tipo_operacao='S'
+inner join tipos_frete tf on tf.tipo_frete=s.tipo_frete
+inner join clientes c on c.cliente=s.cliente
+inner join filiais f on f.filial=s.filial
+
+where
+f.cod_filial='485ESTOQUE'
+AND s.cancelada='F'
+and s.data between :datai and :dataf
+[and s.transportadora IN #REPLACE(transportadora)]
+
+group by 1
+))
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

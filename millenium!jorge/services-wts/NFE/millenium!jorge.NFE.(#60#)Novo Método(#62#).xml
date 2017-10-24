@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="NFE">
+    <METHOD NAME="&lt;Novo M&#233;todo>" DESCRIPTION="Situa&#231;&#227;o das Notas Fiscais Eletr&#244;nicas" VERSION="103" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="STATUS" SIZE="1" FLAGS="17" DEFAULT="2" PROJECTION="0" ORDER="3" LOOKUP="list:'0','Aguardando Protocolo';'1','Notas com erro';'2','Notas Processadas';'3','Todos';" FIELDLABEL="Situa&#231;&#227;o" CTAB="0"/>
+        <PARAM NAME="DATA" FORMAT="D" SIZE="10" FLAGS="1" VISIBILITYRULE="(STATUS&lt;>0)" DEFAULT="Today-5" PROJECTION="0" ORDER="4" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="FILIAL" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="2" LOOKUP="FILIAIS.Lista_Simples" LOOKUPKEY="FILIAL" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_FILIAL" FIELDLABEL="Filial" CTAB="0"/>
+        <PARAM NAME="DATAF" FORMAT="D" SIZE="10" FLAGS="1" VISIBILITYRULE="(STATUS&lt;>0)" DEFAULT="Today" PROJECTION="0" ORDER="5" FIELDLABEL="Data Final" CTAB="0"/>
+        <PARAM NAME="TIPO_ORIGEM" SIZE="1" PROJECTION="0" FIELDLABEL="Tipo Operacao" CTAB="0"/>
+        <PARAM NAME="RELACAO_ES" FORMAT="R" PROJECTION="0" FIELDLABEL="Operacoes" NESTEDNAME="millenium.EVENTOS.RELACAO_ES" CTAB="0"/>
+        <PARAM NAME="NAO_AGRUPAR_CFOP" FORMAT="B" SIZE="1" PROJECTION="0" FIELDLABEL="Nao Agrupar Cfop" CTAB="0"/>
+        <PARAM NAME="MODELO_NFE" SIZE="2" FLAGS="17" DEFAULT="-1" PROJECTION="0" ORDER="1" LOOKUP="list:'55','NFe';'65','NFCe';'00','NFSe';'-1','Ambas';" FIELDLABEL="Modelo Nfe" CTAB="0"/>
+        <PARAM NAME="EVENTO" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="7" LOOKUP="EVENTOS.LISTA" LOOKUPKEY="EVENTO" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Evento" CTAB="0"/>
+        <PARAM NAME="NOTA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Nota" CTAB="0"/>
+        <PARAM NAME="CFOP" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="8" LOOKUP="CFOP.LISTA" LOOKUPKEY="CFOP" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="NAT_OPERACAO" FIELDLABEL="Cfop" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="ID" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Id" CTAB="0"/>
+        <FIELD NAME="NOTA" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="13" FIELDLABEL="Nota" CTAB="0"/>
+        <FIELD NAME="EMISSAO" SIZE="6" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Emiss&#227;o" CTAB="0"/>
+        <FIELD NAME="DATA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="15" FIELDLABEL="Data" CTAB="0"/>
+        <FIELD NAME="VALOR" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="16" FIELDLABEL="Valor" CTAB="0"/>
+        <FIELD NAME="STATUS" SIZE="30" FLAGS="1" PROJECTION="0" ORDER="17" FIELDLABEL="Situa&#231;&#227;o" CTAB="0"/>
+        <FIELD NAME="IDNFE" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="21" FIELDLABEL="Chave NFe" CTAB="0"/>
+        <FIELD NAME="IDRECIBO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="20" FIELDLABEL="Recibo" CTAB="0"/>
+        <FIELD NAME="IDPROTOCOLO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="24" FIELDLABEL="Protocolo" CTAB="0"/>
+        <FIELD NAME="IDSTATUS" SIZE="3" FLAGS="1" PROJECTION="0" ORDER="22" FIELDLABEL="Status" CTAB="0"/>
+        <FIELD NAME="MENSAGEMNFE" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="29" FIELDLABEL="Mensagem Erro" CTAB="0"/>
+        <FIELD NAME="DATA_IMP" FORMAT="H" SIZE="18" FLAGS="1" PROJECTION="0" ORDER="27" FIELDLABEL="Impresso em" CTAB="0"/>
+        <FIELD NAME="USUARIO_IMP" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="28" FIELDLABEL="Impresso por" CTAB="0"/>
+        <FIELD NAME="COD_OPERACAO" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Cod Operacao" CTAB="0"/>
+        <FIELD NAME="TIPO_OPERACAO" SIZE="1" PROJECTION="0" FIELDLABEL="Tipo Operacao" CTAB="0"/>
+        <FIELD NAME="EVENTO" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Evento" CTAB="0"/>
+        <FIELD NAME="BICM" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="30" FIELDLABEL="Base Icms" CTAB="0"/>
+        <FIELD NAME="V_ICMS" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="31" FIELDLABEL="Valor Icms" CTAB="0"/>
+        <FIELD NAME="V_IPI" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="32" FIELDLABEL="Valor IPI" CTAB="0"/>
+        <FIELD NAME="NAT_OPERACAO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="33" FIELDLABEL="Cfop" CTAB="0"/>
+        <FIELD NAME="VALOR_BRUTO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="35" FIELDLABEL="Valor Bruto" CTAB="0"/>
+        <FIELD NAME="TSS_NFE" FORMAT="H" SIZE="18" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Data Proc." CTAB="0"/>
+        <FIELD NAME="DESC_EVENTO" SIZE="60" FLAGS="1" PROJECTION="0" ORDER="34" FIELDLABEL="Evento" CTAB="0"/>
+        <FIELD NAME="NOME_DESTINATARIO" SIZE="60" FLAGS="1" PROJECTION="0" ORDER="37" FIELDLABEL="Nome Destinat&#225;rio" CTAB="0"/>
+        <FIELD NAME="CODIGO_DESTINATARIO" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="36" FIELDLABEL="C&#243;digo Destinat&#225;rio" CTAB="0"/>
+        <FIELD NAME="CNPJ_DESTINATARIO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="38" FIELDLABEL="Cnpj Destinat&#225;rio" CTAB="0"/>
+        <FIELD NAME="IE_DESTINATARIO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="39" FIELDLABEL="Inscr. Estadual Destinat&#225;rio" CTAB="0"/>
+        <FIELD NAME="USUARIONFE" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="25" FIELDLABEL="Usu&#225;rio NFe" CTAB="0"/>
+        <FIELD NAME="USUARIO_MOV" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="26" FIELDLABEL="Usu&#225;rio Movimenta&#231;&#227;o" CTAB="0"/>
+        <FIELD NAME="CANCELADA" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="18" FIELDLABEL="Cancelada" CTAB="0"/>
+        <FIELD NAME="SERIE" SIZE="5" FLAGS="1" PROJECTION="0" ORDER="14" FIELDLABEL="S&#233;rie" CTAB="0"/>
+        <FIELD NAME="COMPLEMENTAR" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="19" FIELDLABEL="Complementar" CTAB="0"/>
+        <FIELD NAME="NUM_CCES" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="23" FIELDLABEL="Num Cces" CTAB="0"/>
+        <FIELD NAME="MODELO_NF" SIZE="2" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Modelo Nf" CTAB="0"/>
+        <FIELD NAME="MODELO" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Modelo" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT #TRANSLATE(#NULL_TO_S(nf1.status,'000'),'100':#TRANSLATE(mod.especie,'NFS':'RPS: '||nf1.NOTA||' Nota: '||nf1.NUMERO_NOTA,
+       ELSE:nf1.NOTA),ELSE:#TRANSLATE(mod.especie,'NFS':'RPS: '||nf1.NOTA,else:nf1.NOTA)) as NOTA,
+       nf1.DATA, min(nf1.VALOR) as valor, nf1.IDNFE, nf1.IDRECIBO,
+       CAST(#NULL_TO_S(nf1.IDPROTOCOLO,'EPEC-'||nf1.nr_dpec) as VARCHAR(30)) as IDPROTOCOLO,
+       #TRANSLATE(nf1.tipoemisnfe,'5':'FS-DA','3':'SCAN','4':'EPEC',ELSE:'NORMAL') as EMISSAO,
+       nf1.MENSAGEMNFE, nf1.STATUS as IDSTATUS, doc.DATA_IMP, doc.USUARIO_IMP, nf1.ID,
+       nf1.COD_OPERACAO, nf1.TIPO_OPERACAO, #TRANSLATE(#NULL_TO_S(nf1.status,'000'),
+        '000':'Aguardando Protocolo','100':'NF Autorizada','101':'NF Cancelada','-85':'Erro NFSe verifique no site',
+        '102':'NF Inutilizada','110':'NF Denegada','301':'NF Denegada','302':'NF Denegada','-77':'Aguardando Envio para Sefaz','-80':'NFSe Aguardando Protocolo',
+        '-88':'NFe impressa em FS-DA','900':'NFe Emitida por EPEC',Else:'NF com erro ver MSG') as status,
+       #NULL_TO_N(s.evento,#NULL_TO_N(e.evento,t.evento)) as evento,
+       #NULL_TO_N(sum(pe_s.bicm), #NULL_TO_N(sum(pe_e.bicm), sum(pe_t.bicm)))  AS bicm,
+       #NULL_TO_N(sum(pe_s.v_icms), #NULL_TO_N(sum(pe_e.v_icms),  sum(pe_t.v_icms))) AS v_icms,
+       #NULL_TO_N(sum(pe_s.v_ipi),  #NULL_TO_N(sum(pe_e.v_ipi),   sum(pe_t.v_ipi)))  AS v_ipi,
+       #SELECT(NAO_AGRUPAR_CFOP, TRUE:{NULL}, ELSE:{#NULL_TO_S(c_s.nat_operacao, #NULL_TO_S (c_e.nat_operacao, c_t.nat_operacao))}) AS nat_operacao,
+       #NULL_TO_N(sum(pe_s.quantidade*pe_s.preco), #NULL_TO_N(sum(pe_e.quantidade*pe_e.preco), sum(pe_t.quantidade*pe_t.preco))) AS valor_bruto
+       ,min(nf1.TSS_NFE) as TSS_NFE, min(nf1.USUARIONFE) as USUARIONFE,
+       #NULL_TO_S(min(s.usuario), #NULL_TO_S(min(e.usuario), min(t.usuario))) AS USUARIO_MOV,
+       min(nf1.cancelada) as cancelada, nf1.serie, #NULL_TO_S(min(nfa.nota_complementar),'F') as complementar
+       ,min(ev.codigo || ' - ' || ev.descricao ) as desc_evento
+       ,#null_to_s(min(clientes_s.cod_cliente),
+           #null_to_s(min(clientes_e.cod_cliente),
+               #null_to_s(min(fornecedores_e.cod_fornecedor),
+                   #null_to_s(min(fornecedores_s.cod_fornecedor),
+                       #null_to_s(min(fil_dest.cod_filial),''))))) as codigo_destinatario
+       ,#null_to_s(min(clientes_s.nome),
+           #null_to_s(min(clientes_e.nome),
+               #null_to_s(min(fornecedores_e.nome),
+                   #null_to_s(min(fornecedores_s.nome),
+                       #null_to_s(min(fil_dest.nome),''))))) as nome_destinatario
+       ,(select count(*) from CCES cc where cc.idnota =nf1.id and cc.origem =nf1.cod_operacao and cc.tipo_origem =nf1.tipo_operacao) as NUM_CCES
+
+       ,#null_to_s(min(clientes_s.cnpj),
+           #null_to_s(min(clientes_e.cnpj),
+               #null_to_s(min(fornecedores_e.cnpj),
+                   #null_to_s(min(fornecedores_s.cnpj),
+                       #null_to_s(min(fil_dest.cnpj),''))))) as cnpj_destinatario
+
+       ,#null_to_s(min(clientes_s.ie),
+           #null_to_s(min(clientes_e.ie),
+               #null_to_s(min(fornecedores_e.ie),
+                   #null_to_s(min(fornecedores_s.ie),
+                       #null_to_s(min(fil_dest.ie),''))))) as ie_destinatario
+       ,min(mod.codigo) as modelo_nf, min(nf.modelo) as modelo
+
+
+  FROM nf_modelos mod INNER JOIN nf nf1 ON mod.nf_modelo = nf1.modelo
+       LEFT JOIN documentos doc ON doc.origem = nf1.cod_operacao
+       and doc.tipo_origem = nf1.tipo_operacao and doc.nota = nf1.nota and
+           ( ((DOC.TIPO_DOCUMENTO = 'DANFE') and (mod.codigo='55')) or ((DOC.TIPO_DOCUMENTO = 'DANFCE') and (mod.codigo='65')) )
+       LEFT JOIN nfa on nfa.nf =nf1.id
+       LEFT JOIN entradas e on e.entrada = nf1.cod_operacao and e.tipo_operacao_e=nf1.tipo_operacao
+       LEFT JOIN saidas s on s.saida = nf1.cod_operacao and s.tipo_operacao_s=nf1.tipo_operacao
+       LEFT JOIN transferencias t on t.transferencia = nf1.cod_operacao and t.tipo_operacao_t=nf1.tipo_operacao
+       LEFT JOIN produtos_eventos pe_e ON ( e.entrada = pe_e.cod_operacao AND e.tipo_operacao_e = pe_e.tipo_operacao and nf1.nota = pe_e.nota)
+       LEFT JOIN produtos_eventos pe_s ON ( s.saida = pe_s.cod_operacao AND s.tipo_operacao_s = pe_s.tipo_operacao and nf1.nota = pe_s.nota)
+       LEFT JOIN produtos_eventos pe_t ON ( t.transferencia = pe_t.cod_operacao AND t.tipo_operacao_t = pe_t.tipo_operacao and nf1.nota = pe_t.nota)
+       LEFT JOIN cfop c_e ON ( c_e.cfop = pe_e.cfop )
+       LEFT JOIN cfop c_s ON ( c_s.cfop = pe_s.cfop )
+       LEFT JOIN cfop c_t ON ( c_t.cfop = pe_t.cfop )
+       LEFT JOIN eventos ev on ev.evento = #NULL_TO_N(s.evento,#NULL_TO_N(e.evento,t.evento))
+       LEFT JOIN clientes clientes_s on clientes_s.cliente = s.cliente
+       LEFT JOIN fornecedores fornecedores_s on fornecedores_s.fornecedor = s.fornecedor
+       LEFT JOIN fornecedores fornecedores_e on fornecedores_e.fornecedor = e.fornecedor
+       LEFT JOIN clientes clientes_e on clientes_e.cliente = e.cliente
+       LEFT JOIN filiais fil_dest on fil_dest.filial = t.filial_destino
+
+ WHERE
+       #SELECT( MODELO_NFE,
+                '-1':{((mod.codigo='55') or (mod.codigo='65') or (mod.codigo='00' and mod.especie='NFS'))},
+                '00':{((mod.codigo='00' and mod.especie='NFS'))},
+                ELSE:{mod.codigo=:MODELO_NFE}
+               )
+       #SELECT(STATUS,
+       0:{and (nf1.STATUS is NULL or nf1.STATUS='-77' or nf1.STATUS='-80' or nf1.STATUS='-88' or nf1.STATUS='000') and nf1.cancelada&lt;>True},
+       1:{and Cast(#NULL_TO_S(nf1.STATUS,'200') as integer)>200 and nf1.status not in ('-77','-80','-88','900','205','301','302')
+          [and nf1.DATA between :DATA and :DATAF]
+          and not exists (select * from nf nf2 where nf2.nota =nf1.nota and nf2.modelo =nf1.modelo and nf2.filial =nf1.filial and
+                      nf2.serie =nf1.serie and nf2.cod_operacao =-1 and nf2.tipo_operacao ='C' and nf2.id &lt;> nf1.id)},
+       2:{and ((Cast(#NULL_TO_S(nf1.STATUS,'200') as integer)&lt;201 and Cast(#NULL_TO_S(NF1.STATUS,'200') as integer)>-1
+                and nf1.status&lt;>'000') or
+               (nf1.status in ('900','205','301','302')) or
+               (nf1.cancelada=True and nf1.status ='101') or (nf1.cancelada=True and nf1.status ='102') )
+          [and nf1.DATA between :DATA and :DATAF]
+          and not exists (select * from nf nf2 where nf2.nota =nf1.nota and nf2.modelo =nf1.modelo and nf2.filial =nf1.filial and
+                      nf2.serie =nf1.serie and nf2.cod_operacao =-1 and nf2.tipo_operacao ='C' and nf2.id &lt;> nf1.id)
+                      },
+       else:{[and nf1.DATA between :DATA and :DATAF]}) and (nf1.digitada = FALSE or nf1.digitada is null)
+       [and nf1.FILIAL = :FILIAL]
+       [and (doc.tipo_origem =:tipo_origem) and (doc.origem in #makelist(relacao_es,cod_operacao))]
+       [and (nf1.tipo_operacao =:tipo_origem) and (nf1.cod_operacao in #makelist(relacao_es,cod_operacao))]
+       [and ev.evento in #replace(evento)]
+       [and nf1.nota=:nota]
+       [and (c_e.cfop  in #replace(:CFOP) or c_s.cfop  in #replace(:CFOP) or  c_t.cfop  in #replace(:CFOP))]
+
+
+ GROUP BY 1,2,4,5,6,7,8,9,10,11,12,13,14,15,16,20,26
+
+ ORDER BY 2,26,1;
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

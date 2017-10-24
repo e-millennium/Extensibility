@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<root>
+	<_currentid>MICROVIX_003</_currentid>
+	
+	<_name>RULES.MICROVIX</_name>
+
+	<link category="Utilitários\Microvix\Configurações" target="standard.tdataedit" _id="MICROVIX_001" Caption="Configurações">
+		<OBJECT>MILLENIUM!MICROVIX.MICROVIX</OBJECT>
+	</link>
+	
+	<link category="Utilitários\Microvix\Lista de Produtos" target="standard.tdataedit" _id="MICROVIX_002" Caption="Lista de Produtos">
+          <METHOD>MILLENIUM!MICROVIX.PRODUTOS.LISTASIMPLES</METHOD>
+		  
+          <link target="_blank,standard.tdataedit" _id="MICROVIX_003" Caption="Exportar" ORDER="-1">
+               <METHOD>MILLENIUM!MICROVIX.PRODUTOS.EXPORTAR</METHOD>
+			   <PARAM DATA="{$data.PRODUTO[]}" >PRODUTOS.ITEM</PARAM>		   
+			   <PARAM DATA="{$data.UPDATE_PROD}" >UPDATE_PROD</PARAM>		
+          </link>	
+		  
+	</link>
+	
+	
+
+</root>

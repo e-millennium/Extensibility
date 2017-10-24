@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="VENDAS">
+    <METHOD NAME="Lista_comissao" DESCRIPTION="Lista Vendas por Vendedor" VERSION="9" INTFTYPE="5" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="DATAI" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="DATAF" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Data Final" CTAB="0"/>
+        <PARAM NAME="FUNCIONARIOS" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="4" LOOKUP="MILLENIUM.FUNCIONARIOS.LISTA_VENDEDORES" LOOKUPKEY="FUNCIONARIO" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_FUNCIONARIO" FIELDLABEL="Funcionarios" CTAB="0"/>
+        <PARAM NAME="FILIAIS" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="3" LOOKUP="MILLENIUM.FILIAIS.LISTA" LOOKUPKEY="FILIAL" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_FILIAL" FIELDLABEL="Filiais" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="DATA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" FIELDLABEL="Data" CTAB="0"/>
+        <FIELD NAME="NOME" SIZE="50" FLAGS="1" PROJECTION="0" FIELDLABEL="Nome" CTAB="0"/>
+        <FIELD NAME="FRETE_ATACADO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" FIELDLABEL="Frete Atacado" CTAB="0"/>
+        <FIELD NAME="VAREJO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" FIELDLABEL="Varejo" CTAB="0"/>
+        <FIELD NAME="COMISSAO_VAREJO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" FIELDLABEL="Comissao Varejo" CTAB="0"/>
+        <FIELD NAME="ATACADO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" FIELDLABEL="Atacado" CTAB="0"/>
+        <FIELD NAME="COMISSAO_ATACADO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" FIELDLABEL="Comissao Atacado" CTAB="0"/>
+        <FIELD NAME="FRETE_VAREJO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" FIELDLABEL="Frete Varejo" CTAB="0"/>
+        <FIELD NAME="FRETE_TOTAL" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" FIELDLABEL="Frete Total" CTAB="0"/>
+        <FIELD NAME="VENDA_TOTAL" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" FIELDLABEL="Venda Total" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>#set(tbl_venda,${#createtable(     data date,
+                                   romaneio int,
+                                   ticket int,
+                                   funcionario int,
+                                   frete_varejo numeric(15,8),
+                                   frete_atacado numeric(15,8),
+                                   varejo numeric(15,8),
+                                   comissao_varejo numeric(15,8),
+                                   atacado numeric(15,8),
+                                   comissao_atacado numeric(15,8) )});
+
+
+insert into #replace(TBL_venda)
+
+select
+      s.data,
+      s.romaneio,
+      s.ticket,
+      s.funcionario,
+      max(#null_to_z(v_frete)) as frete_varejo,
+      0 as frete_atacado,
+      sum(valor_inicial) as varejo,
+      sum((valor_inicial-#null_to_z(v_frete))*0.03) as comissao_varejo,
+      0 as atacado,
+      0 as comissao_atacado
+
+ from lancamentos l
+
+inner join saidas s
+      on (s.saida = l.origem
+      and l.tipo_origem ="S"
+      and l.tipo='R'
+      and l.substituido='F'
+      and baixa_s is null) or
+
+ (s.saida = l.origem
+      and l.tipo_origem ="S"
+      and l.tipo='R'
+      and l.substituido='T'
+      and baixa_s is null)
+
+ where S.EVENTO IN (4,19,3,8,18, 1610250001)
+       [and l.tipo_pgto&lt;>5]
+       [and s.data  between :datai and :dataf]
+       [and s.funcionario in   #replace(FUNCIONARIOS)]
+       [and S.FILIAL in   #replace(FILIAIS)]
+
+ group by s.data,s.romaneio,s.ticket,s.funcionario
+
+ union all
+
+select
+      s.data,
+      s.romaneio,
+      s.ticket,
+      s.funcionario,
+      0 as comissao_varejo,
+      max(#null_to_z(s.v_frete)) as frete_atacado,
+      0 as frete_varejo,
+      0 as varejo,
+      sum(valor_inicial) as atacado,
+      sum(valor_inicial*0.05) as comissao_atacado
+
+ from lancamentos l
+
+ inner join saidas s
+      on (s.saida = l.origem
+      and l.tipo_origem ="S"
+      and l.tipo='R'
+      and l.substituido='F'
+      and baixa_s is null) or
+
+ (s.saida = l.origem
+      and l.tipo_origem ="S"
+      and l.tipo='R'
+      and l.substituido='T'
+      and baixa_s is null)
+
+
+ where S.EVENTO IN (7,5, 1610250015)
+       [and l.tipo_pgto&lt;>5]
+       [and s.data  between :datai and :dataf]
+       [and s.funcionario in   #replace(FUNCIONARIOS)]
+       [and S.FILIAL in   #replace(FILIAIS)]
+
+ group by s.data,s.romaneio,s.ticket,s.funcionario ;
+
+////////////////////
+
+
+
+select
+      v.data,
+      f.nome,
+      sum(v.frete_varejo)                      as frete_varejo,
+      sum(v.frete_atacado)                     as frete_atacado,
+      sum(varejo)                              as varejo,
+      sum(comissao_varejo)                     as comissao_varejo,
+      sum(atacado)                             as atacado,
+      sum((atacado-frete_atacado)*0.015)       as comissao_atacado,
+      sum(v.frete_varejo+v.frete_atacado)      as frete_total,
+      sum(varejo+atacado)                      as venda_total,
+      sum(comissao_varejo+((atacado-frete_atacado)*0.015))    as comissao_total
+
+
+ from #replace(TBL_venda) v
+
+ inner join funcionarios f on v.funcionario=f.funcionario
+
+ group by v.data,f.nome
+
+
+
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="VITRINES">
+    <METHOD NAME="Lista_vitrines" DESCRIPTION="lista Vitrines" VERSION="3" THREADSAFE="0">
+      <PARAMS/>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="CODIGO" SIZE="5" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Codigo" CTAB="0"/>
+        <FIELD NAME="VITRINE" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Vitrine" CTAB="0"/>
+        <FIELD NAME="DESCRICAO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Descricao" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select vitrine,codigo,descricao from vitrine
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="RECEB_EMBARQUE_COMPRA">
+    <METHOD NAME="LISTA_VALIDACAO_FRETE" DESCRIPTION="Valida&#231;&#227;o de Fretes" VERSION="18" ENABLED="0" INTFTYPE="5" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="CODIGO_TRANSP" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Codigo Transp" CTAB="0"/>
+        <PARAM NAME="DATA_MOVIMENTOI" FORMAT="D" SIZE="10" FLAGS="17" DEFAULT="today" PROJECTION="0" ORDER="3" FIELDLABEL="Data Movimento Inicial" CTAB="0"/>
+        <PARAM NAME="DATA_MOVIMENTOF" FORMAT="D" SIZE="10" FLAGS="17" DEFAULT="today" PROJECTION="0" ORDER="4" FIELDLABEL="Data Movimento Final" CTAB="0"/>
+        <PARAM NAME="PEDIDO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Pedido" CTAB="0"/>
+        <PARAM NAME="NF_VINCULADA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="NF-e Vinculada" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="CODIGO_TRANSP" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="C&#243;digo" CTAB="0"/>
+        <FIELD NAME="TRANSPORTADORA" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Transportadora" CTAB="0"/>
+        <FIELD NAME="DATA_CTE" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Data CT-e" CTAB="0"/>
+        <FIELD NAME="ROMANEIO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Romaneio" CTAB="0"/>
+        <FIELD NAME="DATA_RECEBIMENTO" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Data Recebimento XML" CTAB="0"/>
+        <FIELD NAME="NFE_VINCULADA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="14" FIELDLABEL="NF-e Vinculada" CTAB="0"/>
+        <FIELD NAME="DATA_NF_VINCULADA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Data NF-e Vinculada" CTAB="0"/>
+        <FIELD NAME="PEDIDO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="16" FIELDLABEL="Pedido" CTAB="0"/>
+        <FIELD NAME="TIPO_NF_VINCULADA" SIZE="2" FLAGS="1" PROJECTION="0" ORDER="13" FIELDLABEL="Tipo NF-e" CTAB="0"/>
+        <FIELD NAME="DIGITADA" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="15" FIELDLABEL="Digitada" CTAB="0"/>
+        <FIELD NAME="FRETE_COBRADO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="18" FIELDLABEL="Frete Cobrado" CTAB="0"/>
+        <FIELD NAME="VALOR_CTE" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="17" FIELDLABEL="Valor CT-e" CTAB="0"/>
+        <FIELD NAME="MAIOR" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="19" FIELDLABEL="Maior" CTAB="0"/>
+        <FIELD NAME="MENOR" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="20" FIELDLABEL="Menor" CTAB="0"/>
+        <FIELD NAME="CHAVE_NFE_VINCULADA" SIZE="300" FLAGS="1" PROJECTION="0" ORDER="21" FIELDLABEL="Chave Nfe Vinculada" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT * FROM
+(SELECT
+        f.cod_fornecedor    as codigo_transp,
+        f.nome              as transportadora,
+        m.data              as data_movimento,
+        m.romaneio          as romaneio,
+        nf2.data            as data_cte,
+        rec.data_r          as   data_recebimento,
+        nf.numero_nota      as NFe_vinculada,
+        nf.data             as data_nf_vinculada,
+        (select max(pv.cod_pedidov) from pedido_venda pv
+                                            inner join produto_pedidov ppv on  pv.pedidov=ppv.pedidov
+                                            inner join produtos_eventos pe on pe.pedido=pv.pedidov
+                                            where pe.cod_operacao=m2.cod_operacao and
+                                                  pe.tipo_operacao=m2.tipo_operacao
+                                            )  as pedido,
+        nf.tipo_operacao    as tipo_nf_vinculada,
+        nf.digitada         as digitada,
+        m2.v_frete          as frete_cobrado,
+        rec.valor_nf        as valor_cte,
+
+        case when
+                    (m2.v_frete-rec.valor_nf)>0 then m2.v_frete-rec.valor_nf
+                    else 0
+                    end as MAIOR,
+
+        case when
+                    (m2.v_frete-rec.valor_nf)&lt;0 then (m2.v_frete-rec.valor_nf)*-1
+                    else 0
+                    end as MENOR,
+
+
+
+
+        recnf.idnfe         as chave_nfe_vinculada
+
+FROM receb_embarque_compra rec
+inner join movimento m on m.cod_operacao=rec.cod_operacao and m.tipo_operacao=rec.tipo_operacao
+inner join fornecedores f on f.fornecedor=m.fornecedor
+inner join receb_embarque_compra_cte_nfe recnf on rec.recebimento=recnf.recebimento
+inner join nf nf2 on nf2.cod_operacao=m.cod_operacao and nf2.tipo_operacao=m.tipo_operacao
+left join nf on nf.idnfe=recnf.idnfe
+inner join movimento m2 on m2.cod_operacao=nf.cod_operacao and m2.tipo_operacao=nf.tipo_operacao
+where
+ m.data between :DATA_MOVIMENTOI and :DATA_MOVIMENTOF
+
+
+
+)
+
+WHERE
+[PEDIDO=:PEDIDO]
+[and codigo_transp=:codigo_transp]
+[and NFe_vinculada=:NF_VINCULADA]
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

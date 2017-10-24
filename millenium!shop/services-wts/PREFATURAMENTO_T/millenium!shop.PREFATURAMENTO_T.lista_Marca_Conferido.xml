@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PREFATURAMENTO_T">
+    <METHOD NAME="lista_Marca_Conferido" DESCRIPTION="Marcar Prefaturamenteo de Transferencia como Conferido" VERSION="5" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="NUMERO" SIZE="15" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Numero" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>update  prefaturamento_t p set p.conferido='T',p.podeconferir='T' where p.numero=:NUMERO
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

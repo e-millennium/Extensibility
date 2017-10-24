@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="VITRINES">
+    <METHOD NAME="lista_produtos_vitrine" DESCRIPTION="Lista Produtos da Vitrine" VERSION="18" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="VITRINE" SIZE="255" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Vitrine" CTAB="0"/>
+        <PARAM NAME="PRODUTO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Produto" CTAB="0"/>
+        <PARAM NAME="ATIVO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Ativo" CTAB="0"/>
+        <PARAM NAME="REFERENCIA" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="3" FIELDLABEL="Referencia" CTAB="0"/>
+        <PARAM NAME="MARCA" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Marca" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="VITRINE" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Vitrine" CTAB="0"/>
+        <FIELD NAME="DATA_PUBLICACAO" FORMAT="H" SIZE="18" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Data Publicacao" CTAB="0"/>
+        <FIELD NAME="NOME_CLASSIFICACAO" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Nome Classificacao" CTAB="0"/>
+        <FIELD NAME="COD_PRODUTO" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Codigo Produto" CTAB="0"/>
+        <FIELD NAME="DESCRICAO" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="13" FIELDLABEL="Descricao" CTAB="0"/>
+        <FIELD NAME="DESCRICAO_TRADUZIDA" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="14" FIELDLABEL="Descricao Traduzida" CTAB="0"/>
+        <FIELD NAME="COD_COR" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="15" FIELDLABEL="Codigo Cor" CTAB="0"/>
+        <FIELD NAME="DESC_COR" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="16" FIELDLABEL="Descricao Cor" CTAB="0"/>
+        <FIELD NAME="TAMANHO" SIZE="5" FLAGS="1" PROJECTION="0" ORDER="17" FIELDLABEL="Tamanho" CTAB="0"/>
+        <FIELD NAME="INCLUIR" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="18" FIELDLABEL="Incluir" CTAB="0"/>
+        <FIELD NAME="REFERENCIA" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Referencia" CTAB="0"/>
+        <FIELD NAME="MARCA" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Marca" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select
+            v.descricao                 as vitrine,
+            v.data_publicacao ,
+            vc.nome_classificacao,
+            p.cod_produto,
+            p.referencia,
+            p.descricao1                as descricao,
+            p.descricao_traduzida,
+            c.cod_cor,
+            c.descricao                 as desc_cor,
+            vp.tamanho,
+            vp.incluir,
+            m.descricao                 as marca
+
+ from vitrine v
+inner join vitrine_produtos_sku vp on vp.vitrine=v.vitrine
+inner join vitrine_produtos vc on vc.vitrine=vp.vitrine and vc.produto=vp.produto  and vc.excluido='F'
+inner join  produtos p on p.produto=vp.produto
+inner join cores c on c.cor=vp.cor
+inner join marcas m on m.marca=p.marca
+
+where
+[V.DESCRICAO =:VITRINE]
+[and P.COD_PRODUTO=:PRODUTO ]
+[and M.DESCRICAO=:MARCA ]
+[and p.REFERENCIA=:REFERENCIA ]
+[AND VP.INCLUIR=:ATIVO]
+
+
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

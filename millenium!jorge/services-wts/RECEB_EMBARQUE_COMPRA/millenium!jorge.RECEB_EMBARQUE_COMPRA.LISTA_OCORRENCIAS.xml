@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="RECEB_EMBARQUE_COMPRA">
+    <METHOD NAME="LISTA_OCORRENCIAS" DESCRIPTION="Lista Ocorr&#234;ncias de Transporte" VERSION="11" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="dataocorenciai" FORMAT="D" SIZE="10" FLAGS="17" DEFAULT="today" PROJECTION="0" ORDER="2" FIELDLABEL="Data Ocorr&#234;ncia Inicial" CTAB="0"/>
+        <PARAM NAME="dataocorenciaf" FORMAT="D" SIZE="10" FLAGS="17" DEFAULT="today" PROJECTION="0" ORDER="3" FIELDLABEL="Data Ocorr&#234;ncia Final" CTAB="0"/>
+        <PARAM NAME="NOTA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Nota" CTAB="0"/>
+        <PARAM NAME="PEDIDO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Pedido" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="DATA_NF" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Data NF-e" CTAB="0"/>
+        <FIELD NAME="NUMERO_NOTA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="NF-e" CTAB="0"/>
+        <FIELD NAME="PEDIDO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Pedido" CTAB="0"/>
+        <FIELD NAME="DATA_OCORRENCIA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Data Ocorrencia" CTAB="0"/>
+        <FIELD NAME="HORA" SIZE="5" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Hora" CTAB="0"/>
+        <FIELD NAME="OCORRENCIA" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Ocorrencia" CTAB="0"/>
+        <FIELD NAME="ARQUIVO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Arquivo" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select * from
+
+(select
+        m.data as data_nf,
+        nf.numero_nota,
+        ( select max(cod_pedidov) from pedido_venda pv
+                                    inner join produtos_eventos ppe on pv.pedidov=ppe.pedido
+                                            where ppe.cod_operacao=m.cod_operacao and
+                                                ppe.tipo_operacao=m.tipo_operacao
+         ) as pedido,
+        t.cod_transportadora||'-'||t.nome as transportadora,
+        eh.data_ocorrencia,
+        substr(eh.hora_ocorrencia,1,2)||':'||substr(eh.hora_ocorrencia,3,2) as hora,
+        eo.descricao as ocorrencia,
+        eh.arquivo
+
+from embarques_historico eh
+inner join embarques_ocorrencia eo on eo.embarque_ocorrencia=eh.codigo_ocorrencia
+inner join movimento m on m.cod_operacao=eh.origem and m.tipo_operacao=eh.tipo_origem
+inner join nf on m.cod_operacao=nf.cod_operacao and m.tipo_operacao=nf.tipo_operacao
+inner join transportadoras t on t.transportadora=m.transportadora
+
+where
+[eh.data_ocorrencia between :dataocorenciai and :dataocorenciaf ]
+[and nf.numero_nota=:nota]
+and eh.arquivo   like 'OCO%'
+
+)
+
+where
+[PEDIDO=:PEDIDO]
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>
