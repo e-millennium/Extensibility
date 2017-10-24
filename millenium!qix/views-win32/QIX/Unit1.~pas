@@ -1,0 +1,117 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Db, wtsMethodView, StdCtrls,
+
+  wtsStream,wtsCube,wtsCubeGrid;
+
+type
+  TForm1 = class(TForm)
+    Button1: TButton;
+    wtsMethodView1: TwtsMethodView;
+    procedure Button1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+  private
+    FGrid: TwtsCubeGrid;
+    FDimMap: TwtsDimMap;
+    FDataCube: TwtsRecordset;
+  public
+    procedure BuildCube;
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.DFM}
+
+procedure TForm1.BuildCube;
+var
+   c, nc: TwtsCube;
+   i: Integer;
+   f:TCubeGridAxisFactColumn;
+begin
+  c := TwtsCube.Create;
+
+  c.MeasureFields.Add('QTD_PROP_GRADE');
+  c.MeasureFields.Add('QTD_VENDA_PROD');
+  c.MeasureFields.Add('QTD_ESTOQUE');
+  c.MeasureFields.Add('QTD_PRODUZIDO');
+  c.MeasureFields.Add('QTD_SALDO');
+
+  fDimMap.BeginUpdate;
+  c.DimMap := fDimMap;
+  c.Build(FDataCube);
+
+  FGrid.BeginUpdate;
+  try
+    nc := fGrid.Cube;
+    fGrid.Cube := nil;
+    FreeAndNil(nc);
+
+    //Ver
+    FGrid.VAxis.Dimensions.ClearFields;
+    FGrid.VAxis.Dimensions.AddField('PRODUTO');
+
+    //Hor
+    FGrid.HAxis.Dimensions.ClearFields;
+    FGrid.HAxis.Dimensions.AddField('TAMANHO');
+
+    //medidas
+    fGrid.VAxis.Facts.ClearFields;
+
+    f := fGrid.VAxis.Facts.AddFact('QTD_PROP_GRADE');
+    f.AddField('QTD_PROP_GRADE');
+    
+    f := fGrid.VAxis.Facts.AddFact('QTD_VENDA_PROD');
+    f.AddField('QTD_VENDA_PROD');
+
+    f := fGrid.VAxis.Facts.AddFact('QTD_ESTOQUE');
+    f.AddField('QTD_ESTOQUE');
+
+    f := fGrid.VAxis.Facts.AddFact('QTD_PRODUZIDO');
+    f.AddField('QTD_PRODUZIDO');
+
+    f := fGrid.VAxis.Facts.AddFact('QTD_SALDO');
+    f.AddField('QTD_SALDO');
+
+    fGrid.Cube := c;
+
+    fGrid.Active := True;
+  finally
+    FGrid.EndUpdate;
+  end;
+
+  FGrid.Visible := True;
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+  wtsMethodView1.Open;
+  FDataCube := wtsMethodView1.Data;
+  BuildCube;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  FGrid := TwtsCubeGrid.Create(Self);
+  FGrid.Align := alClient;
+  FGrid.Parent := Self;
+  FGrid.ChartType := ctCrossTab;
+  FGrid.Options := FGrid.Options - [cgoShowLegend];
+  FGrid.RowTotals := False;
+  FGrid.GroupTotals := False;
+  FGrid.Visible := False;
+  FGrid.ReadOnly := False;
+  FGrid.ShowMeasureCaption := False;
+ // FGrid.HAxis.FreezedScroll := True;
+  FGrid.ReplyMode := True;
+
+  FDimMap := TwtsDimMap.Create;
+end;
+
+end.

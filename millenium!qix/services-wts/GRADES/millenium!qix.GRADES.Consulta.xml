@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="GRADES">
+    <METHOD NAME="Consulta" DESCRIPTION="" VERSION="14" INTFTYPE="6" TRIGGEROF="GRADES.CONSULTA" TRIGGERTYPE="0" THREADSAFE="1">
+      <PARAMS/>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="VOID" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Void" CTAB="0"/>
+        <FIELD NAME="TAMANHOS" FORMAT="R" FLAGS="1" PROJECTION="0" FIELDLABEL="Tamanhos" NESTEDNAME="MILLENIUM.GRADES.TAMANHOS" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT G.GRADE,
+       #ROWSET("SELECT:TAMANHOS
+                       T.TAMANHO,
+                       T.DESC_TAMANHO,
+                       QT.PERC_DIST AS QIX_PERC_DIST
+                FROM TAMANHOS T
+                LEFT JOIN QIX_TAMANHOS QT ON QT.GRADE = T.GRADE AND
+                                             QT.TAMANHO = T.TAMANHO
+                WHERE T.GRADE=:WTSSYS_OBJECT")
+FROM GRADES G
+WHERE G.GRADE =:WTSSYS_OBJECT;
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

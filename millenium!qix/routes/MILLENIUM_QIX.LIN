@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<root>
+	<_currentid>QIX_2</_currentid>
+	<_name>RULES.QIX</_name>
+
+	<link category="Logística\Estoque\Planejamento Estoque Projetado" target="standard.tdataedit" _id="QIX_1">
+		 <OBJECT>MILLENIUM!QIX.PLANEJAMENTOS_ESTOQUES</OBJECT>
+
+     <link target="_blank,qix_estoque.TFPlanejamentoEstoque" _id="QIX_2" caption="Processar Planejameto Estoque">
+          <PLANEJAMENTO_ESTOQUE>{$data.PLANEJAMENTO_ESTOQUE}</PLANEJAMENTO_ESTOQUE>		
+     </link>
+		 
+		 
+	</link>	
+
+</root>
+
+
+

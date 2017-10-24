@@ -1,0 +1,15 @@
+<dbdic.objects.objects>
+  <ROW NAME="MNR_SITUACAO_AUT" CREATE_BLANK="FALSE" ORDER="0">
+    <FIELDS NAME="SITUACAO_AUT" DATATYPE="3">
+      <FLAGS> AQ==
+</FLAGS>
+    </FIELDS>
+    <FIELDS NAME="DESCRICAO" DATATYPE="1" SIZE="30">
+      <FLAGS> AQ==
+</FLAGS>
+    </FIELDS>
+    <INDEXES>
+      <FIELDS>SITUACAO_AUT</FIELDS>
+    </INDEXES>
+  </ROW>
+</dbdic.objects.objects>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<root>
+  <dimension caption="Situacao Autorizacao">
+    <tables>
+      <table name="MNR_SITUACAO_AUT"/>
+    </tables>
+
+    <attributes>
+	    <level name="SITUACAO_AUT" caption="Situacao Autorizacao" keyattribute="SITUACAO_AUT" displayattribute="DESCRICAO">
+			<attribute name="SITUACAO_AUT" caption="" cangroup="1"/>
+			<attribute name="DESCRICAO" cangroup="1" degenerate="1"/>
+	    </level>
+    </attributes>
+	
+  </dimension>
+</root>

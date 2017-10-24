@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<root>
+  <fact>
+    
+	<outriggers>
+        <outrigger fullname="MNR_SITUACAO_AUT$MNR_SITUACAO_AUT">
+            <relation cardinality="1-1">
+                <condition left="MNR_SITUACAO_AUT" right="MNR_SITUACAO_AUT$MNR_SITUACAO_AUT.SITUACAO_AUT"/>
+            </relation>
+        </outrigger>
+    </outriggers>		
+	
+    <attributes>
+		<attribute name="MNR_SITUACAO_AUT"/> 
+    </attributes>
+	
+  </fact>
+</root>

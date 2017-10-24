@@ -1,0 +1,449 @@
+<?xml version="1.0"?>
+<root>
+  <report universe="millenium.mdu" defaultperspective="Producao" guid="{1CACC772-cccc-vvXXsxsd-0DF6E04FC8B5}" description="">
+    <conditions>
+      <condition leftmember="data_inicio_fase.DATA.DATA" compop=" between " rightmember="prompt()"/>
+      <condition logiop="AND" leftmember="oficina.GERADOR.GERADOR" compop="=" rightmember="prompt()"/>
+      <condition logiop="AND" leftmember="filial.GERADOR.gerador" compop="=" rightmember="prompt()"/>
+      <condition logiop="AND" leftmember="producao.producao.producao" compop=" in " rightmember="prompt()"/>
+      <condition logiop="AND" leftmember="movimento_producao.MNR_SITUACAO_AUT.SITUACAO_AUT.SITUACAO_AUT" compop="=" rightmember="prompt()"/>
+    </conditions>
+    <measures>
+      <measure name="rpt.CUSTO_UNIT" expression="min(movimento_producao.custo) &#xA;" caption="custo_unit" displayformat=""/>
+      <measure name="rpt.2" expression="Producao.custo_atual/Producao.quantidade_atual &#xA;" caption="2" displayformat=""/>
+      <measure name="rpt.A1" expression="min(situacao_producao.custo) &#xA;" caption="a1" displayformat=""/>
+      <measure name="rpt.A2" expression="min(movimento_producao.custo) &#xA;" caption="a2" displayformat=""/>
+      <measure name="rpt.A3" expression="Producao.custo_retorno+Producao.custo_atual &#xA;" caption="a3" displayformat=""/>
+      <measure name="rpt.3" expression="sum(rpt.2*Producao.qtde_envio_oficina) &#xA;" caption="3" displayformat=""/>
+      <measure name="rpt.CT" expression="sum(sum(movimento_producao.custo*movimento_producao.quantidade){f:movimento_producao.flagoficina='S'} &#xA;+sum(situacao_producao.custo*situacao_producao.quantidade){f:situacao_producao.fase &lt;> -1}) &#xA;" caption="ct" displayformat=""/>
+      <measure name="rpt.VU" expression="(rpt.CT/Producao.qtde_envio_oficina) &#xA;" caption="vu" displayformat=""/>
+      <measure name="rpt.ENVV" expression="(movimento_producao.num_controle) &#xA;" caption="envv" displayformat=""/>
+      <measure name="rpt.SIT_CT" expression="avg(situacao_producao.custo) &#xA;" caption="sit_ct" displayformat=""/>
+      <measure name="rpt.MOV_CT" expression="avg(movimento_producao.custo) &#xA;" caption="mov_ct" displayformat=""/>
+      <measure name="rpt.TOTAL123" expression="Producao.quantidade_atual+Producao.qtde_retorno_oficina &#xA;" caption="total123" displayformat=""/>
+    </measures>
+    <prompts _EXTENSION="" DATA_INICIO_FASE_DATA_DATA_interval.DEFAULT="0" DATA_INICIO_FASE_DATA_DATA_interval.VISIBLE="0" DATA_INICIO_FASE_DATA_DATA_interval.ORDER="1" DATA_INICIO_FASE_DATA_DATA_start.FIELDLABEL="Data Inicial" DATA_INICIO_FASE_DATA_DATA_start.DEFAULT="today -30" DATA_INICIO_FASE_DATA_DATA_start.NOTNULL="1" DATA_INICIO_FASE_DATA_DATA_start.ORDER="2" DATA_INICIO_FASE_DATA_DATA_end.FIELDLABEL="Data Final" DATA_INICIO_FASE_DATA_DATA_end.DEFAULT="today" DATA_INICIO_FASE_DATA_DATA_end.NOTNULL="1" DATA_INICIO_FASE_DATA_DATA_end.ORDER="3" OFICINA_GERADOR_GERADOR.ORDER="4" FILIAL_GERADOR_GERADOR.ORDER="5" PRODUCAO_PRODUCAO_PRODUCAO.ORDER="6" COMPACTMODE="F"/>
+    <page pagesize="1" useprinterpage="0" orientation="0" pagewidth="0" pageheight="0" maxpages="500" showfooter="0" showheader="0" endonbreak="0">
+      <headers>
+        <header breakbefore="1" breakafter="0" keeptogether="1" DistinctValues="1">
+          <margins left="0" top="0" right="0" bottom="0"/>
+          <border borderleft="False" bordertop="False" borderright="False" borderbottom="False"/>
+          <styles>
+            <caption mask="" fontname="Segoe UI" fontsize="8" fontcolor="clWindowText" fontbold="True" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWhite"/>
+            <data mask="" fontname="Segoe UI" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWhite"/>
+          </styles>
+          <groups>
+            <group name="" caption=""/>
+          </groups>
+          <items>
+            <item expression="filial.GERADOR.nome" showtotals="0" totaltype="0" order="0" notes="" caption="Filial" exprtype="0" displayformat="" classname="" group="" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0" linebreakafter="0" showcaption="1" widthpercent="0" height="0">
+              <pos left="3" top="0" width="712" height="17"/>
+              <pos-label width="46" height="13"/>
+              <styles>
+                <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+              </styles>
+              <conditionalstyles/>
+            </item>
+            <item expression="oficina.GERADOR.NOME" showtotals="0" totaltype="0" order="0" notes="" caption="Oficina" exprtype="0" displayformat="" classname="" group="" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0" linebreakafter="0" showcaption="1" widthpercent="0" height="0">
+              <pos left="3" top="18" width="712" height="17"/>
+              <pos-label width="46" height="13"/>
+              <styles>
+                <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+              </styles>
+              <conditionalstyles/>
+            </item>
+          </items>
+          <conditions/>
+        </header>
+      </headers>
+      <bodytable>
+        <tr height="0">
+          <td width="0" datacols="1">
+            <table autowidth="1" headervisible="1" HorizontalPaging="1" MeasuresAxe="0" ShowTotals="0" DistinctValues="1">
+              <title alignment="2" wordwrap="0" height="24">Quantidade Em Oficina
+                <style mask="" fontname="" fontsize="0" fontcolor="clBlack" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWhite"/>
+              </title>
+              <margins left="0" top="0" right="0" bottom="0"/>
+              <styles>
+                <ColsCap mask="" fontname="Tahoma" fontsize="8" fontcolor="clWhite" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00B26666"/>
+                <Cols mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00F2E5E5"/>
+                <Rows mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWhite"/>
+                <RowsCap mask="" fontname="Tahoma" fontsize="8" fontcolor="clWhite" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00B26666"/>
+                <DataCap mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00CC9999"/>
+                <Data mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWindow"/>
+                <TotalCap mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00B26666"/>
+                <Total mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00E5FFFF"/>
+              </styles>
+              <border-styles>
+                <Header borderleft="True" bordertop="True" borderright="True" borderbottom="True" borderrows="True" bordercols="True"/>
+                <Data borderleft="True" bordertop="True" borderright="True" borderbottom="True" borderrows="True" bordercols="True"/>
+                <Footer borderleft="True" bordertop="True" borderright="True" borderbottom="True" borderrows="True" bordercols="True"/>
+              </border-styles>
+              <breaks/>
+              <cols>
+                <item expression="data_inicio_fase.DATA.DATA" showtotals="2" totaltype="0" order="0" notes="" caption="Data" exprtype="0" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="67" height="20"/>
+                  <pos-label width="67" height="25"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="90" height="18"/>
+                </item>
+                <item expression="producao.producao.n_ordem" showtotals="0" totaltype="0" order="0" notes="" caption="Ordem" exprtype="0" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="51" height="20"/>
+                  <pos-label width="51" height="25"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="66" height="20"/>
+                </item>
+                <item expression="produto.produto.COD_PRODUTO" showtotals="0" totaltype="0" order="0" notes="" caption="C&#243;digo" exprtype="0" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="61" height="20"/>
+                  <pos-label width="61" height="25"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="73" height="20"/>
+                </item>
+                <item expression="produto.produto.descricao1" showtotals="0" totaltype="0" order="0" notes="" caption="Produto" exprtype="0" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="169" height="20"/>
+                  <pos-label width="169" height="25"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="191" height="20"/>
+                </item>
+                <item expression="fase.fase.descricao" showtotals="0" totaltype="0" order="0" notes="" caption="Fase" exprtype="0" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="116" height="18"/>
+                  <pos-label width="116" height="25"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="120" height="18"/>
+                </item>
+              </cols>
+              <rows/>
+              <data/>
+              <datacols>
+                <item expression="Producao.quantidade_atual" showtotals="0" totaltype="0" order="0" notes="" caption="Qtde em Oficina" exprtype="1" displayformat="###,###,###" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="87" height="18"/>
+                  <pos-label width="87" height="25"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="120" height="18"/>
+                </item>
+                <item expression="rpt.SIT_CT" showtotals="0" totaltype="0" order="0" notes="" caption="Custo Unit." exprtype="1" displayformat="R$ ###,###,##0.00" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="75" height="18"/>
+                  <pos-label width="75" height="25"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="120" height="18"/>
+                </item>
+                <item expression="Producao.custo_atual" showtotals="0" totaltype="0" order="0" notes="" caption="Custo Em Oficina" exprtype="1" displayformat="R$ ###,###,##0.00" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="92" height="18"/>
+                  <pos-label width="92" height="25"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="120" height="18"/>
+                </item>
+              </datacols>
+              <conditions/>
+            </table>
+          </td>
+        </tr>
+        <tr height="0">
+          <td width="0" datacols="1">
+            <textflow breakbefore="0" breakafter="0" keeptogether="0" DistinctValues="1">
+              <margins left="0" top="0" right="0" bottom="0"/>
+              <border borderleft="False" bordertop="False" borderright="False" borderbottom="False"/>
+              <styles>
+                <caption mask="" fontname="Segoe UI" fontsize="8" fontcolor="clWindowText" fontbold="True" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWhite"/>
+                <data mask="" fontname="Segoe UI" fontsize="8" fontcolor="clWindowText" fontbold="False" fontitalic="False" fontstrikeout="False" fontunderline="False" bkcolor="clWhite"/>
+              </styles>
+              <groups/>
+              <items/>
+              <conditions/>
+              <content><![CDATA[{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fnil\fcharset0 Segoe UI;}{\f1\fnil Segoe UI;}}
+\viewkind4\uc1\pard\lang1046\f0\fs16  \f1 
+\par }
+]]>
+              </content>
+            </textflow>
+          </td>
+        </tr>
+        <tr height="0">
+          <td width="0" datacols="1">
+            <table autowidth="1" headervisible="1" HorizontalPaging="1" MeasuresAxe="0" ShowTotals="0" DistinctValues="1">
+              <title alignment="2" wordwrap="0" height="24">Quantidade Retornada
+                <style mask="" fontname="" fontsize="0" fontcolor="clBlack" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWhite"/>
+              </title>
+              <margins left="0" top="0" right="0" bottom="0"/>
+              <styles>
+                <ColsCap mask="" fontname="Tahoma" fontsize="8" fontcolor="clWhite" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00B26666"/>
+                <Cols mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00F2E5E5"/>
+                <Rows mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWhite"/>
+                <RowsCap mask="" fontname="Tahoma" fontsize="8" fontcolor="clWhite" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00B26666"/>
+                <DataCap mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00CC9999"/>
+                <Data mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWindow"/>
+                <TotalCap mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00B26666"/>
+                <Total mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00E5FFFF"/>
+              </styles>
+              <border-styles>
+                <Header borderleft="True" bordertop="True" borderright="True" borderbottom="True" borderrows="True" bordercols="True"/>
+                <Data borderleft="True" bordertop="True" borderright="True" borderbottom="True" borderrows="True" bordercols="True"/>
+                <Footer borderleft="True" bordertop="True" borderright="True" borderbottom="True" borderrows="True" bordercols="True"/>
+              </border-styles>
+              <breaks/>
+              <cols>
+                <item expression="data_inicio_fase.DATA.DATA" showtotals="2" totaltype="0" order="0" notes="" caption="Data" exprtype="0" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="53" height="20"/>
+                  <pos-label width="53" height="20"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="67" height="18"/>
+                </item>
+                <item expression="producao.producao.N_ORDEM" showtotals="2" totaltype="0" order="0" notes="" caption="Ordem" exprtype="0" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="45" height="20"/>
+                  <pos-label width="45" height="20"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="51" height="18"/>
+                </item>
+                <item expression="produto.produto.COD_PRODUTO" showtotals="0" totaltype="0" order="0" notes="" caption="C&#243;digo" exprtype="0" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="53" height="20"/>
+                  <pos-label width="53" height="20"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="63" height="18"/>
+                </item>
+                <item expression="produto.produto.descricao1" showtotals="0" totaltype="0" order="0" notes="" caption="Produto" exprtype="0" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="143" height="20"/>
+                  <pos-label width="143" height="20"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="133" height="18"/>
+                </item>
+                <item expression="movimento_producao.fase_inicio.fase.descricao" showtotals="0" totaltype="0" order="0" notes="" caption="Fase" exprtype="0" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="99" height="18"/>
+                  <pos-label width="99" height="20"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="101" height="18"/>
+                </item>
+                <item expression="movimento_producao.MNR_SITUACAO_AUT.SITUACAO_AUT.DESCRICAO" showtotals="0" totaltype="0" order="0" notes="" caption="Status" exprtype="0" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="103" height="18"/>
+                  <pos-label width="103" height="18"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="120" height="18"/>
+                </item>
+              </cols>
+              <rows/>
+              <data/>
+              <datacols>
+                <item expression="Producao.qtde_retorno_oficina" showtotals="0" totaltype="0" order="0" notes="" caption="Qtde retornada" exprtype="1" displayformat="###,###,###" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="77" height="18"/>
+                  <pos-label width="77" height="20"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="101" height="18"/>
+                </item>
+                <item expression="rpt.MOV_CT" showtotals="0" totaltype="0" order="0" notes="" caption="Custo Unit." exprtype="1" displayformat="R$ ###,###,##0.00" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="65" height="18"/>
+                  <pos-label width="65" height="20"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="101" height="18"/>
+                </item>
+                <item expression="Producao.custo_retorno" showtotals="0" totaltype="0" order="0" notes="" caption="Custo Retornado" exprtype="1" displayformat="R$ ###,###,##0.00" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="80" height="18"/>
+                  <pos-label width="80" height="20"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="101" height="18"/>
+                </item>
+              </datacols>
+              <conditions>
+                <condition leftmember="Producao.qtde_retorno_oficina" compop=">" rightmember="0"/>
+              </conditions>
+            </table>
+          </td>
+        </tr>
+        <tr height="0">
+          <td width="0" datacols="1">
+            <textflow breakbefore="0" breakafter="0" keeptogether="0" DistinctValues="1">
+              <margins left="0" top="0" right="0" bottom="0"/>
+              <border borderleft="False" bordertop="False" borderright="False" borderbottom="False"/>
+              <styles>
+                <caption mask="" fontname="Segoe UI" fontsize="8" fontcolor="clWindowText" fontbold="True" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWhite"/>
+                <data mask="" fontname="Segoe UI" fontsize="8" fontcolor="clWindowText" fontbold="False" fontitalic="False" fontstrikeout="False" fontunderline="False" bkcolor="clWhite"/>
+              </styles>
+              <groups/>
+              <items/>
+              <conditions/>
+              <content><![CDATA[{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fnil\fcharset0 Segoe UI;}{\f1\fnil Segoe UI;}}
+\viewkind4\uc1\pard\lang1046\f0\fs16  \f1 
+\par }
+]]>
+              </content>
+            </textflow>
+          </td>
+        </tr>
+        <tr height="0">
+          <td width="0" datacols="1">
+            <table autowidth="1" headervisible="1" HorizontalPaging="1" MeasuresAxe="0" ShowTotals="3" DistinctValues="1">
+              <title alignment="2" wordwrap="0" height="24">Valor Final
+                <style mask="" fontname="" fontsize="0" fontcolor="clBlack" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWhite"/>
+              </title>
+              <margins left="0" top="0" right="0" bottom="0"/>
+              <styles>
+                <ColsCap mask="" fontname="Tahoma" fontsize="8" fontcolor="clWhite" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00B26666"/>
+                <Cols mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00F2E5E5"/>
+                <Rows mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWhite"/>
+                <RowsCap mask="" fontname="Tahoma" fontsize="8" fontcolor="clWhite" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00B26666"/>
+                <DataCap mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00CC9999"/>
+                <Data mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clWindow"/>
+                <TotalCap mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00B26666"/>
+                <Total mask="" fontname="Tahoma" fontsize="8" fontcolor="clWindowText" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="$00E5FFFF"/>
+              </styles>
+              <border-styles>
+                <Header borderleft="True" bordertop="True" borderright="True" borderbottom="True" borderrows="True" bordercols="True"/>
+                <Data borderleft="True" bordertop="True" borderright="True" borderbottom="True" borderrows="True" bordercols="True"/>
+                <Footer borderleft="False" bordertop="False" borderright="False" borderbottom="False" borderrows="False" bordercols="False"/>
+              </border-styles>
+              <breaks/>
+              <cols>
+                <item expression="oficina.GERADOR.NOME" showtotals="0" totaltype="0" order="0" notes="" caption="Oficina" exprtype="0" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="354" height="20"/>
+                  <pos-label width="354" height="24"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="402" height="18"/>
+                </item>
+              </cols>
+              <rows/>
+              <data/>
+              <datacols>
+                <item expression="rpt.TOTAL123" showtotals="0" totaltype="0" order="0" notes="" caption="Quantidade Total" exprtype="1" displayformat="" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="169" height="18"/>
+                  <pos-label width="169" height="18"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="120" height="18"/>
+                </item>
+                <item expression="rpt.A3" showtotals="0" totaltype="0" order="0" notes="" caption="Custo Total" exprtype="1" displayformat="R$ ###,###,##0.00" classname="" group="" visible="0" autoquery="0" kpiname="" expressiontarget="" expressionsource="" alignment="0" wordwrap="0">
+                  <pos left="0" top="0" width="195" height="20"/>
+                  <pos-label width="195" height="24"/>
+                  <styles>
+                    <data mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <caption mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                    <total mask="" fontname="" fontsize="0" fontcolor="clNone" fontbold="" fontitalic="" fontstrikeout="" fontunderline="" bkcolor="clNone"/>
+                  </styles>
+                  <conditionalstyles/>
+                  <pos-table width_h="120" height_h="18" width_v="120" height_v="18" width_c="120" height_c="18"/>
+                  <pos-total width="116" height="18"/>
+                </item>
+              </datacols>
+              <conditions/>
+            </table>
+          </td>
+        </tr>
+      </bodytable>
+      <margins left="10" top="10" right="10" bottom="10"/>
+    </page>
+    <endtext><![CDATA[]]>
+    </endtext>
+  </report>
+</root>

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<root>
+	<_currentid>MNR_5</_currentid>
+	<_name>RULES.MNR</_name>
+  
+	<link category="Monnari\Lista Pagamentos Retorno Oficina" target="standard.tdataedit" _id="MNR_1">
+		<METHOD>MILLENIUM!MONNARI.PRODUCAO.LISTARRETORNOOFICINA</METHOD>
+
+		<link target="_blank,standard.tdataedit" _id="MNR_2" caption="Autorizar">
+			<METHOD>MILLENIUM!MONNARI.PRODUCAO.APROVARPAGAMENTOS</METHOD>
+	        <PARAM DATA="{$data.MOVIMENTO_PRODUCAO[]}">MOVIMENTO_PRODUCAO.ITEM</PARAM>
+	        <Option>CloseOnSubmit</Option>
+	    </link>	
+		
+		<link target="_blank,standard.tdataedit" _id="MNR_3" caption="Revogar">
+			<METHOD>MILLENIUM!MONNARI.PRODUCAO.REVOGARPAGAMENTO</METHOD>
+	        <PARAM DATA="{$data.MOVIMENTO_PRODUCAO[]}">MOVIMENTO_PRODUCAO.ITEM</PARAM>
+	        <Option>CloseOnSubmit</Option>
+	    </link>	
+
+		<link target="_blank,standard.tdataedit" _id="MNR_5" caption="Pago">
+			<METHOD>MILLENIUM!MONNARI.PRODUCAO.BAIXARPAGAMENTO</METHOD>
+	        <PARAM DATA="{$data.MOVIMENTO_PRODUCAO[]}">MOVIMENTO_PRODUCAO.ITEM</PARAM>
+	        <Option>CloseOnSubmit</Option>
+	    </link>			
+
+		<link target="_blank,standard.tdataedit" _id="MNR_4" caption="Histórico">
+			<METHOD>MILLENIUM!MONNARI.PRODUCAO.LISTAHISTSITUACAOAUT	</METHOD>
+	        <PARAM DATA="{$data.MOVIMENTO_PRODUCAO}">MOVIMENTO_PRODUCAO</PARAM>
+			<Option>ReadOnly</Option>
+			<Option>AutoRefresh</Option>
+	    </link>				
+		
+		
+	</link>
+	
+</root>

@@ -1,0 +1,21 @@
+<dbdic.objects.objects>
+  <ROW NAME="QIX_TAMANHOS" CREATE_BLANK="FALSE" ORDER="0">
+    <FIELDS NAME="GRADE" DATATYPE="3">
+      <FLAGS> AQ==
+</FLAGS>
+    </FIELDS>
+    <FIELDS NAME="TAMANHO" DATATYPE="1" SIZE="5">
+      <FLAGS> AQ==
+</FLAGS>
+    </FIELDS>
+    <FIELDS NAME="PERC_DIST" DATATYPE="3">
+      <DEFAULT>0</DEFAULT>
+    </FIELDS>
+    <INDEXES>
+      <FIELDS>GRADE</FIELDS>
+    </INDEXES>
+    <INDEXES>
+      <FIELDS>GRADE;TAMANHO</FIELDS>
+    </INDEXES>
+  </ROW>
+</dbdic.objects.objects>

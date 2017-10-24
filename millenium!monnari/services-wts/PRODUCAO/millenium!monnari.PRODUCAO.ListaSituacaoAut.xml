@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PRODUCAO">
+    <METHOD NAME="ListaSituacaoAut" DESCRIPTION="" VERSION="5" THREADSAFE="1">
+      <PARAMS/>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="SITUACAO_AUT" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Mnr Situacao Aut" CTAB="0"/>
+        <FIELD NAME="DESCRICAO" SIZE="30" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Descricao" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT * FROM MNR_SITUACAO_AUT
+ORDER BY SITUACAO_AUT
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

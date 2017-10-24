@@ -1,0 +1,18 @@
+﻿<?xml version="1.0"?>
+<root>
+	<fact>
+		<tables>
+			<table name="MMM_MOVIMENTO_LANC"/>
+		</tables>
+		<relations>
+			<relation cardinality="1-1" forced="0">
+				<condition left="LANCAMENTOS.LANCAMENTO" right="MMM_MOVIMENTO_LANC.LANCAMENTO"/>
+			</relation>
+		</relations>
+		<attributes>
+			<level name="lancamento">
+				<attribute name="MMM_EXTRA" tablename="" fieldname="#if(exists (select * from MMM_MOVIMENTO_LANC mml where mml.lancamento=$.lancamento),true,false)" subselect="1" datatype="boolean" caption="Extra" cangroup="1" degenerate="1"/>				
+			</level>							
+		</attributes>
+	</fact>
+</root>
