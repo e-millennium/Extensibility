@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GetOutBoundDataResponse xmlns="http://tempuri.org/">
+   <GetOutBoundDataResult>
+      <S11:Envelope xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:dp="http://www.datapower.com/schemas/management">
+         <S11:Header>
+            <pi:PartyInfo xmlns:pi="http://www.tibco.com/namespaces/bc/2002/04/partyinfo.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+               <from xmlns="">
+                  <domain>System</domain>
+                  <name>CSS</name>
+               </from>
+               <to xmlns="">
+                  <domain>System</domain>
+                  <name>ABBS</name>
+               </to>
+               <operationID xmlns="">OutBound</operationID>
+               <operationType xmlns="">syncRequestResponse</operationType>
+               <transactionID xmlns="">OutBound_CSS_20170814030046.xml</transactionID>
+               <encoding xmlns="">UTF-8</encoding>
+            </pi:PartyInfo>
+         </S11:Header>
+         <S11:Body>
+            <XML_ABBS_HEADER xmlns="http://tempuri.org/TicketEvents">
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>ADELMOS DA SILVA SALDANHA</CustomerName>
+                  <CustomerAddress>Rua Estrada do Feiche 9200</CustomerAddress>
+                  <Address2 />
+                  <District>Bairro Recosta</District>
+                  <CustomerState>RS</CustomerState>
+                  <City>São Francisco de Paula</City>
+                  <ZipCode>95400-000</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>498.145.160-15</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>54999566836</PhoneNumber>
+                  <Email>saldanhajose61@gmail.com</Email>
+                  <CSSTicketNumber>1857355X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136585BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GHDAL.001</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGHDAL001637E7FB19501</SerialNumber>
+                     <UnitPrice>699.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>BENEDITA GOMES BATISTA</CustomerName>
+                  <CustomerAddress>RUA DOS CAJUEIROS   195</CustomerAddress>
+                  <Address2>Loja MARTINELLO</Address2>
+                  <District>Centro</District>
+                  <CustomerState>MT</CustomerState>
+                  <City>GUARANTA</City>
+                  <ZipCode>78520-000</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>346.355.801-72</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>66999043904</PhoneNumber>
+                  <Email>guaranta@martinello.com.br</Email>
+                  <CSSTicketNumber>1857328X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136662BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GHDAL.001</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGHDAL001640000519501</SerialNumber>
+                     <UnitPrice>699.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>BRUNO SANTOS BATISTA</CustomerName>
+                  <CustomerAddress>RUA: FÁTIMA DE OLIVEIRA 75</CustomerAddress>
+                  <Address2>CASA</Address2>
+                  <District>MARCOS FREIRE II</District>
+                  <CustomerState>SE</CustomerState>
+                  <City>Nossa Senhora do Socorro</City>
+                  <ZipCode>49160-000</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>067.816.625-03</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>7932547952</PhoneNumber>
+                  <Email>BRUNOXP360@GMAIL.COM</Email>
+                  <CSSTicketNumber>1855263X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136659BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GMFAL.004</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGMFAL0047162D03E9501</SerialNumber>
+                     <UnitPrice>645.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>CARLA EUNICE MACEDO ISLABAO</CustomerName>
+                  <CustomerAddress>RUA CORONEL PEDRO OSORIO 455</CustomerAddress>
+                  <Address2>CASA</Address2>
+                  <District>SÃO JOSE</District>
+                  <CustomerState>RS</CustomerState>
+                  <City>Arroio Grande</City>
+                  <ZipCode>96330-000</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>995.667.530-04</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>53984268021</PhoneNumber>
+                  <Email>LOJA.ARROIOGRANDE@BENOIT.COM.BR</Email>
+                  <CSSTicketNumber>1857426X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136596BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.G56AL.005</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXG56AL0057021AEB79501</SerialNumber>
+                     <UnitPrice>484.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>Carlos Roberto de Carvalho</CustomerName>
+                  <CustomerAddress>Av. Comendador Francisco Avelino Maia 2830</CustomerAddress>
+                  <Address2 />
+                  <District>Centro</District>
+                  <CustomerState>MG</CustomerState>
+                  <City>Passos</City>
+                  <ZipCode>37900-005</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>697.757.706-10</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>3535261060</PhoneNumber>
+                  <Email>daniel@conexaopassos.com.br</Email>
+                  <CSSTicketNumber>1859152X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136654BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GJLAL.003</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGJLAL003718310A69501</SerialNumber>
+                     <UnitPrice>816.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>Carlos Sávio Silva</CustomerName>
+                  <CustomerAddress>Rua Francisco Ader 1028</CustomerAddress>
+                  <Address2>Casa 01</Address2>
+                  <District>Novo Mundo</District>
+                  <CustomerState>PR</CustomerState>
+                  <City>Curitiba</City>
+                  <ZipCode>81050-140</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>102.269.661-00</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>41992249056</PhoneNumber>
+                  <Email>GOIANO.CARLINHOS@HOTMAIL.COM</Email>
+                  <CSSTicketNumber>1859146X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136655BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GARAL.002</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGARAL002627D0A7D9501</SerialNumber>
+                     <UnitPrice>660.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>DIVINA APARECIDA DOS SANTOS</CustomerName>
+                  <CustomerAddress>AV SERGIPE 960</CustomerAddress>
+                  <Address2>CASA</Address2>
+                  <District>CENTRO</District>
+                  <CustomerState>MG</CustomerState>
+                  <City>Limeira do Oeste</City>
+                  <ZipCode>38295-000</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>024.192.066-30</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>34996921670</PhoneNumber>
+                  <Email>DIVINALETICIA@HOTMAIL.COM</Email>
+                  <CSSTicketNumber>1856928X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136657BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GMFAL.004</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGMFAL0047142A4E69501</SerialNumber>
+                     <UnitPrice>645.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>FABIANA IMACULADA DE ALMEIDA</CustomerName>
+                  <CustomerAddress>RUA JOSÉ ANDRÉ DE ALMEIDA 265</CustomerAddress>
+                  <Address2>BAR DO NILO</Address2>
+                  <District>São Judas Tadeu</District>
+                  <CustomerState>MG</CustomerState>
+                  <City>Ponte Nova</City>
+                  <ZipCode>35430-173</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>074.664.836-74</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>3138174277</PhoneNumber>
+                  <Email>LOJASTAVARES@YAHOO.COM.BR</Email>
+                  <CSSTicketNumber>1857379X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136597BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GHDAL.001</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGHDAL001639EE5E89501</SerialNumber>
+                     <UnitPrice>699.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>Gabriel Melo Nunes</CustomerName>
+                  <CustomerAddress>Rua José Duarte de Souza 180</CustomerAddress>
+                  <Address2>EDIFICIO PONTA DO MEL, AP 78</Address2>
+                  <District>Jardim Santa Paula</District>
+                  <CustomerState>SP</CustomerState>
+                  <City>São Carlos</City>
+                  <ZipCode>13564-030</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>037.048.863-60</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>98-3227-8386</PhoneNumber>
+                  <Email>GABRIELMN1511@GMAIL.COM</Email>
+                  <CSSTicketNumber>1858534X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136592BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GASAL.002</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGASAL002626CE7BE9501</SerialNumber>
+                     <UnitPrice>921.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>INFORMATICAM MONDAI LTDA</CustomerName>
+                  <CustomerAddress>RUA IVOTY, 106</CustomerAddress>
+                  <Address2>LOJA</Address2>
+                  <District>CENTRO</District>
+                  <CustomerState>SC</CustomerState>
+                  <City>Iporã do Oeste</City>
+                  <ZipCode>89899-000</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>088.674.939-57</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>4936341289</PhoneNumber>
+                  <Email>TELETRONICA@HOTMAIL.COM</Email>
+                  <CSSTicketNumber>1852938X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136630BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GHDAL.003</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGHDAL003650198919501</SerialNumber>
+                     <UnitPrice>627.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>Leandra Heberle Beira</CustomerName>
+                  <CustomerAddress>Rua Minas Gerais 430</CustomerAddress>
+                  <Address2>casa</Address2>
+                  <District>Jardim Cecilia</District>
+                  <CustomerState>PR</CustomerState>
+                  <City>Campo Magro</City>
+                  <ZipCode>83535-000</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>033.889.379-23</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>4136777707</PhoneNumber>
+                  <Email>leandrabeira@gmail.com</Email>
+                  <CSSTicketNumber>1860036X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136589BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GJ7AL.003</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGJ7AL003706207489501</SerialNumber>
+                     <UnitPrice>464.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>LORETES DO ROCIO CORDEIRO DA SILVA</CustomerName>
+                  <CustomerAddress>RUA PASCHOA LAZAROTTO TONIOLO 1240</CustomerAddress>
+                  <Address2>CASA</Address2>
+                  <District>FÁTIMA</District>
+                  <CustomerState>PR</CustomerState>
+                  <City>Colombo</City>
+                  <ZipCode>83405-760</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>041.674.419-26</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>4136635737</PhoneNumber>
+                  <Email>CKIYOHARA@OUTLOOK.COM</Email>
+                  <CSSTicketNumber>1857635X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136594BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GJ7AL.003</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGJ7AL00371328B9F9501</SerialNumber>
+                     <UnitPrice>464.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>MARCOS ARAGÃO DOS SANTOS REIS</CustomerName>
+                  <CustomerAddress>RUA MARECHAL DEODORO 257</CustomerAddress>
+                  <Address2>CASA</Address2>
+                  <District>CENTRO</District>
+                  <CustomerState>BA</CustomerState>
+                  <City>Santa Inês</City>
+                  <ZipCode>45320-000</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>003.974.005-60</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>73988607980</PhoneNumber>
+                  <Email>marcosboalis@gmail.com</Email>
+                  <CSSTicketNumber>1855071X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136598BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.MQYAL.011</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXMQYAL0115081D7C79501</SerialNumber>
+                     <UnitPrice>828.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>MARIA LOIVA COSTA PEREIRA MUNHOZ</CustomerName>
+                  <CustomerAddress>Avenida Assis Brasil 139</CustomerAddress>
+                  <Address2>LOJA</Address2>
+                  <District>Centro</District>
+                  <CustomerState>RS</CustomerState>
+                  <City>Tapes</City>
+                  <ZipCode>96760-000</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>501.730.900-44</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>51999797815</PhoneNumber>
+                  <Email>RODRIGOSILVAVENCATO@GMAIL.COM</Email>
+                  <CSSTicketNumber>1859147X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136591BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.G56AL.005</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXG56AL0056461205F9501</SerialNumber>
+                     <UnitPrice>484.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>Matheus Carneiro Cardoso</CustomerName>
+                  <CustomerAddress>Rua Morais e Silva  51</CustomerAddress>
+                  <Address2>bloco 1 , apto 301</Address2>
+                  <District>Maracanã</District>
+                  <CustomerState>RJ</CustomerState>
+                  <City>Rio de Janeiro</City>
+                  <ZipCode>20271-030</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>118.218.137-66</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>21-2284-7382</PhoneNumber>
+                  <Email>advmatheuscardoso@gmail.com</Email>
+                  <CSSTicketNumber>1858505X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136595BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GJLAL.003</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGJLAL003718316D59501</SerialNumber>
+                     <UnitPrice>816.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>Matheus Mayer</CustomerName>
+                  <CustomerAddress>Assis Brasil 736</CustomerAddress>
+                  <Address2 />
+                  <District>Centro</District>
+                  <CustomerState>RS</CustomerState>
+                  <City>Manoel Viana</City>
+                  <ZipCode>97640-000</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>040.640.790-86</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>5532562352</PhoneNumber>
+                  <Email>matheusmayer7@gmail.com</Email>
+                  <CSSTicketNumber>1858391X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136660BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GAYAL.001</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGAYAL001609B48649501</SerialNumber>
+                     <UnitPrice>1083.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>PEDRO PAULO DE MAGALHÃES</CustomerName>
+                  <CustomerAddress>Rua Lauro Linhares 970</CustomerAddress>
+                  <Address2>APARTAMENTO 503/ BLOCO A</Address2>
+                  <District>Trindade</District>
+                  <CustomerState>SC</CustomerState>
+                  <City>Florianópolis</City>
+                  <ZipCode>88036-001</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>498.658.828-17</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>13981580008</PhoneNumber>
+                  <Email>PEPPEMAGALHAES90@GMAIL.COM</Email>
+                  <CSSTicketNumber>1858894X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136593BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GHFAL.002</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGHFAL002638E9EA19501</SerialNumber>
+                     <UnitPrice>629.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>RICARDO DE SOUZA BITTENCOURT</CustomerName>
+                  <CustomerAddress>RODOVIA RS 239 707</CustomerAddress>
+                  <Address2 />
+                  <District>OPERARIO</District>
+                  <CustomerState>RS</CustomerState>
+                  <City>NOVO HAMBURGO</City>
+                  <ZipCode>93352-700</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>015.815.150-06</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>51999791314</PhoneNumber>
+                  <Email>RICARDOSOUZABITTENCOURT@HOTMAIL.COM</Email>
+                  <CSSTicketNumber>1858263X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136588BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GAPAL.001</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGAPAL001623C7BC49501</SerialNumber>
+                     <UnitPrice>861.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>RODRIGO CESAR ROSSI</CustomerName>
+                  <CustomerAddress>Rua Simão Bolivar 875</CustomerAddress>
+                  <Address2>POUSADA &amp;quot;VILLA TATA&amp;quot;</Address2>
+                  <District>Juvevê</District>
+                  <CustomerState>PR</CustomerState>
+                  <City>Curitiba</City>
+                  <ZipCode>80040-140</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>068.999.106-16</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>3537313589</PhoneNumber>
+                  <Email>RODRIGOZOOTECNISTA@YAHOO.COM.BR</Email>
+                  <CSSTicketNumber>1851906X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136586BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.G5RAL.006</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXG5RAL006538838469501</SerialNumber>
+                     <UnitPrice>1111.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>THARLYS OLIVEIRA SIMÃO</CustomerName>
+                  <CustomerAddress>AVENIDA ENGENHEIRO CARLOS PIRES DE SA 514</CustomerAddress>
+                  <Address2>CASA</Address2>
+                  <District>CENTRO</District>
+                  <CustomerState>PB</CustomerState>
+                  <City>Cajazeiras</City>
+                  <ZipCode>58900-000</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>074.942.774-47</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>83991526582</PhoneNumber>
+                  <Email>THARLYS_20@HOTMAIL.COM</Email>
+                  <CSSTicketNumber>1855595X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136658BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GAPAL.001</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGAPAL001624C93289501</SerialNumber>
+                     <UnitPrice>861.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TicketEventHeader>
+                  <EventType>OutBound</EventType>
+                  <CustomerName>VICTOR BRUNO DA SILVA FIDELIS</CustomerName>
+                  <CustomerAddress>RUA RAIMUNDO ALVES 3131</CustomerAddress>
+                  <Address2 />
+                  <District>FLORES-CE</District>
+                  <CustomerState>CE</CustomerState>
+                  <City>Russas</City>
+                  <ZipCode>62903-000</ZipCode>
+                  <CustomerType>CLI</CustomerType>
+                  <CPFCNPJNumber>001.997.403-56</CPFCNPJNumber>
+                  <StateRegNumber>ISENTO</StateRegNumber>
+                  <PhoneNumber>88999121321</PhoneNumber>
+                  <Email>vbfidelis@gmail.com</Email>
+                  <CSSTicketNumber>1858228X</CSSTicketNumber>
+                  <WarrantyStatus>IN WARRANTY</WarrantyStatus>
+                  <XMLFileName>OutBound_CSS_20170814021050.xml</XMLFileName>
+                  <AckStatus>BGH-Success</AckStatus>
+                  <AckRemarks>BGH-Success</AckRemarks>
+                  <TicketEventDetail>
+                     <SequenceNo>TN3136590BR</SequenceNo>
+                     <FromWarehouse>103</FromWarehouse>
+                     <ProductNumber>NX.GHEAL.001</ProductNumber>
+                     <Quantity>1</Quantity>
+                     <SerialNumber>NXGHEAL001634E0DBC9501</SerialNumber>
+                     <UnitPrice>727.00</UnitPrice>
+                  </TicketEventDetail>
+               </TicketEventHeader>
+               <TRAILER>
+                  <Header>21</Header>
+                  <Detail>21</Detail>
+                  <FILE_NAME>OutBound_CSS_20170814030046.xml</FILE_NAME>
+               </TRAILER>
+            </XML_ABBS_HEADER>
+         </S11:Body>
+      </S11:Envelope>
+   </GetOutBoundDataResult>
+</GetOutBoundDataResponse>

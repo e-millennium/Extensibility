@@ -1,0 +1,12 @@
+library millenium_acer;
+
+
+uses
+  wtsmemorym_intf,
+  wtsServerObjs;
+
+exports
+    wtsLibEntry,
+    wtsLibShutdown;
+
+end.

@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="ORDENS_SERVICO">
+    <METHOD NAME="Consultar" DESCRIPTION="Consultar" VERSION="128" INTFTYPE="6" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="ORDEM_SERVICO" FORMAT="+" SIZE="8" FLAGS="1024" PROJECTION="0" FIELDLABEL="Chamado" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+          <GROUP NAME="Status"/>
+          <GROUP NAME="Observa&#231;&#245;es"/>
+          <GROUP NAME="Equipamentos" STYLE="1"/>
+          <GROUP NAME="Pe&#231;as" STYLE="1"/>
+          <GROUP NAME="Outras Pe&#231;as" STYLE="1"/>
+          <GROUP NAME="Problemas(Integra&#231;&#227;o)" STYLE="1"/>
+        </GROUPS>
+        <FIELD NAME="ORDEM_SERVICO" FORMAT="+" SIZE="8" FLAGS="1024" PROJECTION="0" FIELDLABEL="Chamado" CTAB="0"/>
+        <FIELD NAME="COD_ORDEM_SERVICO" SIZE="10" FLAGS="145" DEFAULT="millenium.utils.default(['SI_COD_ORDEM_SERVICO',5],'Result',True)" PROJECTION="0" ORDER="1" FIELDLABEL="C&#243;digo" CTAB="0"/>
+        <FIELD NAME="DATA_ABERTURA" FORMAT="D" SIZE="10" FLAGS="145" DEFAULT="TODAY" PROJECTION="0" ORDER="2" FIELDLABEL="Data Abertura" CTAB="0"/>
+        <FIELD NAME="CLIENTE" FORMAT="N" SIZE="8" FLAGS="1" STYLE="5" PROJECTION="0" ORDER="3" LOOKUP="MILLENIUM.CLIENTES.LISTA_FILTROPOPUP" LOOKUPKEY="CLIENTE" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_CLIENTE" FIELDLABEL="Cliente" CTAB="0"/>
+        <FIELD NAME="EQUIPAMENTOS" FORMAT="R" FLAGS="17" STYLE="3" PROJECTION="0" ORDER="15" FIELDLABEL="Equipamentos" NESTEDNAME="MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.PRODUTO" GROUPNAME="Equipamentos" CTAB="0"/>
+        <FIELD NAME="PRODUTOS" FORMAT="R" FLAGS="1" STYLE="3" PROJECTION="0" ORDER="17" FIELDLABEL="Pe&#231;as" NESTEDNAME="MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.PRODUTO" GROUPNAME="Pe&#231;as" CTAB="0"/>
+        <FIELD NAME="GARANTIA" FORMAT="B" SIZE="1" FLAGS="17" DEFAULT="0" PROJECTION="0" ORDER="5" FIELDLABEL="Garantia" CTAB="0"/>
+        <FIELD NAME="OBSERVACAO" FLAGS="1" PROJECTION="0" ORDER="13" FIELDLABEL="Observa&#231;&#227;o" GROUPNAME="Observa&#231;&#245;es" CTAB="0"/>
+        <FIELD NAME="STATUS" FORMAT="N" SIZE="8" FLAGS="1" DEFAULT="1" PROJECTION="0" ORDER="7" LOOKUP="list:'1','AG. FATURAMENTO ENTRADA';'2','AG. REPARO';'3','EM REPARO';'4','AG. FATURAMENTO';'5','FINALIZADO';" FIELDLABEL="Status" GROUPNAME="Status" CTAB="0"/>
+        <FIELD NAME="ERRO" FORMAT="B" SIZE="1" FLAGS="145" DEFAULT="0" PROJECTION="0" ORDER="8" FIELDLABEL="Erro" GROUPNAME="Status" CTAB="0"/>
+        <FIELD NAME="PROBLEMAS" FLAGS="129" PROJECTION="0" ORDER="21" FIELDLABEL="Problemas" GROUPNAME="Problemas(Integra&#231;&#227;o)" CTAB="0"/>
+        <FIELD NAME="ORIGEM" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Origem" GROUPNAME="Status" CTAB="0"/>
+        <FIELD NAME="OUTROS_PRODUTOS" FORMAT="R" FLAGS="1" STYLE="3" PROJECTION="0" ORDER="19" FIELDLABEL="Outros Produtos" NESTEDNAME="MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.PRODUTO" GROUPNAME="Outras Pe&#231;as" CTAB="0"/>
+        <FIELD NAME="CLSCLIENTE" FORMAT="N" SIZE="8" FLAGS="129" PROJECTION="0" ORDER="4" LOOKUP="MILLENIUM.CLASSIFICACAO_CLIENTE.LISTA" LOOKUPKEY="CLSCLIENTE" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="COD_CLSCLIENTE" FIELDLABEL="Classifica&#231;&#227;o" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT O.ORDEM_SERVICO,
+       O.COD_ORDEM_SERVICO,
+       O.DATA_ABERTURA,
+       O.CLIENTE,
+       O.GARANTIA,
+       O.OBSERVACAO,
+       O.STATUS,
+       O.ERRO,
+       O.PROBLEMAS,
+       O.ORIGEM,
+       C.CLSCLIENTE
+       #ROWSET({SELECT:EQUIPAMENTOS
+                       S.PRODUTO,
+                       S.COR,
+                       S.ESTAMPA,
+                       S.TAMANHO,
+                       S.NUMERO_PRODUTO,
+                       S.QUANTIDADE,
+                       S.NUMERO_SERIE,
+                       S.PRECO,
+                       S.EQUIPAMENTO,
+                       S.DATA,
+                       P.COD_PRODUTO||'-'||P.DESCRICAO1 AS DESC_PRODUTO,
+                       S.ESTOQUE_ORIGEM,
+                       S.ESTOQUE_DESTINO
+                FROM SI_ORDENS_SERVICO_PRODUTOS S
+                LEFT JOIN PRODUTOS P ON (P.PRODUTO = S.PRODUTO)
+                WHERE ORDEM_SERVICO=:ORDEM_SERVICO AND
+                      EQUIPAMENTO='T'})
+
+       #ROWSET({SELECT:PRODUTOS
+                       S.PRODUTO,
+                       S.COR,
+                       S.ESTAMPA,
+                       S.TAMANHO,
+                       S.NUMERO_PRODUTO,
+                       S.QUANTIDADE,
+                       S.NUMERO_SERIE,
+                       S.PRECO,
+                       S.EQUIPAMENTO,
+                       S.DATA,
+                       P.COD_PRODUTO||'-'||P.DESCRICAO1 AS DESC_PRODUTO,
+                       S.ESTOQUE_ORIGEM,
+                       S.ESTOQUE_DESTINO
+                FROM SI_ORDENS_SERVICO_PRODUTOS S
+                LEFT JOIN PRODUTOS P ON (P.PRODUTO = S.PRODUTO)
+                WHERE ORDEM_SERVICO=:ORDEM_SERVICO AND
+                      EQUIPAMENTO='F'})
+                      
+       #ROWSET({SELECT:OUTROS_PRODUTOS
+                       S.PRODUTO,
+                       S.COR,
+                       S.ESTAMPA,
+                       S.TAMANHO,
+                       S.NUMERO_PRODUTO,
+                       S.QUANTIDADE,
+                       S.NUMERO_SERIE,
+                       S.PRECO,
+                       S.EQUIPAMENTO,
+                       S.DATA,
+                       P.COD_PRODUTO||'-'||P.DESCRICAO1 AS DESC_PRODUTO,
+                       S.ESTOQUE_ORIGEM,
+                       S.ESTOQUE_DESTINO
+                FROM SI_ORDENS_SERVICO_PRODUTOS S
+                LEFT JOIN PRODUTOS P ON (P.PRODUTO = S.PRODUTO)
+                WHERE ORDEM_SERVICO=:ORDEM_SERVICO AND
+                      EQUIPAMENTO='O'})
+
+FROM SI_ORDENS_SERVICO O
+LEFT JOIN CLIENTES C ON (C.CLIENTE = O.CLIENTE)
+WHERE ORDEM_SERVICO=:ORDEM_SERVICO;
+
+
+
+
+
+
+
+
+
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

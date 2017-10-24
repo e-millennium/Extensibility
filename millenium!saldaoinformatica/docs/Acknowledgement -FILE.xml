@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+   <soapenv:Header />
+   <soapenv:Body>
+      <tem:UpdateFileACKStatus>
+         <tem:ResponseXml>
+            <ns:PipSystemAcknowledgement xmlns:ns="http://www.acer.com.tw/rod/xmlschema/PipSystemAcknowledgement">
+               <ns:TransmissionDocumentCategory>ABBSACK</ns:TransmissionDocumentCategory>
+               <ns:TransmissionDocumentDateTime>
+                  <ns:DateTimeStamp>20171003220543</ns:DateTimeStamp>
+               </ns:TransmissionDocumentDateTime>
+               <ns:TransmissionDocumentIdentifier>
+                  <ns:ProprietaryDocumentIdentifier />
+               </ns:TransmissionDocumentIdentifier>
+               <ns:StatusInformation>
+                  <ns:Status>BGH-Success</ns:Status>
+                  <ns:StatusDescription>
+                     <ns:StatusCode>BGH-Success</ns:StatusCode>
+                     <ns:TransactionRef>InBound_CSS_20170930115943.xml</ns:TransactionRef>
+                     <ns:Description>BGH-Success</ns:Description>
+                  </ns:StatusDescription>
+               </ns:StatusInformation>
+            </ns:PipSystemAcknowledgement>
+         </tem:ResponseXml>
+      </tem:UpdateFileACKStatus>
+   </soapenv:Body>
+</soapenv:Envelope>

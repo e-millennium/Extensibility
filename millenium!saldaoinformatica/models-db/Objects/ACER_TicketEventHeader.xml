@@ -1,0 +1,37 @@
+<dbdic.objects.objects>
+  <ROW NAME="ACER_TicketEventHeader" CREATE_BLANK="FALSE" ORDER="0">
+    <FIELDS NAME="EventHeader" DATATYPE="3">
+      <FLAGS> AQ==
+</FLAGS>
+    </FIELDS>
+    <FIELDS NAME="EventType" DATATYPE="1" SIZE="20"/>
+    <FIELDS NAME="CustomerName" DATATYPE="1" SIZE="100"/>
+    <FIELDS NAME="CustomerAddress" DATATYPE="1" SIZE="100"/>
+    <FIELDS NAME="Address2" DATATYPE="1" SIZE="50"/>
+    <FIELDS NAME="District" DATATYPE="1" SIZE="50"/>
+    <FIELDS NAME="CustomerState" DATATYPE="1" SIZE="2"/>
+    <FIELDS NAME="City" DATATYPE="1" SIZE="50"/>
+    <FIELDS NAME="ZipCode" DATATYPE="1" SIZE="10"/>
+    <FIELDS NAME="CustomerType" DATATYPE="1" SIZE="10"/>
+    <FIELDS NAME="CPFCNPJNumber" DATATYPE="1" SIZE="20"/>
+    <FIELDS NAME="StateRegNumber" DATATYPE="1" SIZE="20"/>
+    <FIELDS NAME="PhoneNumber" DATATYPE="1" SIZE="20"/>
+    <FIELDS NAME="Email" DATATYPE="1" SIZE="100"/>
+    <FIELDS NAME="CSSTicketNumber" DATATYPE="1" SIZE="50"/>
+    <FIELDS NAME="WarrantyStatus" DATATYPE="1" SIZE="20"/>
+    <FIELDS NAME="XMLFileName" DATATYPE="1" SIZE="100"/>
+    <FIELDS NAME="AckStatus" DATATYPE="1" SIZE="20" DESCRIPTION="0- Ag. Reconhecimento Ticket 1-Ticket Reconhecido"/>
+    <FIELDS NAME="AckRemarks" DATATYPE="1" SIZE="20"/>
+    <FIELDS NAME="ORDEM_SERVICO" DATATYPE="3"/>
+    <FIELDS NAME="DATA" DATATYPE="9"/>
+    <FIELDS NAME="MSG_ERROR" DATATYPE="16"/>
+    <INDEXES>
+      <FIELDS>EventHeader</FIELDS>
+      <FLAGS> AQ==
+</FLAGS>
+    </INDEXES>
+    <INDEXES>
+      <FIELDS>ORDEM_SERVICO</FIELDS>
+    </INDEXES>
+  </ROW>
+</dbdic.objects.objects>

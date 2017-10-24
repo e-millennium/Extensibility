@@ -1,0 +1,9 @@
+library millenium_acer;
+
+
+uses
+
+{$R *.res}
+
+begin
+end.

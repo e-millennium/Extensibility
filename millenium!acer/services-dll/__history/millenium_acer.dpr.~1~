@@ -1,0 +1,11 @@
+library millenium_acer;
+
+
+uses
+  SysUtils,
+  Classes;
+
+{$R *.res}
+
+begin
+end.

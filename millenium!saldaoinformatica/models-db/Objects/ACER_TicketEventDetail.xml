@@ -1,0 +1,31 @@
+<dbdic.objects.objects>
+  <ROW NAME="ACER_TicketEventDetail" CREATE_BLANK="FALSE" ORDER="0">
+    <FIELDS NAME="EventDetail" DATATYPE="3">
+      <FLAGS> AQ==
+</FLAGS>
+    </FIELDS>
+    <FIELDS NAME="EventHeader" DATATYPE="3">
+      <FLAGS> AQ==
+</FLAGS>
+    </FIELDS>
+    <FIELDS NAME="SequenceNo" DATATYPE="1" SIZE="50"/>
+    <FIELDS NAME="ToWareHouse" DATATYPE="1" SIZE="50"/>
+    <FIELDS NAME="ProductNumber" DATATYPE="1" SIZE="50"/>
+    <FIELDS NAME="Quantity" DATATYPE="3"/>
+    <FIELDS NAME="SerialNumber" DATATYPE="1" SIZE="50"/>
+    <FIELDS NAME="UnitPrice" DATATYPE="6"/>
+    <FIELDS NAME="ORDENS_SERVICO_PRODUTO" DATATYPE="3"/>
+    <FIELDS NAME="FromWarehouse" DATATYPE="1" SIZE="50"/>
+    <INDEXES>
+      <FIELDS>EventDetail</FIELDS>
+      <FLAGS> AQ==
+</FLAGS>
+    </INDEXES>
+    <INDEXES>
+      <FIELDS>EventHeader</FIELDS>
+    </INDEXES>
+    <INDEXES>
+      <FIELDS>ORDENS_SERVICO_PRODUTO</FIELDS>
+    </INDEXES>
+  </ROW>
+</dbdic.objects.objects>

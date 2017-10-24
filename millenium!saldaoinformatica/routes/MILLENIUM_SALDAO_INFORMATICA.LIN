@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<root>
+	<_currentid>SALDAO_6</_currentid>
+	<_name>RULES.SALDAO</_name>
+  
+	<link category="Saldão da Informática\Ordens Serviço" target="standard.tdataedit" _id="SALDAO_1">
+		<OBJECT>MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO</OBJECT>
+	 
+		<link target="_blank,Eventos.TExecutaEvento" _id="SALDAO_2" caption="Emitir Nota Fiscal">
+			<EVENT>{$data.EVENTO}</EVENT>
+			<ID_DOCFATGENERICO>{$data.ORDEM_SERVICO}</ID_DOCFATGENERICO>
+			<Option>CloseOnSubmit</Option>
+	    </link>	 
+		
+		<link target="_blank,standard.tdataedit" _id="SALDAO_4" caption="Agrupar">
+			<METHOD>MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.AGRUPAR</METHOD>
+	        <PARAM DATA="{$data.ORDEM_SERVICO[]}">ORDENS_SERVICO.ITEM</PARAM>
+	        <Message>Confirmar Agrupamento das ordens selecionadas?</Message>
+	        <Option>CloseOnSubmit</Option>
+	    </link>	
+		
+		<link target="_blank,standard.tdataedit" _id="SALDAO_7" caption="Reavaliar">
+			<METHOD>MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.REAVALIARRELACIONAMENTOS</METHOD>
+	        <PARAM DATA="{$data.ORDEM_SERVICO}">ORDEM_SERVICO</PARAM>
+	        <Option>CloseOnSubmit</Option>
+	    </link>	
+		
+		<link target="_blank,standard.tdataedit" _id="SALDAO_5" caption="Desagrupar">
+			<METHOD>MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.DESAGRUPAR</METHOD>
+	        <PARAM DATA="{$data.ORDEM_SERVICO[]}">ORDENS_SERVICO.ITEM</PARAM>
+	        <Message>Confirmar Desagrupamento das ordens selecionadas?</Message>
+	        <Option>CloseOnSubmit</Option>
+	    </link>			
+	</link>
+	
+	<link category="Saldão da Informática\Consulta Estoque" target="standard.tdataedit" _id="SALDAO_6">
+		<METHOD>MILLENIUM!SALDAOINFORMATICA.ESTOQUES.CONSULTA</METHOD>
+	</link>	
+	
+	
+	
+	
+	
+</root>
