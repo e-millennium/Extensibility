@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<root>
+	<fact>
+		<tables>
+			<table name="QIX_PLAN_ESTOQUES"/>
+			<table name="QIX_PLAN_ESTOQUE_PRODUTOS"/>
+		</tables>
+		
+		<relations>
+			<relation cardinality="N-1">
+				<condition left="QIX_PLAN_ESTOQUE_PRODUTOS.PLANEJAMENTO_ESTOQUE" right="QIX_PLAN_ESTOQUES.PLANEJAMENTO_ESTOQUE"/>
+			</relation>
+		</relations>
+	  
+		<attributes>
+			<level name="PLANEJAMENTO_ESTOQUE" main="1" tablename="QIX_PLAN_ESTOQUES" caption="Planejamento Estoque" keyattribute="PLANEJAMENTO_ESTOQUE" displayattribute="DESCRICAO" codeattribute="COD_PLANEJAMENTO">
+				<attribute name="PLANEJAMENTO_ESTOQUE"/>
+				<attribute name="COD_PLANEJAMENTO" aption="Codigo" degenerate="1"/>
+				<attribute name="DESCRICAO" aption="Descricao" degenerate="1"/>
+				<attribute name="APROVADO" fieldname="APROVADO" caption="Aprovado" degenerate="1"/>				
+				<attribute name="PERC_CRESCIMENTO" caption="Percentual Crescimento" degenerate="1"/>
+				<attribute name="DATA_PROCESSAMENTO" caption="Data Processo" degenerate="1"/>
+				<attribute name="USUARIO_PROCESSAMENTO" caption="Usuario Processo" degenerate="1"/>	
+				<attribute name="DATA_APROVACAO" caption="Data Aprovacao" degenerate="1"/>
+				<attribute name="USUARIO_APROVACAO" caption="Usuario Aprovacao" degenerate="1"/>				
+			</level>
+			
+			<level name="PLAN_ESTOQUE_PRODUTO" tablename="QIX_PLAN_ESTOQUE_PRODUTOS">			
+				<attribute name="PLAN_ESTOQUE_PRODUTO"/>
+				<attribute name="PLANEJAMENTO_ESTOQUE"/>
+				<attribute name="PRODUTO"/>
+				<attribute name="COR"/>
+				<attribute name="ESTAMPA"/>
+				<attribute name="TAMANHO"/>
+				<attribute name="QTD_PROP_GRADE"/>
+				<attribute name="QTD_VENDA"/>
+				<attribute name="QTD_ESTOQUE"/>
+				<attribute name="QTD_PRODUZIDO"/>
+			</level>			
+		</attributes>
+	</fact>
+</root>
+

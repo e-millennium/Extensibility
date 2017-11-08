@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<root>
+  <cube>
+	<objects>
+		<object fullname="qix_plan_estoques" caption="Planejamento Estoque"/>
+	</objects>
+	
+    <relations>
+		<relation left="qix_plan_estoques$qix_plan_estoques.produto" right="produto$produto.produto"/>
+		<relation left="qix_plan_estoques$qix_plan_estoques.cor" right="cor$cor.cor"/>
+		<relation left="qix_plan_estoques$qix_plan_estoques.estampa" right="estampa$estampa.estampa"/>
+		<relation left="qix_plan_estoques$qix_plan_estoques.TAMANHO" right="tamanho$tamanho.TAMANHO"/>
+		<relation left="qix_plan_estoques$qix_plan_estoques.TAMANHO" right="tamanho_grade$tamanho_grade.TAMANHO"/>
+		<relation left="qix_plan_estoques$qix_plan_estoques.PRODUTO" right="tamanho_grade$tamanho_grade.PRODUTO"/>
+	</relations>  
+	
+	<perspectives>
+		 <perspective name="qix" caption="QIX" >
+			<items>
+				<dimension name="qix_plan_estoques"/>
+				<dimension name="produto"/>
+				<dimension name="cor"/>				
+				<dimension name="estampa"/>
+				<dimension name="tamanho"/>
+				<dimension name="tamanho_grade"/>				
+				
+				<measure name="qtd_venda" expression="sum(qix_plan_estoques.qtd_venda)" caption="Quantidade Vendas"/>	
+				<measure name="qtd_estoque" expression="sum(qix_plan_estoques.qtd_estoque)" caption="Quantidade Estoque"/>	
+				<measure name="qtd_produzido" expression="sum(qix_plan_estoques.qtd_produzido)" caption="Quantidade Produzido"/>
+				<measure name="qtd_saldo" expression="sum(qix_plan_estoques.qtd_venda)+sum(qix_plan_estoques.qtd_estoque)-sum(qix_plan_estoques.qtd_produzido)" caption="Quantidade Saldo"/>
+				
+			</items>
+		 </perspective>
+	</perspectives>
+	
+  </cube>
+</root>

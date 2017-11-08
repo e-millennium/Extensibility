@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   DMBase, StdCtrls, wtsPainter, dmPanel, LinkList, Grids, PalGrid, wtsStream,
-  wtsClient, StatusPanel,Math,millenium_variants,ResUnit;
+  wtsClient, StatusPanel,Math,millenium_variants,ResUnit,ActiveX,Excel2000,
+  ExtCtrls;
 
 type
   TFPlanejamentoEstoque = class(TDMBase)
@@ -13,6 +14,12 @@ type
     dmPanel2: TdmPanel;
     LinkList1: TLinkList;
     PalGrid1: TPalGrid;
+    OpenDialog: TOpenDialog;
+    pnlLOG: TPanel;
+    MemoLog: TMemo;
+    Panel2: TPanel;
+    Memo2: TMemo;
+    LinkList2: TLinkList;
     procedure PalGrid1ChangeDrawing(Sender: TObject; ACol, ARow: Integer;
       var ForeColor, BackColor: TColor);
     procedure PalGrid1GetDrawStyle(Sender: TObject; Col, Row: Integer;
@@ -24,6 +31,8 @@ type
       var CanSelect: Boolean);
     procedure PalGrid1CellChanged(Sender: TObject; Col, Row: Integer);
     procedure LinkList1Links0Click(Sender: TObject);
+    procedure LinkList1Links2Click(Sender: TObject);
+    procedure LinkList1Links3Click(Sender: TObject);
   private
     FStatusPanel: TStatusPanel;
     FID:Integer;
@@ -36,6 +45,8 @@ type
     function RowIsVenda(ARow: Integer): Boolean;
     function IndexColTotal(ARow: Integer): Integer;
     procedure CalcularSaldo(ARow: Integer);
+    function ExcelToRecord(const AFileName:string): TwtsRecordset;
+    procedure PreencherDadosProduzidos(ADados: TwtsRecordset);
   public
     { Public declarations }
     function  DoCommand:Integer;override;
@@ -235,7 +246,7 @@ begin
 
         SetValue(ColTamanho,RowProduto+CEstoque,VarToIntDef(Result.FieldValuesByName['QTD_ESTOQUE'],0));
         SetValue(ColTamanho,RowProduto+CProduzido,VarToIntDef(Result.FieldValuesByName['QTD_PRODUZIDO'],0));
-        PalGrid1.RowHeights[RowProduto+CID] := 0;
+        PalGrid1.RowHeights[RowProduto+CID] := 100;
 
         Inc(ColTamanho);
         QtdMaxCol := Max(QtdMaxCol,ColTamanho);
@@ -272,7 +283,7 @@ begin
   PalGrid1.Visible := False;
 
   PalGrid1.Cells[0,0] := 'Tipo';
-  PalGrid1.ColWidths[0] := 0;
+  PalGrid1.ColWidths[0] := 100;
 
   PalGrid1.Cells[1,0] := 'Produto';
   PalGrid1.ColWidths[1] := 200;
@@ -348,6 +359,123 @@ end;
 procedure TFPlanejamentoEstoque.LinkList1Links0Click(Sender: TObject);
 begin
 //1
+end;
+
+function TFPlanejamentoEstoque.ExcelToRecord(const AFileName:string): TwtsRecordset;
+var
+  Qtd,I,T,LCID: Integer;
+  ExcelApplication1: TExcelApplication;
+  ExcelWorksheet1: TExcelWorksheet;
+  ExcelWorkbook1: TExcelWorkbook;
+  Value:string;
+  Tamanhos: array of string;
+begin
+  CoInitialize(nil);
+  ExcelApplication1 := TExcelApplication.Create(nil);
+  ExcelWorksheet1 := TExcelWorksheet.Create(nil);
+  ExcelWorkbook1 := TExcelWorkbook.Create(nil);
+
+  LCID := GetUserDefaultLCID;
+  try
+    try
+      ExcelApplication1.Connect;
+    except
+      raise Exception.Create('Excel não instalado!');
+    end;
+    ExcelApplication1.Workbooks.Open(AFileName,EmptyParam,true,EmptyParam,EmptyParam,EmptyParam,True,EmptyParam,EmptyParam,False,EmptyParam,EmptyParam,EmptyParam,LCID);
+    ExcelWorkbook1.ConnectTo(ExcelApplication1.ActiveWorkbook);
+    ExcelWorksheet1.ConnectTo(ExcelWorkbook1.ActiveSheet as _Worksheet);
+
+    Value := ExcelWorksheet1.Cells.Item[1,1].Value;
+    if not SameText(Value,'Modelo') then
+      raise Exception.Create('Arquivo não está no formato esperado!');
+
+    Result := TwtsRecordset.CreateFromStreamEx(TMemoryStream.Create,rdInput);
+    Result.Transaction := 'MILLENIUM!QIX.PLANEJAMENTOS_ESTOQUES.PRODUZIDO';
+
+    SetLength(Tamanhos,0);
+    for I := 2 to MaxInt do
+    begin
+      Value := ExcelWorksheet1.Cells.Item[1,I].Value;
+      if Trim(Value)='' then
+        Break;
+      SetLength(Tamanhos,Length(Tamanhos)+1);
+      Tamanhos[Length(Tamanhos)-1] := Value;
+    end;
+
+    for I := 2 to MaxInt do
+    begin
+      Value := ExcelWorksheet1.Cells.Item[I,1].Value;
+      if Trim(Value)='' then
+        Break;
+
+      for T := Low(Tamanhos) to High(Tamanhos) do
+      begin
+        Value := ExcelWorksheet1.Cells.Item[I,T+2].Value;
+        try
+          Qtd := ExcelWorksheet1.Cells.Item[I,T+2].Value;
+        except
+          Qtd := 0;
+        end;
+        
+        if Qtd > 0 then
+        begin
+          Result.New;
+          Result.FieldValuesByName['PRODUTO'] := Value;
+          Result.FieldValuesByName['TAMANHO'] := Tamanhos[T];
+          Result.FieldValuesByName['QTD_PRODUZIDO'] := Qtd;
+          Result.Add;
+        end;
+      end;
+    end;
+  finally
+    FreeAndNil(ExcelApplication1);
+    FreeAndNil(ExcelWorksheet1);
+    FreeAndNil(ExcelWorkbook1);
+    CoUninitialize;
+  end;
+end;
+
+procedure TFPlanejamentoEstoque.PreencherDadosProduzidos(ADados: TwtsRecordset);
+var
+  Produtos: TwtsRecordset;
+begin
+  wtsCallEx('MILLENIUM!QIX.PLANEJAMENTOS_ESTOQUES.LISTARPRODUTOS',['PLANEJAMENTO_ESTOQUE'],[FID],Produtos);
+  ADados.First;
+  while not ADados.Eof do
+  begin
+   // if Produtos.Locate(
+    ADados.Next;
+  end;
+end;
+
+procedure TFPlanejamentoEstoque.LinkList1Links2Click(Sender: TObject);
+var
+  FileName:string;
+  DadosExcel: TwtsRecordset;
+begin
+  if OpenDialog.Execute then
+    FileName := OpenDialog.FileName;
+
+  if not FileExists(FileName) then
+    Exit;
+
+  FStatusPanel := TStatusPanel.Create(dmPanel2,False,True,True,False);
+  try
+    DadosExcel := ExcelToRecord(FileName);
+    PreencherDadosProduzidos(DadosExcel);
+  finally
+    DadosExcel.Free;
+    FStatusPanel.Free;
+  end;
+end;
+
+
+//quando criar um grid. gerar uma mapa e quando preendher usar este mapa e nao o grid
+
+procedure TFPlanejamentoEstoque.LinkList1Links3Click(Sender: TObject);
+begin
+  Window.Close;
 end;
 
 initialization

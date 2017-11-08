@@ -39,7 +39,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=c:\millenium
+OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -50,7 +50,7 @@ DebugSourceDirs=
 UsePackages=0
 [Parameters]
 RunParams=
-HostApplication=c:\millenium\binbrowser.exe
+HostApplication=
 [Version Info]
 IncludeVerInfo=0
 AutoIncBuild=0
@@ -77,16 +77,15 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 [Excluded Packages]
-$(DELPHI)\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package
 $(DELPHI)\Bin\dclbde50.bpl=Borland BDE DB Components
-Z:\EurekaLog 6\ExceptionExpert5.bpl=EurekaLog 6.0.14
-$(DELPHI)\Bin\dcldss50.bpl=Borland Decision Cube Components
+$(DELPHI)\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package
 $(DELPHI)\Projects\Bpl\tdbf_d5d.bpl=TDbf for Delphi 5
 $(DELPHI)\Projects\Bpl\Package1.bpl=(untitled)
 $(DELPHI)\Projects\Bpl\SynEdit_D5.bpl=SynEdit component suite
 $(DELPHI)\Projects\Bpl\PngComponentsD5D.bpl=PNG Components designtime
 C:\PROGRA~2\Borland\Delphi5\Projects\Bpl\PngComponentsD5R.bpl=PNG Components runtime
 C:\PROGRA~2\Borland\Delphi5\Projects\Bpl\PngImageD5DR.bpl=PNG Image designtime and runtime
+$(DELPHI)\Bin\dcldss50.bpl=Borland Decision Cube Components
 $(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 [HistoryLists\hlUnitAliases]
 Count=1

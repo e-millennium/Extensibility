@@ -1,14 +1,14 @@
 object FPlanejamentoEstoque: TFPlanejamentoEstoque
-  Left = 392
-  Top = 131
+  Left = 393
+  Top = 132
   Width = 845
   Height = 482
   Caption = 'Planejamento Estoque Projetado'
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
+  Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
   PixelsPerInch = 96
@@ -48,6 +48,69 @@ object FPlanejamentoEstoque: TFPlanejamentoEstoque
         OnGetDrawStyle = PalGrid1GetDrawStyle
         OnCellChanged = PalGrid1CellChanged
         OnChangeDrawing = PalGrid1ChangeDrawing
+        object pnlLOG: TPanel
+          Left = 184
+          Top = 88
+          Width = 417
+          Height = 209
+          Anchors = []
+          BevelOuter = bvNone
+          Caption = 'pnlLOG'
+          TabOrder = 0
+          Visible = False
+          object MemoLog: TMemo
+            Left = 0
+            Top = 25
+            Width = 417
+            Height = 153
+            Align = alClient
+            BorderStyle = bsNone
+            TabOrder = 0
+          end
+          object Panel2: TPanel
+            Left = 0
+            Top = 0
+            Width = 417
+            Height = 25
+            Align = alTop
+            BevelOuter = bvNone
+            Caption = 'LOG'
+            Color = clSilver
+            TabOrder = 1
+            object Memo2: TMemo
+              Left = 72
+              Top = 24
+              Width = 217
+              Height = 121
+              Lines.Strings = (
+                'Memo1')
+              TabOrder = 0
+            end
+          end
+          object LinkList2: TLinkList
+            Left = 0
+            Top = 178
+            Width = 417
+            Height = 31
+            Links = <
+              item
+                Down = False
+                Caption = 'OK'
+                ShortCut = 0
+              end>
+            LinksHeight = 24
+            LinksSpacing = 3
+            LinksMargin = 2
+            ShortCutPos = scpLeft
+            ShowtCutColor = clRed
+            List = False
+            ListSmall = False
+            AutoSize = False
+            Margin = 2
+            TabOrder = 2
+            Align = alBottom
+          end
+        end
       end
     end
   end
@@ -68,6 +131,18 @@ object FPlanejamentoEstoque: TFPlanejamentoEstoque
         Caption = 'Reprocessar'
         ShortCut = 0
         OnClick = LinkList1Links1Click
+      end
+      item
+        Down = False
+        Caption = 'Produção(Importar Planilha)'
+        ShortCut = 0
+        OnClick = LinkList1Links2Click
+      end
+      item
+        Down = False
+        Caption = 'Fechar'
+        ShortCut = 0
+        OnClick = LinkList1Links3Click
       end>
     LinksHeight = 24
     LinksSpacing = 3
@@ -80,5 +155,11 @@ object FPlanejamentoEstoque: TFPlanejamentoEstoque
     Margin = 2
     TabOrder = 1
     Align = alBottom
+  end
+  object OpenDialog: TOpenDialog
+    Filter = 'Excel|*.xlsx'
+    Title = 'Excel com dados de produção'
+    Left = 137
+    Top = 285
   end
 end

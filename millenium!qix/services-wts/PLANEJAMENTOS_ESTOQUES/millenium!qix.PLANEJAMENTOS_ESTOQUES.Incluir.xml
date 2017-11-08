@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
   <OBJECT NAME="PLANEJAMENTOS_ESTOQUES">
-    <METHOD NAME="Incluir" DESCRIPTION="Incluir" VERSION="56" INTFTYPE="1" THREADSAFE="1">
+    <METHOD NAME="Incluir" DESCRIPTION="Incluir" VERSION="57" INTFTYPE="1" THREADSAFE="1">
       <PARAMS>
         <GROUPS>
           <GROUP/>
