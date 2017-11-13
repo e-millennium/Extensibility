@@ -6,13 +6,14 @@
 	<link category="Logística\Estoque\Planejamento Estoque Projetado" target="standard.tdataedit" _id="QIX_1">
 		 <OBJECT>MILLENIUM!QIX.PLANEJAMENTOS_ESTOQUES</OBJECT>
 
-		 <link target="_blank,qix_estoque.TFPlanejamentoEstoque" _id="QIX_2" caption="Processar Planejameto Estoque">
+		 <link target="_blank,qix_estoque.TFPlanejamentoEstoque" _id="QIX_2" caption="Planejar">
 			  <PLANEJAMENTO_ESTOQUE>{$data.PLANEJAMENTO_ESTOQUE}</PLANEJAMENTO_ESTOQUE>		
 		 </link>
 			 
-		 <link target="_blank,standard.tdataedit" _id="QIX_3" caption="Aprovar Planejameto Estoque">
+		 <link target="_blank,standard.tdataedit" _id="QIX_3" caption="Aprovar">
 			 <METHOD>MILLENIUM!QIX.PLANEJAMENTOS_ESTOQUES.APROVAR</METHOD>
 		     <PARAM DATA="{$data.PLANEJAMENTO_ESTOQUE}" >PLANEJAMENTO_ESTOQUE</PARAM>
+			 <Message>Após aprovação, não será mais possível alterar o planejamento. Deseja continuar?</Message>			 
 		     <Option>CloseOnSubmit</Option>	 		  
 		 </link>
 		 

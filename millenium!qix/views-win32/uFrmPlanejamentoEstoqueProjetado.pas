@@ -6,9 +6,15 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   DMBase, StdCtrls, wtsPainter, dmPanel, LinkList, Grids, PalGrid, wtsStream,
   wtsClient, StatusPanel,Math,millenium_variants,ResUnit,ActiveX,Excel2000,
-  ExtCtrls;
+  ExtCtrls,contnrs, PngImage, ProEffectImage;
 
 type
+   TMapProdutoGrid = class
+     ID: Integer;
+     Row: Integer;
+     Col: Integer;
+   end;
+
   TFPlanejamentoEstoque = class(TDMBase)
     dmPanel1: TdmPanel;
     dmPanel2: TdmPanel;
@@ -20,6 +26,9 @@ type
     Panel2: TPanel;
     Memo2: TMemo;
     LinkList2: TLinkList;
+    pnlAviso: TPanel;
+    ProEffectImage1: TProEffectImage;
+    lblAprovado: TLabel;
     procedure PalGrid1ChangeDrawing(Sender: TObject; ACol, ARow: Integer;
       var ForeColor, BackColor: TColor);
     procedure PalGrid1GetDrawStyle(Sender: TObject; Col, Row: Integer;
@@ -33,14 +42,18 @@ type
     procedure LinkList1Links0Click(Sender: TObject);
     procedure LinkList1Links2Click(Sender: TObject);
     procedure LinkList1Links3Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure LinkList2Links0Click(Sender: TObject);
   private
     FStatusPanel: TStatusPanel;
     FID:Integer;
     FInicioColTamanho:Integer;
-    procedure ListaPlanejamentoDone(Params: TwtsRecordset;
-      Result: TwtsClientRecordset; var UserData: IUnknown);
-    procedure CriarPlanejamentoDone(Params: TwtsRecordset;
-      Result: TwtsClientRecordset; var UserData: IUnknown);
+    FMapProdutosProd: TStringList;
+    FMapProdutosVend: TStringList;
+    procedure ListaPlanejamentoDone(Params: TwtsRecordset; Result: TwtsClientRecordset; var UserData: IUnknown);
+    procedure CriarPlanejamentoDone(Params: TwtsRecordset; Result: TwtsClientRecordset; var UserData: IUnknown);
+    procedure SalvarPlanejamentoDone(Params: TwtsRecordset; Result: TwtsClientRecordset; var UserData: IUnknown);
     procedure TotalizarLinhas;
     function RowIsVenda(ARow: Integer): Boolean;
     function IndexColTotal(ARow: Integer): Integer;
@@ -151,10 +164,11 @@ end;
 procedure TFPlanejamentoEstoque.ListaPlanejamentoDone(Params:TwtsRecordset;Result:TwtsClientRecordset;var UserData:IUnknown);
 var
   Periodos,Vendas: TwtsRecordset;
-  Key,S: string;
+  Key,S,Tam: string;
   I,ColTamanho,RowProduto,Periodo: Integer;
   Value:Double;
   QtdPeriodo,QtdMaxCol: Integer;
+  MapProdutoGrid: TMapProdutoGrid;
   procedure SetValue(ACol,ARow:Integer;AValue:Double);
   begin
     PalGrid1.Cells[ACol,ARow] := '';
@@ -220,11 +234,13 @@ begin
         Vendas.Free;
         Vendas := Result.CreateFieldRecordset('VENDAS');
 
-        PalGrid1.Cells[ColTamanho,RowProduto] := VarToStr(Result.FieldValuesByName['TAMANHO']);
+        Tam := VarToStr(Result.FieldValuesByName['TAMANHO']);
+        PalGrid1.Cells[ColTamanho,RowProduto] := Tam;
 
         PalGrid1.Cells[ColTamanho,RowProduto+CID] := VarToStr(Result.FieldValuesByName['PLAN_ESTOQUE_PRODUTO']);
         PalGrid1.Cells[ColTamanho,RowProduto+CGradePadrao] := VarToStr(Result.FieldValuesByName['QTD_PROP_GRADE']);
 
+        //Vendas
         if VarToIntDef(Result.FieldValuesByName['QTD_PROP_GRADE'],0) > 0 then
         begin
           Periodos.First;
@@ -235,10 +251,16 @@ begin
             if Vendas.Locate(['PERIODO'],[Periodo]) then
             begin
               PalGrid1.Cells[2,RowProduto+CVendas+Periodos.RecNo] := 'Vendas até '+VarToStr(Periodos.FieldValuesByName['ITEM'])+' dias '+VarToStr(VarToIntDef(Vendas.FieldValuesByName['QTD_VENDA'],0))+' Peça(s)';
-              PalGrid1.Cells[3,RowProduto+CVendas+Periodos.RecNo] := VarToStr(Vendas.FieldValuesByName['APROVADO']);
+              PalGrid1.Cells[3,RowProduto+CVendas+Periodos.RecNo] := VarToStrDef(Vendas.FieldValuesByName['APROVADO'],'0');
 
               Value := RoundFloat(VarToIntDef(Vendas.FieldValuesByName['QTD_VENDA'],0)*(Result.FieldValuesByName['QTD_PROP_GRADE']/100),True,0);
               SetValue(ColTamanho,RowProduto+CVendas+Periodos.RecNo,Value);
+
+              MapProdutoGrid := TMapProdutoGrid.Create;
+              MapProdutoGrid.ID := Result.FieldValuesByName['PLAN_ESTOQUE_PRODUTO'];
+              MapProdutoGrid.Row := RowProduto+CVendas+Periodos.RecNo;
+              MapProdutoGrid.Col := ColTamanho;
+              FMapProdutosVend.AddObject(Key,MapProdutoGrid);
             end;
             Periodos.Next;
           end;
@@ -246,7 +268,13 @@ begin
 
         SetValue(ColTamanho,RowProduto+CEstoque,VarToIntDef(Result.FieldValuesByName['QTD_ESTOQUE'],0));
         SetValue(ColTamanho,RowProduto+CProduzido,VarToIntDef(Result.FieldValuesByName['QTD_PRODUZIDO'],0));
-        PalGrid1.RowHeights[RowProduto+CID] := 100;
+
+        MapProdutoGrid := TMapProdutoGrid.Create;
+        MapProdutoGrid.ID := Result.FieldValuesByName['PLAN_ESTOQUE_PRODUTO'];
+        MapProdutoGrid.Row := RowProduto+CProduzido;
+        MapProdutoGrid.Col := ColTamanho;
+        FMapProdutosProd.AddObject(VarToStr(Result.FieldValuesByName['COD_PRODUTO'])+Tam,MapProdutoGrid);
+        PalGrid1.RowHeights[RowProduto+CID] := 0;
 
         Inc(ColTamanho);
         QtdMaxCol := Max(QtdMaxCol,ColTamanho);
@@ -273,6 +301,7 @@ end;
 function TFPlanejamentoEstoque.DoCommand: Integer;
 var
    I: Integer;
+   R: TwtsRecordset;
 begin
   for I := 0 to CommandParser.Count - 1 do
   begin
@@ -280,10 +309,26 @@ begin
       FID := StrToInt64Def(CommandParser.Items[I].CommandOf('PLANEJAMENTO_ESTOQUE'),-1);
   end;
 
+  LinkList1.Links[0].Visible := True;
+  LinkList1.Links[1].Visible := True;
+  LinkList1.Links[2].Visible := True;
+  LinkList1.Links[3].Visible := False;
+  pnlAviso.Visible := False;
+  wtsCallEx('MILLENIUM!QIX.PLANEJAMENTOS_ESTOQUES.ConsultaStatusAprovacao',['PLANEJAMENTO_ESTOQUE'],[FID],R);
+  if VarToBool(R.FieldValuesByName['APROVADO']) then
+  begin                                                
+    lblAprovado.Caption := Format(lblAprovado.Caption,[VarToStr(R.FieldValuesByName['USUARIO_APROVACAO']),VarToStr(R.FieldValuesByName['DATA_APROVACAO'])]);
+    LinkList1.Links[0].Visible := False;
+    LinkList1.Links[1].Visible := False;
+    LinkList1.Links[2].Visible := False;
+    LinkList1.Links[3].Visible := True;
+    pnlAviso.Visible := True;
+  end;
+
   PalGrid1.Visible := False;
 
   PalGrid1.Cells[0,0] := 'Tipo';
-  PalGrid1.ColWidths[0] := 100;
+  PalGrid1.ColWidths[0] := 0;
 
   PalGrid1.Cells[1,0] := 'Produto';
   PalGrid1.ColWidths[1] := 200;
@@ -292,7 +337,7 @@ begin
   PalGrid1.ColWidths[2] := 200;
 
   PalGrid1.Cells[3,0] := '';
-  PalGrid1.ColWidths[3] := 50;
+  PalGrid1.ColWidths[3] := 30;
 
   FInicioColTamanho := 4;
 
@@ -303,7 +348,21 @@ end;
 procedure TFPlanejamentoEstoque.PalGrid1ChangeDrawing(Sender: TObject;
   ACol, ARow: Integer; var ForeColor, BackColor: TColor);
 begin
-  if (PalGrid1.Cells[0,ARow] = '0') or (PalGrid1.Cells[0,ARow] = IntToStr(CSaldo)) then
+  //Grupo
+  if (PalGrid1.Cells[0,ARow] = '0')  then
+    BackColor := RGB(248,248,248);
+
+  //Produto sem venda
+  {if (ACol = 3)  then
+  begin
+    if RowIsVenda(ARow) and (PalGrid1.Cells[ACol,ARow]<>'')  then
+      BackColor := RGB(255,255,255)
+    else
+      BackColor := RGB(248,248,248)
+  end;}
+
+  //Total do grupo  
+  if (PalGrid1.Cells[0,ARow] = IntToStr(CSaldo)) and (ACol > 2)  then
     BackColor := RGB(248,248,248);
 
   if (PalGrid1.Cells[0,ARow] = IntToStr(CSaldo)) and (ACol >= FInicioColTamanho) then
@@ -333,21 +392,21 @@ end;
 procedure TFPlanejamentoEstoque.PalGrid1GetEditStyle(Sender: TObject; Col,
   Row: Integer; var Style: TEditStyle; var ReadOnly: Boolean);
 begin
- // ReadOnly := True;
-  if (Col = 3) and RowIsVenda(Row) then
+  ReadOnly := True;
+  if (Col = 3) and RowIsVenda(Row) and (PalGrid1.Cells[Col,Row]<>'')  then
   begin
     Style := esCheck;
- //   ReadOnly := False;
+    ReadOnly := False;
   end;  
 end;
 
 procedure TFPlanejamentoEstoque.PalGrid1SelectCell(Sender: TObject; ACol,
   ARow: Integer; var CanSelect: Boolean);
 begin
-(*  CanSelect := (PalGrid1.Cells[0,ARow] <> '0') and
+  CanSelect := (PalGrid1.Cells[0,ARow] <> '0') and
                //(ACol <> IndexColTotal(ARow)); //and
                (PalGrid1.Cells[0,ARow] <> IntToStr(CSaldo)){ and
-               (ACol = 3) and RowIsVenda(ARow)};  *)
+               (ACol = 3) and RowIsVenda(ARow)};  
 end;
 
 procedure TFPlanejamentoEstoque.PalGrid1CellChanged(Sender: TObject; Col,
@@ -356,9 +415,59 @@ begin
   CalcularSaldo(Row);
 end;
 
-procedure TFPlanejamentoEstoque.LinkList1Links0Click(Sender: TObject);
+procedure TFPlanejamentoEstoque.SalvarPlanejamentoDone(Params: TwtsRecordset; Result: TwtsClientRecordset; var UserData: IUnknown);
 begin
-//1
+  ShowMessage('Comando executado com sucesso');
+  Window.Close;
+end;
+
+procedure TFPlanejamentoEstoque.LinkList1Links0Click(Sender: TObject);
+var
+  ItensProd,ItensVend: TwtsRecordset;
+  I,Qtd,Sel,Periodo: Integer;
+  MapProdutoGrid:TMapProdutoGrid;
+  S:string;
+begin
+  FStatusPanel := TStatusPanel.Create(dmPanel2,False,True,True,False);
+  if MessageBox(Handle, PChar('Deseja salvar planejamento?'), 'Planejamento Estoque Projetado', MB_ICONQUESTION or MB_YESNO or MB_DEFBUTTON2) = mrYes then
+  begin
+    ItensProd := TwtsRecordset.CreateFromStreamEx(TMemoryStream.Create,rdInput);
+    ItensProd.Transaction := 'MILLENIUM!QIX.PLANEJAMENTOS_ESTOQUES.ITENS';
+    //Vamos coletar os itens produzidos
+    for I := 0 to FMapProdutosProd.Count-1 do
+    begin
+      MapProdutoGrid := TMapProdutoGrid(FMapProdutosProd.Objects[I]);
+      Qtd := StrToInt64Def(PalGrid1.Cells[MapProdutoGrid.Col,MapProdutoGrid.Row],0);
+      if (MapProdutoGrid.ID > 0) and (Qtd>0) then
+      begin
+        ItensProd.New;
+        ItensProd.FieldValuesByName['PLAN_ESTOQUE_PRODUTO'] := MapProdutoGrid.ID;
+        ItensProd.FieldValuesByName['QTD_PRODUZIDO'] := Qtd;
+        ItensProd.Add;
+      end;
+    end;
+
+    ItensVend := TwtsRecordset.CreateFromStreamEx(TMemoryStream.Create,rdInput);
+    ItensVend.Transaction := 'MILLENIUM!QIX.PLANEJAMENTOS_ESTOQUES.ITENS';
+    //Vamos coletar as vendas selecionadas
+    for I := 0 to FMapProdutosVend.Count-1 do
+    begin
+      MapProdutoGrid := TMapProdutoGrid(FMapProdutosVend.Objects[I]);
+      Qtd := StrToInt64Def(PalGrid1.Cells[MapProdutoGrid.Col,MapProdutoGrid.Row],0);
+      Sel := StrToInt64Def(PalGrid1.Cells[3,MapProdutoGrid.Row],0);
+      S := PalGrid1.Cells[0,MapProdutoGrid.Row];
+      Periodo := StrToIntDef(Copy(S,Pos(':',S)+1,Length(S)),-1);
+      if (MapProdutoGrid.ID > 0) and (Sel<>0) then
+      begin
+        ItensVend.New;
+        ItensVend.FieldValuesByName['PLAN_ESTOQUE_PRODUTO'] := MapProdutoGrid.ID;
+        ItensVend.FieldValuesByName['QTD_VENDA'] := Qtd;
+        ItensVend.FieldValuesByName['PERIODO'] := Periodo;
+        ItensVend.Add;
+      end;
+    end;
+    wtsCallAsync('MILLENIUM!QIX.PLANEJAMENTOS_ESTOQUES.SalvarPlanejamento',['PLANEJAMENTO_ESTOQUE','ITENS_PRODUZIDOS','ITENS_VENDAS'],[FID,ItensProd.Data,ItensVend.Data],nil,SalvarPlanejamentoDone);
+  end;
 end;
 
 function TFPlanejamentoEstoque.ExcelToRecord(const AFileName:string): TwtsRecordset;
@@ -411,7 +520,6 @@ begin
 
       for T := Low(Tamanhos) to High(Tamanhos) do
       begin
-        Value := ExcelWorksheet1.Cells.Item[I,T+2].Value;
         try
           Qtd := ExcelWorksheet1.Cells.Item[I,T+2].Value;
         except
@@ -439,14 +547,34 @@ end;
 procedure TFPlanejamentoEstoque.PreencherDadosProduzidos(ADados: TwtsRecordset);
 var
   Produtos: TwtsRecordset;
+  MapProdutoGrid:TMapProdutoGrid;
+  Qtd,I: Integer;
 begin
+  MemoLog.Lines.Clear;
   wtsCallEx('MILLENIUM!QIX.PLANEJAMENTOS_ESTOQUES.LISTARPRODUTOS',['PLANEJAMENTO_ESTOQUE'],[FID],Produtos);
   ADados.First;
   while not ADados.Eof do
   begin
-   // if Produtos.Locate(
+    MapProdutoGrid := nil;
+    if Produtos.Locate(['COD_PRODUTO'],[VarToStr(ADados.FieldValuesByName['PRODUTO'])]) then
+    begin
+      Qtd := Produtos.FieldValuesByName['QTD'];
+      if Qtd = 1 then
+      begin
+        I := FMapProdutosProd.IndexOf(VarToStr(ADados.FieldValuesByName['PRODUTO'])+VarToStr(ADados.FieldValuesByName['TAMANHO']));
+        if I >-1 then
+        begin
+          MapProdutoGrid := TMapProdutoGrid(FMapProdutosProd.Objects[I]);
+          PalGrid1.Cells[MapProdutoGrid.Col,MapProdutoGrid.Row] := IntToStr(VarToIntDef(ADados.FieldValuesByName['QTD_PRODUZIDO'],0));
+          CalcularSaldo(MapProdutoGrid.Row);
+        end;
+      end else
+        MemoLog.Lines.Add('Produção do produto '+VarToStr(ADados.FieldValuesByName['PRODUTO'])+' não pôde ser importada, produto planejado com cores');
+    end else
+        MemoLog.Lines.Add('Produção do produto '+VarToStr(ADados.FieldValuesByName['PRODUTO'])+' não pôde ser importada, produto não encontrado no planejado');
     ADados.Next;
   end;
+  pnlLOG.Visible := MemoLog.Lines.Count > 0; 
 end;
 
 procedure TFPlanejamentoEstoque.LinkList1Links2Click(Sender: TObject);
@@ -470,12 +598,27 @@ begin
   end;
 end;
 
-
-//quando criar um grid. gerar uma mapa e quando preendher usar este mapa e nao o grid
-
 procedure TFPlanejamentoEstoque.LinkList1Links3Click(Sender: TObject);
 begin
   Window.Close;
+end;
+
+procedure TFPlanejamentoEstoque.FormCreate(Sender: TObject);
+begin
+  FMapProdutosProd := TStringList.Create;
+  FMapProdutosVend := TStringList.Create;
+end;
+
+procedure TFPlanejamentoEstoque.FormDestroy(Sender: TObject);
+begin
+  FMapProdutosProd.Free;
+  FMapProdutosVend.Free;
+end;
+
+
+procedure TFPlanejamentoEstoque.LinkList2Links0Click(Sender: TObject);
+begin
+  pnlLOG.Visible := False;
 end;
 
 initialization
