@@ -5,7 +5,7 @@
 //  >Import : http://css-uat.acer.com/MicroSigaIntegration/TicketEventWebService.asmx?wsdl:0
 // Encoding : utf-8
 // Version  : 1.0
-// (06/09/2017 19:40:07 - - $Rev: 7010 $)
+// (14/11/2017 21:39:54 - - $Rev: 7010 $)
 // ************************************************************************ //
 
 unit TicketEventWebService;
@@ -51,13 +51,13 @@ type
   // ************************************************************************ //
   TicketEventWebServiceSoap = interface(IInvokable)
   ['{C3ADAE94-BB76-F047-473C-40B958D321C2}']
-    function  GetInBoundData(const Request: WideString): GetInBoundDataResult; stdcall;
-    function  GetIssuedData(const Request: WideString): GetIssuedDataResult; stdcall;
-    function  GetUnIssueData(const Request: WideString): GetUnIssueDataResult; stdcall;
-    function  GetNonCaseIssueData(const Request: WideString): GetNonCaseIssueDataResult; stdcall;
-    function  GetOutBoundData(const Request: WideString): GetOutBoundDataResult; stdcall;
-    function  UpdateFileACKStatus(const ResponseXml: ResponseXml): WideString; stdcall;
-    function  UpdateTicketACKStatus(const ResponseXml: ResponseXml2): WideString; stdcall;
+    function  GetInBoundData(const Request: WideString; const UserName: WideString; const PassWord: WideString): GetInBoundDataResult; stdcall;
+    function  GetIssuedData(const Request: WideString; const UserName: WideString; const PassWord: WideString): GetIssuedDataResult; stdcall;
+    function  GetUnIssueData(const Request: WideString; const UserName: WideString; const PassWord: WideString): GetUnIssueDataResult; stdcall;
+    function  GetNonCaseIssueData(const Request: WideString; const UserName: WideString; const PassWord: WideString): GetNonCaseIssueDataResult; stdcall;
+    function  GetOutBoundData(const Request: WideString; const UserName: WideString; const PassWord: WideString): GetOutBoundDataResult; stdcall;
+    function  UpdateFileACKStatus(const ResponseXml: ResponseXml; const Input: WideString; const UserName: WideString; const Password: WideString): WideString; stdcall;
+    function  UpdateTicketACKStatus(const ResponseXml: ResponseXml2; const Input: WideString; const UserName: WideString; const Password: WideString): WideString; stdcall;
   end;
 
 function GetTicketEventWebServiceSoap(UseWSDL: Boolean=System.False; Addr: string=''; HTTPRIO: THTTPRIO = nil): TicketEventWebServiceSoap;
