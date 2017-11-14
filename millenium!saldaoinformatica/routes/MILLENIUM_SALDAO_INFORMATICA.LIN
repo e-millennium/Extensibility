@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <root>
-	<_currentid>SALDAO_8</_currentid>
+	<_currentid>SALDAO_9</_currentid>
 	<_name>RULES.SALDAO</_name>
   
 	<link category="Saldão da Informática\Ordens Serviço" target="standard.tdataedit" _id="SALDAO_1">
@@ -41,6 +41,8 @@
 		<METHOD>MILLENIUM!SALDAOINFORMATICA.ESTOQUES.CONCILIACAO</METHOD>
 	</link>		
 	
-	
+	<link category="Saldão da Informática\Tickets" target="standard.tdataedit" _id="SALDAO_9">
+		<OBJECT>MILLENIUM!SALDAOINFORMATICA.ACER</OBJECT>
+	</link>			
 	
 </root>

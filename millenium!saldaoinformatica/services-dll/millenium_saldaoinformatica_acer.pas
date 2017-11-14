@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Classes, wtsServerObjs, SysUtils, ServerCfgs, millenium_variants,
-  XMLAcer,wtsIntf,EcoUtils;  
+  XMLAcer,wtsIntf,EcoUtils,ComObj,ActiveX,Excel2000,millennium_uteis;
 
 implementation
 
@@ -27,7 +27,7 @@ begin
           AFiles.Add(APath+F.Name);
       end;
       Ret := FindNext(F);
-    end;
+    end;                        
   finally
     FindClose(F);
   end;
@@ -281,8 +281,14 @@ begin
       try
         CPFCNPJFormartado := FormatarCPFCNPJ(T.GetFieldAsString('CPFCNPJNUMBER'));
 
-        if (Length(CPFCNPJFormartado)=14) and (Length(CPFCNPJFormartado)=18) then
+        if (Length(CPFCNPJFormartado)<>14) and (Length(CPFCNPJFormartado)<>18) then
           raise Exception.Create('CPF\CNPJ Inválido '+CPFCNPJFormartado);
+
+        try
+          ValidaCPFCNPJ(RemoveChar(CPFCNPJFormartado));
+        except on e: Exception do
+          Problemas.Add(E.Message);
+        end;
 
         if Length(CPFCNPJFormartado) = 14 then
         begin
@@ -395,7 +401,7 @@ begin
       except on e: Exception do
         Problemas.Add('NÃO FOI POSSÍVEL CADASTRAR OU ATUALIZAR CLIENTE. MOTIVO: '+E.Message);
       end;
-    end;  
+    end;
 
     //Encontrando equipamento
     P.Execute('SELECT * FROM SI_ORDENS_SERVICO_PRODUTOS WHERE ORDEM_SERVICO=:ORDEM_SERVICO AND PRODUTO IS NULL');
@@ -736,6 +742,61 @@ begin
   Output.SetFieldByName('MOVIMENTO',Movimento.Data);
 end;
 
+procedure GerarExcelConciliacao(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
+var
+  C: IwtsCommand;
+  Data: IwtsWriteData;
+  Filial,Tabela,X,Y: Integer;
+  Proximo: TDateTime;
+  Excel: Variant;
+  S:string;
+begin
+  Proximo := GetConfigSrv.ReadParamDateTime('SI_DATA_PROX_CONC_EST',0);
+  if Now < Proximo then
+    Exit;
+
+  C := DataPool.Open('MILLENIUM');
+  Filial := GetConfigSrv.ReadParamInt('SI_FILIAL',-1);
+  Tabela := GetConfigSrv.ReadParamInt('SI_TABELA_PRECO_CUSTO',-1);
+
+  C.Dim('FILIAL',Filial);
+  C.Dim('TABELA',Tabela);
+  C.Dim('DATA',FormatDateTime('YYYYMMDDHHNNSS',Proximo));
+  C.Execute('#CALL MILLENIUM.CORES.LISTA()');
+  //C.Execute('#CALL MILLENIUM!SALDAOINFORMATICA.ESTOQUES.CONCILIACAO(FILIAL=:FILIAL,TABELA=:TABELA,DATA=:DATA)');
+
+  Data := C.CreateRecordset;
+  CoInitialize(nil);
+  try
+      Excel:=CreateOleObject('Excel.Application');
+      Excel.Visible:=False;
+      Excel.DisplayAlerts:=False;
+      Excel.Workbooks.Add(1);
+      Excel.Workbooks[1].Sheets.Add;
+      Excel.Workbooks[1].WorkSheets[1].Name:='Teste';
+      Excel.Workbooks[1].WorkSheets[1].DisplayPageBreaks:=False;
+      Excel.Columns.AutoFit;
+
+    for X := 0 to Data.FieldCount-1 do
+     excel.WorkBooks[1].Sheets[1].Cells[x,1] := Data.FieldName(X);
+
+   { Data.First;
+    for X := 0 to Data.RecordCount-1 do
+    begin
+      for Y := 0 to Data.FieldCount-1 do
+        Excel.cells[X+2,Y] := VarToStr(Data.GetField(Y));
+      Data.Next;
+    end;       }
+    Excel.Application.Workbooks[1].SaveAs('c:\test.xlsx', 51); // or xlOpenXMLWorkbook (51)
+    Excel.Application.Quit;
+  finally
+    CoUninitialize;
+  end;
+
+  C.Dim('PARAM_VALUE',Proximo);
+  C.Execute('UPDATE CONFIGURACOES SET PARAM_VALUE=:PARAM_VALUE WHERE PARAM_NAME="SI_DATA_PROX_CONC_EST"');
+
+end;
 
 
 initialization
@@ -745,5 +806,6 @@ initialization
    wtsRegisterProc('ACER.ImportarProdutos',ImportarProdutos);
    wtsRegisterProc('ACER.ImportarFechamento',ImportarFechamento);
    wtsRegisterProc('MOVIMENTACAO.DadosFaturamentoGenerico', DadosFaturamentoGenerico);
-   
+   wtsRegisterProc('ESTOQUES.GerarExcelConciliacao',GerarExcelConciliacao);
+
 end.
