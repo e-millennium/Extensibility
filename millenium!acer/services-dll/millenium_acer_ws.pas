@@ -11,10 +11,13 @@ implementation
 
 uses TicketEventWebService;
 
-procedure AssignParams(var ACode, AWSUrl:string);
+procedure AssignParams(var ACode, AWSUrl, AUsuario, ASenha, ARequest:string);
 begin
   ACode := GetConfigSrv.ReadParamStr('SI_CODIGO_CER','');
   AWSUrl := LowerCase(GetConfigSrv.ReadParamStr('SI_URL_ACER',''));
+  AUsuario := GetConfigSrv.ReadParamStr('SI_USUARIO_ACER','');
+  ASenha := GetConfigSrv.ReadParamStr('SI_SENHA_ACER','');
+  ARequest := GetConfigSrv.ReadParamStr('SI_REQUEST_ACER','');
 end;
 
 function RecursiveFindNode(ANode: IXMLNode; const SearchNodeName: string): String;
@@ -155,9 +158,9 @@ var
   SL: TStringList;
   Files:TStringList;
   I: Integer;
-  Code,URL:string;
+  Code,URL,Usuario,Senha,Request:string;
 begin
-  AssignParams(Code,URL);
+  AssignParams(Code,URL,Usuario,Senha,Request);
   TicketEventWebService := GetTicketEventWebServiceSoap(False,URL);
   Files := TStringList.Create;
   try
@@ -169,7 +172,7 @@ begin
       try
         XML := CreateXMLBodySystemAcknowledgement('CNS',ExtractFileName(FileName));
         XMLData.LoadFomXML(XML);
-        XML := TicketEventWebService.UpdateFileACKStatus(XMLData);
+        XML := TicketEventWebService.UpdateFileACKStatus(XMLData,Request,Usuario,Senha);
         if Pos('Successfully',XML) > 0 then
         begin
           NewFileName := ChangeFileExt(FileName,'.xml');
@@ -198,22 +201,22 @@ var
   TicketEventWebService: TicketEventWebServiceSoap;
   XMLData:TXMLData;
   sl: TStringList;
-  Code,URL:string;
+  Code,URL,Usuario,Senha,Request:string;
 begin
   CoInitialize(nil);
-  AssignParams(Code,URL);
+  AssignParams(Code,URL,Usuario,Senha,Request);
   TicketEventWebService := GetTicketEventWebServiceSoap(False,URL);
   try
-    XMLData := TicketEventWebService.GetInBoundData(Code);
+    XMLData := TicketEventWebService.GetInBoundData(Code,Usuario,Senha);
     SaveFile(XMLData,'InBound');
 
-    XMLData := TicketEventWebService.GetIssuedData(Code);
+    XMLData := TicketEventWebService.GetIssuedData(Code,Usuario,Senha);
     SaveFile(XMLData,'Issued');
 
-    XMLData := TicketEventWebService.GetUnIssueData(Code);
+    XMLData := TicketEventWebService.GetUnIssueData(Code,Usuario,Senha);
     SaveFile(XMLData,'UnIssue');
 
-    XMLData := TicketEventWebService.GetOutBoundData(Code);
+    XMLData := TicketEventWebService.GetOutBoundData(Code,Usuario,Senha);
     SaveFile(XMLData,'OutBound');
 
     {sl := TStringList.Create;
@@ -237,12 +240,12 @@ var
   SL: TStringList;
   XML:WideString;
   Tickets: TStringList;
-  URL,Code:string;
+  URL,Code,Usuario,Senha,Request:string;
 begin
   C := DataPool.Open('MILLENIUM');
   X := DataPool.Open('MILLENIUM');
 
-  AssignParams(Code,URL);
+  AssignParams(Code,URL,Usuario,Senha,Request);
   TicketEventWebService := GetTicketEventWebServiceSoap(False,URL);
 
   Tickets := TStringList.Create;
@@ -261,7 +264,7 @@ begin
           ExtractStrings([','],[],PChar(C.GetFieldAsString('CSSTICKETNUMBER')),Tickets);
           XML := CreateXMLBodySystemAcknowledgementTicket('CNS',C.GetFieldAsString('XMLFILENAME'),Tickets);
           XMLData.LoadFomXML(XML);
-          XML := TicketEventWebService.UpdateTicketACKStatus(XMLData);
+          XML := TicketEventWebService.UpdateTicketACKStatus(XMLData,Request,Usuario,Senha);
           if Pos('Successfully',XML) > 0 then
           begin
             X.Dim('EVENTHEADER',C.GetFieldAsString('EVENTHEADER'));
