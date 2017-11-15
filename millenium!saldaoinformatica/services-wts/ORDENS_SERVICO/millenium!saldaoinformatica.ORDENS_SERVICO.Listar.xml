@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
   <OBJECT NAME="ORDENS_SERVICO">
-    <METHOD NAME="Listar" DESCRIPTION="Listar Ordens de Servi&#231;o" VERSION="153" INTFTYPE="14" THREADSAFE="0">
+    <METHOD NAME="Listar" DESCRIPTION="Listar Ordens de Servi&#231;o" VERSION="154" INTFTYPE="14" THREADSAFE="0">
       <PARAMS>
         <GROUPS>
           <GROUP NAME="Abertura"/>

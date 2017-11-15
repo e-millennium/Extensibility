@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <root>
-	<_currentid>SALDAO_9</_currentid>
+	<_currentid>SALDAO_11</_currentid>
 	<_name>RULES.SALDAO</_name>
   
 	<link category="Saldão da Informática\Ordens Serviço" target="standard.tdataedit" _id="SALDAO_1">
@@ -30,7 +30,22 @@
 	        <PARAM DATA="{$data.ORDEM_SERVICO[]}">ORDENS_SERVICO.ITEM</PARAM>
 	        <Message>Confirmar Desagrupamento das ordens selecionadas?</Message>
 	        <Option>CloseOnSubmit</Option>
+	    </link>	
+
+		<link target="_blank,standard.tdataedit" _id="SALDAO_10" caption="Reagrupar">
+			<METHOD>MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.REAGRUPAR</METHOD>
+	        <PARAM DATA="{$data.ORDEM_SERVICO[]}">ORDENS_SERVICO.ITEM</PARAM>
+	        <Message>Confirmar Agrupamento das ordens selecionadas?</Message>
+	        <Option>CloseOnSubmit</Option>
+	    </link>	
+		
+		<link target="_blank,standard.tdataedit" _id="SALDAO_11" caption="Permitir Editar Faturamento">
+			<METHOD>MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.PERMITIREDITARFATURAMENTO</METHOD>
+	        <PARAM DATA="{$data.ORDEM_SERVICO}">ORDEM_SERVICO</PARAM>
+	        <Message>Confirmar Permissão de Edição de Faturamento?</Message>
+	        <Option>CloseOnSubmit</Option>
 	    </link>			
+		
 	</link>
 	
 	<link category="Saldão da Informática\Consulta Estoque" target="standard.tdataedit" _id="SALDAO_6">

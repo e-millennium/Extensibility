@@ -288,7 +288,7 @@ begin
           if C.GetFieldAsString('PF_PJ') = 'PF' then
             CPFCNPJFormartado := C.GetFieldAsString('CPF')
           else
-            CPFCNPJFormartado := C.GetFieldAsString('CNPJ');
+            CPFCNPJFormartado := Copy(C.GetFieldAsString('CNPJ'),2,MaxInt);
         end else
         begin
           CPFCNPJFormartado := FormatarCPFCNPJ(T.GetFieldAsString('CPFCNPJNUMBER'));
@@ -750,6 +750,8 @@ begin
   Movimento.SetFieldByName('PRODUTOS',Produtos);
   Movimento.SetFieldByName('SI_ORDENS_SERVICO',OSBaixa);
   Movimento.Add;
+  devolver somente leitura ou nao
+
 
   Output.NewRecord;
   Output.SetFieldByName('MOVIMENTO',Movimento.Data);
