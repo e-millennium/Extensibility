@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Classes, wtsServerObjs, SysUtils, ServerCfgs, millenium_variants,
-  XMLAcer,wtsIntf,EcoUtils,ComObj,ActiveX,Excel2000,millennium_uteis;
+  XMLAcer,wtsIntf,EcoUtils,ComObj,ActiveX,Excel2000,millennium_uteis,checkcgc;
 
 implementation
 
@@ -275,29 +275,42 @@ begin
 
 
     //Tratando cliente
-    C.Execute('SELECT CLIENTE FROM SI_ORDENS_SERVICO WHERE ORDEM_SERVICO=:ORDEM_SERVICO AND CLIENTE IS NULL');
+    C.Execute('SELECT CLIENTE FROM SI_ORDENS_SERVICO WHERE ORDEM_SERVICO=:ORDEM_SERVICO ');//AND CLIENTE IS NULL
     if not C.EOF then
     begin
       try
-        CPFCNPJFormartado := FormatarCPFCNPJ(T.GetFieldAsString('CPFCNPJNUMBER'));
+        Cli := C.GetFieldByName('CLIENTE');
 
-        if (Length(CPFCNPJFormartado)<>14) and (Length(CPFCNPJFormartado)<>18) then
+        if VarIsValid(Cli) then
+        begin
+          C.Dim('CLIENTE',Cli);
+          C.Execute('SELECT CLIENTE,PF_PJ,CPF,CNPJ FROM CLIENTES WHERE (CLIENTE=:CLIENTE);');
+          if C.GetFieldAsString('PF_PJ') = 'PF' then
+            CPFCNPJFormartado := C.GetFieldAsString('CPF')
+          else
+            CPFCNPJFormartado := C.GetFieldAsString('CNPJ');
+        end else
+        begin
+          CPFCNPJFormartado := FormatarCPFCNPJ(T.GetFieldAsString('CPFCNPJNUMBER'));
+
+          if Length(CPFCNPJFormartado) = 14 then
+          begin
+            C.Dim('CPF_CNPJ',CPFCNPJFormartado);
+            C.Execute('SELECT CLIENTE FROM CLIENTES WHERE (CPF=:CPF_CNPJ);');
+          end else
+          begin
+            C.Dim('CPF_CNPJ',CPFCNPJFormartado);
+            C.Execute('SELECT CLIENTE FROM CLIENTES WHERE (CNPJ=:CPF_CNPJ) OR (CGC=:CPF_CNPJ);');
+          end;
+        end;
+
+        if (Length(CPFCNPJFormartado)<>14) and (Length(CPFCNPJFormartado)<>18) and (Length(CPFCNPJFormartado)<>19) then
           raise Exception.Create('CPF\CNPJ Inválido '+CPFCNPJFormartado);
 
         try
-          ValidaCPFCNPJ(RemoveChar(CPFCNPJFormartado));
+          ValidaCPFCNPJ(CPFCNPJFormartado);
         except on e: Exception do
           Problemas.Add(E.Message);
-        end;
-
-        if Length(CPFCNPJFormartado) = 14 then
-        begin
-          C.Dim('CPF_CNPJ',CPFCNPJFormartado);
-          C.Execute('SELECT CLIENTE FROM CLIENTES WHERE (CPF=:CPF_CNPJ);');
-        end else
-        begin
-          C.Dim('CPF_CNPJ',CPFCNPJFormartado);
-          C.Execute('SELECT CLIENTE FROM CLIENTES WHERE (CNPJ=:CPF_CNPJ) OR (CGC=:CPF_CNPJ);');
         end;
 
         if not C.EOF then
