@@ -51,10 +51,6 @@ UsePackages=0
 [Parameters]
 RunParams=
 HostApplication=c:\millenium\binbrowser.exe
-[Language]
-ActiveLang=
-ProjectLang=$00000416
-RootDir=
 [Version Info]
 IncludeVerInfo=0
 AutoIncBuild=0
@@ -81,10 +77,12 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 [Excluded Packages]
+$(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 $(DELPHI)\Bin\dcldss50.bpl=Borland Decision Cube Components
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlOutputDirectorry]
-Count=1
+Count=2
 Item0=c:\millenium
+Item1=c:\wts\files\apps

@@ -36,7 +36,7 @@
 	</link>	
 	
 	<link category="Vendas\Orçamentos\Orçamento" target="standard.tdataedit" _id="DELCA_7">
-		 <OBJECT>MILLENIUM!DELCA.ORCAMENTOS</OBJECT>			 
+		 <OBJECT View="delca.TOrcamentos">MILLENIUM!DELCA.ORCAMENTOS</OBJECT>			 
 	</link>		
 
 	<link category="Vendas\Orçamentos\Cadastros\Despesas" target="standard.tdataedit" _id="DELCA_8">

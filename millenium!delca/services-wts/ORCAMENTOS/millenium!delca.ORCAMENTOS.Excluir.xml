@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
   <OBJECT NAME="ORCAMENTOS">
-    <METHOD NAME="Excluir" DESCRIPTION="Excluir" VERSION="124" INTFTYPE="3" THREADSAFE="1">
+    <METHOD NAME="Excluir" DESCRIPTION="Excluir" VERSION="155" INTFTYPE="3" THREADSAFE="1">
       <PARAMS>
         <GROUPS>
           <GROUP/>
@@ -20,7 +20,7 @@
           <GROUP NAME="Resumo\Totais" STYLE="1"/>
           <GROUP NAME="Totais Custos Unit&#225;rio"/>
           <GROUP NAME="Totais Outros Custos"/>
-          <GROUP NAME="Pre&#231;o Venda"/>
+          <GROUP NAME="Pre&#231;o Venda" CONDITION="TOTAL_CACULADO=TRUE"/>
         </GROUPS>
       </FIELDS>
       <ACTIONSCRIPT>UPDATE DCA_ORCAMENTOS SET EXCLUIDO = TRUE, USUARIO_EXCLUSAO=#USER(),DATA_EXCLUSAO=#NOW()

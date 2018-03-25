@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PRODUTOSMP">
+    <METHOD NAME="ConsultarPrecoCusto" DESCRIPTION="" VERSION="7" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PRODUTO" FORMAT="N" SIZE="8" FLAGS="2" PROJECTION="0" FIELDLABEL="Produto" CTAB="0"/>
+        <PARAM NAME="TABELA" FORMAT="N" SIZE="8" FLAGS="2" PROJECTION="0" FIELDLABEL="Tabela Preco" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="PRECO_CUSTO" FORMAT="M" SIZE="17" FLAGS="2" DECIMALS="4" PROJECTION="0" FIELDLABEL="Preco Custo" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT AVG(PRE.PRECO) AS PRECO_CUSTO
+FROM PRECOS PRE
+WHERE (PRE.PRODUTO = :PRODUTO) AND
+      (PRE.TABELA = :TABELA)
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>
