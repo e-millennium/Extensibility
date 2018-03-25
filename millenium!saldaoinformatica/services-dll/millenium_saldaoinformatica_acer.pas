@@ -542,12 +542,13 @@ end;
 procedure DadosFaturamentoGenerico(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
 var
   Itens,C: IwtsCommand;
-  OSBaixa, OS,Movimento, Produtos: IwtsWriteData;
+  OSBaixa, OS,Movimento, Produtos, EstoqueLote, PrioridadeLotes: IwtsWriteData;
   Cliente,Status,TabelaPreco,Filial,Evento: Integer;
   Preco: Real;
   CFOP:Variant;
   EstadoFilial,EstadoCliente,Grupo,Lote,UltimaGrupoCFOP,S:string;
-  EmGarantia,DentroDoEstado,ComErro,FaturamentoEntrada,IsEquipamento,ContribuinteICMS,Devolucao,AcessaLote:Boolean;
+  EmGarantia,DentroDoEstado,ComErro,FaturamentoEntrada,IsEquipamento,ContribuinteICMS,
+  Devolucao,AcessaLote,EventoPorClassCliente,ControlaLote:Boolean;
   PecasFaturamento:TPecasFaturamento;
 
   function BoolToStr(const AValue:Boolean): string;
@@ -622,9 +623,27 @@ var
     Result := VarIsValid(CFOP);
   end;
 
-  function EncontraLote(const AFilial,AProduto,ACor,AEstampa:Integer;ATamanho:string): string;
+  function EncontraLote(const AProduto,ACor,AEstampa:Integer;ATamanho:string; var ALote:string): Boolean;
+  var
+    C: IwtsCommand;
+    CMDFilter:string;
   begin
-    Result := '';
+    Result := False;
+    ALote := '';
+    //CMDFilter := '(PRODUTO="'+IntToStr(AProduto)+'") AND (COR="'+IntToStr(ACor)+'") AND (ESTAMPA="'+IntToStr(AEstampa)+'") AND (TAMANHO="'+ATamanho+'")';
+    //EstoqueLote.Filter := '';
+    //EstoqueLote.Filter := CMDFilter;
+    PrioridadeLotes.First;
+    while not PrioridadeLotes.EOF do
+    begin
+      if EstoqueLote.Locate(['PRODUTO','COR','ESTAMPA','TAMANHO','LOTE'],[AProduto,ACor,AEstampa,ATamanho,PrioridadeLotes.GetFieldAsString('ITEM')]) then
+      begin
+        ALote := PrioridadeLotes.GetFieldAsString('ITEM');
+        Break;
+      end;
+      PrioridadeLotes.Next;
+    end;  
+    Result := (ALote <> '');
   end;
 
   function MakeyKeyCFOP(const AClassificaoProduto,ALote:string;AContribuinte,ADentroDoEstado,ADevolucao:Boolean):string;
@@ -654,6 +673,7 @@ begin
   Cliente := OS.GetFieldByName('CLIENTE');
   Grupo := OS.GetFieldAsString('GRUPO');
 
+  EventoPorClassCliente := False;
   if FaturamentoEntrada then
   begin
     PecasFaturamento := [pfEquipamentos];
@@ -661,7 +681,7 @@ begin
   begin
     //Descobrir se o evento que esta no processamento, se está configurado na classificaçao do cliente
     C.Dim('CLIENTE',Cliente);  
-    C.Execute('SELECT CLS.EVENTO_EQUIPAMENTO, CLS.EVENTO_GARANTIA, CLS.EVENTO_FORA_GARANTIA  FROM CLIENTES C '+
+    C.Execute('SELECT CLS.EVENTO_EQUIPAMENTO, CLS.EVENTO_GARANTIA, CLS.EVENTO_FORA_GARANTIA,CLS.EVENTO_RETORNO_CONSIGNACAO FROM CLIENTES C '+
               'LEFT JOIN SI_CLASSIFICACAO_CLIENTE CLS ON (CLS.CLASSIFICACAO_CLIENTE = C.CLSCLIENTE) '+
               'WHERE C.CLIENTE=:CLIENTE');
 
@@ -676,6 +696,9 @@ begin
     if (Evento = VarToIntDef(C.GetFieldByName('EVENTO_FORA_GARANTIA'),-MaxInt)) then
       PecasFaturamento := [ptPecasForaGarantia];
 
+    if (Evento = VarToIntDef(C.GetFieldByName('EVENTO_RETORNO_CONSIGNACAO'),-MaxInt)) then
+      PecasFaturamento := [ptPecasForaGarantia];
+
     //Nada configurado por classificão do cliente, então o mesmo evento faz tudo, paramentros gerais
     if PecasFaturamento = [] then
     begin
@@ -684,12 +707,16 @@ begin
 
       if (Evento = GetConfigSrv.ReadParamInt('SI_EVENTO_SAIDA_FORA_GARANTIA',-MaxInt)) then
         PecasFaturamento := [pfEquipamentos,ptPecasForaGarantia];
-    end;
-  end;
+
+      if (Evento = GetConfigSrv.ReadParamInt('SI_EVENTO_RETORNO_CONSIGNACAO',-MaxInt)) then
+        PecasFaturamento := [ptPecasForaGarantia];
+    end else
+      EventoPorClassCliente := True;
+  end;              
 
   if Grupo <> '' then
   begin                      //Nas devoluções de peças, não podemos considerar Com e Sem Garantia. Faturamos tudo junto
-    if FaturamentoEntrada or (PecasFaturamento = [pfEquipamentos]) then
+    if FaturamentoEntrada or (PecasFaturamento = [pfEquipamentos]) or not EventoPorClassCliente then
     begin
       C.Dim('GARANTIA',Unassigned)
     end else
@@ -719,12 +746,17 @@ begin
   begin
     if Status <> VarToIntDef(OS.GetFieldByName('STATUS'),-1) then
       raise Exception.Create('É necessário todas as ordens estejam no mesmo status.');
-    Status := OS.GetFieldByName('STATUS');
+      
+    if OS.GetFieldByName('STATUS') <> 5 then//Quando o faturamento é por grupo, acontece o faturamento de os por os, não devemos validar
+      Status := OS.GetFieldByName('STATUS');
+
     OS.Next;
   end;
+  
   //1-AG. FATURAMENTO ENTRADA
   //2-AG. FATURAMENTO
-  if (Status <> 1) and (Status <> 4) then
+  //5-FINALIZADO
+  if (Status <> 1) and (Status <> 4) and (Status <> 5) then
     raise Exception.Create('Status não permitido para o faturamento. Permitidos AG. FATURAMENTO ENTRADA ou AG. FATURAMENTO');
 
   OS.First;
@@ -828,26 +860,48 @@ begin
                 '       AVG(OS.PRECO) AS PRECO,'+
                 '       OS.EQUIPAMENTO,'+
                 '       SUM(OS.QUANTIDADE) AS QUANTIDADE,'+
-                '       OS.NUMERO_SERIE '+
+                '       OS.NUMERO_SERIE, '+
+                '       P.CONTROLA_LOTE '+
                 'FROM SI_ORDENS_SERVICO_PRODUTOS OS '+
                 'INNER JOIN PRODUTOS P ON (P.PRODUTO = OS.PRODUTO) '+
                 'WHERE OS.ORDEM_SERVICO IN #MAKELIST(OSS,ORDEM_SERVICO) AND '+
                 '      OS.EQUIPAMENTO #SELECT(TIPO,0:{="T"},1:{="F"},ELSE:{IN ("T","F")}) '+
-                'GROUP BY P.CLASS_PROD,OS.PRODUTO,OS.COR,OS.ESTAMPA,OS.TAMANHO,OS.NUMERO_PRODUTO,OS.EQUIPAMENTO,OS.NUMERO_SERIE '+
+                'GROUP BY P.CLASS_PROD,OS.PRODUTO,OS.COR,OS.ESTAMPA,OS.TAMANHO,OS.NUMERO_PRODUTO,OS.EQUIPAMENTO,OS.NUMERO_SERIE,P.CONTROLA_LOTE '+
                 'HAVING SUM(QUANTIDADE) > 0');
+
+  Itens.First;
+  C.Dim('FILIAL',Filial);
+  C.DimAsData('PRODUTOS',Itens);
+  C.Execute('SELECT FILIAL,PRODUTO,COR,ESTAMPA,TAMANHO,LOTE,SUM(SALDO) AS SALDO '+
+            'FROM ESTOQUES E '+
+            'INNER JOIN PRODUTOS P ON (P.PRODUTO = E.PRODUTO) '+
+            'WHERE P.CONTROLA_LOTE = TRUE AND '+
+            '      E.FILIAL =:FILIAL AND '+
+            '      E.PRODUTO IN #MAKELIST(PRODUTOS,PRODUTO) '+
+            'GROUP BY FILIAL,PRODUTO,COR,ESTAMPA,TAMANHO,LOTE '+
+            'ORDER BY FILIAL,PRODUTO,COR,ESTAMPA,TAMANHO,LOTE');
+  EstoqueLote := C.CreateRecordset;
+
+  PrioridadeLotes
+   := GetConfigSrv.CreateRecordSet('SI_ORDEM_LOTES');
+
+  Itens.First;
   while not Itens.EOF do
   begin
     Preco := VarToFloat(Itens.GetFieldByName('PRECO'));
     IsEquipamento := SameText(Itens.GetFieldAsString('EQUIPAMENTO'),'T');
     Devolucao := (not FaturamentoEntrada) and IsEquipamento;
-  
+    ControlaLote := Itens.GetFieldAsString('CONTROLA_LOTE') = 'T';
+
     Lote := '';
     if IsEquipamento then
       Lote := Copy(Itens.GetFieldAsString('NUMERO_SERIE'),1,20)
     else
-    if AcessaLote then
-      Lote := EncontraLOTE(Filial,Itens.GetFieldByName('PRODUTO'),Itens.GetFieldByName('COR'),
-        Itens.GetFieldByName('ESTAMPA'),Itens.GetFieldAsString('TAMANHO'));
+    if AcessaLote and ControlaLote then
+    begin
+      if not EncontraLOTE(Itens.GetFieldByName('PRODUTO'),Itens.GetFieldByName('COR'),Itens.GetFieldByName('ESTAMPA'),Itens.GetFieldAsString('TAMANHO'),Lote) then
+        raise Exception.Create('Não há estoque com lote disponível para o produto '+Itens.GetFieldAsString('NUMERO_PRODUTO'));
+    end;
 
     S := MakeyKeyCFOP(Itens.GetFieldAsString('CLASS_PROD'),Lote,ContribuinteICMS,DentroDoEstado,Devolucao);
     if S <> UltimaGrupoCFOP then
@@ -898,7 +952,7 @@ begin
   Movimento.SetFieldByName('PRODUTOS',Produtos);
   Movimento.SetFieldByName('SI_ORDENS_SERVICO',OSBaixa);
   Movimento.Add;
-  
+
   //devolver somente leitura ou nao
 
   Output.NewRecord;
@@ -963,30 +1017,42 @@ end;
 procedure ListaEventosPorClassificaoCliente(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
 var
   C,OS: IwtsCommand;
-  G: IwtsWriteData;
-  Eventos:IwtsWriteData;
+  G,Eventos: IwtsWriteData;
+  EventosJaOcorrido:IwtsWriteData;
   EventoEntradaEquipamento,
   EventoSaidaDevolucao,
   EventoSaidaGarantia,
-  EventoSaidaForaGarantia: Variant;
+  EventoSaidaForaGarantia,
+  EventoRetornoConsignacao: Variant;
   Status:Integer;
+  EventoPorClassCliente,SomenteEventosNaoUsados:Boolean;
+  Garantia,Grupo:string;
+  QuantidadePecas: Integer;
 begin
   C := DataPool.Open('MILLENIUM');
   OS := DataPool.Open('MILLENIUM');
 
+  EventoPorClassCliente := False;
   Eventos := DataPool.CreateRecordset('WTSSYSTEM.INTERNALTYPES.INTEGERARRAY');
 
   EventoEntradaEquipamento := GetConfigSrv.ReadParamInt('SI_EVENTO_ENTRADA',-1);
   EventoSaidaDevolucao := GetConfigSrv.ReadParamInt('SI_EVENTO_SAIDA_DEVOLUCAO',-1);
   EventoSaidaGarantia := GetConfigSrv.ReadParamInt('SI_EVENTO_SAIDA_GARANTIA',-1);
   EventoSaidaForaGarantia := GetConfigSrv.ReadParamInt('SI_EVENTO_SAIDA_FORA_GARANTIA',-1);
+  EventoRetornoConsignacao := GetConfigSrv.ReadParamInt('SI_EVENTO_RETORNO_CONSIGNACAO',-1);
+
+  SomenteEventosNaoUsados := VarToBool(Input.GetParamByName('SOMENTE_NAO_USADO'));
 
   OS.Execute('SELECT O.GRUPO, '+
              '       O.STATUS, '+
              '       O.GARANTIA, '+
              '       CLS.EVENTO_EQUIPAMENTO, '+
              '       CLS.EVENTO_GARANTIA, '+
-             '       CLS.EVENTO_FORA_GARANTIA '+
+             '       CLS.EVENTO_FORA_GARANTIA, '+
+             '       CLS.EVENTO_RETORNO_CONSIGNACAO, '+
+             '       (SELECT SUM(P.QUANTIDADE) '+
+             '        FROM SI_ORDENS_SERVICO_PRODUTOS P '+
+             '        WHERE P.ORDEM_SERVICO = O.ORDEM_SERVICO AND P.EQUIPAMENTO = FALSE) AS QUANTIDADE_PECAS '+
              'FROM SI_ORDENS_SERVICO O '+
              'INNER JOIN CLIENTES C ON (C.CLIENTE = O.CLIENTE) '+
              'LEFT JOIN SI_CLASSIFICACAO_CLIENTE CLS ON (CLS.CLASSIFICACAO_CLIENTE = C.CLSCLIENTE) '+
@@ -1000,33 +1066,64 @@ begin
 
   if OS.GetFieldAsString('EVENTO_FORA_GARANTIA') <> '' then
     EventoSaidaForaGarantia := OS.GetFieldAsString('EVENTO_FORA_GARANTIA');
-                                         
-  if OS.GetFieldAsString('GRUPO') <> '' then
+
+  if OS.GetFieldAsString('EVENTO_RETORNO_CONSIGNACAO') <> '' then
+    EventoRetornoConsignacao := OS.GetFieldAsString('EVENTO_RETORNO_CONSIGNACAO');
+
+  QuantidadePecas := VarToIntDef(OS.GetFieldByName('QUANTIDADE_PECAS'),0);
+
+  EventoPorClassCliente := (OS.GetFieldAsString('EVENTO_EQUIPAMENTO') <> '') or (OS.GetFieldAsString('EVENTO_GARANTIA') <> '') or (OS.GetFieldAsString('EVENTO_FORA_GARANTIA') <> '');
+
+  Grupo := OS.GetFieldAsString('GRUPO');
+
+  if Grupo <> '' then
   begin
-    C.Dim('GRUPO',OS.GetFieldAsString('GRUPO'));
+    C.Dim('GRUPO',Grupo);
     C.Execute('SELECT OS.GARANTIA, '+
-              '       OS.STATUS '+
+              '       OS.STATUS, '+
+              '       (SELECT SUM(P.QUANTIDADE) '+
+              '        FROM SI_ORDENS_SERVICO_PRODUTOS P '+
+              '        WHERE P.ORDEM_SERVICO = OS.ORDEM_SERVICO AND P.EQUIPAMENTO = FALSE) AS QUANTIDADE_PECAS '+
               'FROM SI_ORDENS_SERVICO OS '+
               'WHERE OS.GRUPO=:GRUPO  '+//AND '+'      OS.STATUS IN (1,4)
               'GROUP BY OS.GARANTIA,OS.STATUS');
     G := C.CreateRecordset;
 
-    G.First;
-    Status := G.GetFieldByName('STATUS');
-    while not G.EOF do
+    if not SomenteEventosNaoUsados then
     begin
-      if Status <> VarToIntDef(G.GetFieldByName('STATUS'),-1) then
-        raise Exception.Create('É necessário todas as ordens estejam no mesmo status.');
+      G.First;
       Status := G.GetFieldByName('STATUS');
-      G.Next;
+      while not G.EOF do
+      begin
+        if Status <> VarToIntDef(G.GetFieldByName('STATUS'),-1) then
+          raise Exception.Create('É necessário todas as ordens estejam no mesmo status.');
+        Status := G.GetFieldByName('STATUS');
+        G.Next;
+      end;
     end;
 
-    if (Status <> 1) and (Status <> 4) then
-      raise Exception.Create('Status não permitido para o faturamento. Permitidos AG. FATURAMENTO ENTRADA ou AG. FATURAMENTO');
+    if not EventoPorClassCliente then
+    begin
+      G.First;
+      Garantia := G.GetFieldByName('GARANTIA');
+      while not G.EOF do
+      begin
+        if Garantia <> G.GetFieldAsString('GARANTIA') then
+          raise Exception.Create('É necessário todas as ordens estejam no mesmo status(Garantia e Fora de Garantia).');
+        Garantia := G.GetFieldByName('GARANTIA');
+        G.Next;
+      end;
+    end;
+
+    if not SomenteEventosNaoUsados then
+      if (Status <> 1) and (Status <> 4)  then
+        raise Exception.Create('Status não permitido para o faturamento. Permitidos AG. FATURAMENTO ENTRADA ou AG. FATURAMENTO');
 
     G.First;
     while not G.EOF do
     begin
+      QuantidadePecas := VarToIntDef(G.GetFieldByName('QUANTIDADE_PECAS'),0);
+      
       if G.GetFieldAsString('STATUS') = '1' then//AG. FATURAMENTO ENTRADA
       begin
         Eventos.New;
@@ -1035,16 +1132,31 @@ begin
       end else
       if G.GetFieldAsString('STATUS') = '4' then//AG. FATURAMENTO
       begin
-        Eventos.New;
-        Eventos.SetFieldByName('ITEM',EventoSaidaDevolucao);
-        Eventos.Add;
+        if EventoPorClassCliente then
+        begin
+          Eventos.New;
+          Eventos.SetFieldByName('ITEM',EventoSaidaDevolucao);
+          Eventos.Add;
+        end;
 
-        Eventos.New;
-        if VarToBool(G.GetFieldByName('GARANTIA')) then
-          Eventos.SetFieldByName('ITEM',EventoSaidaGarantia)
-        else
-          Eventos.SetFieldByName('ITEM',EventoSaidaForaGarantia);
-        Eventos.Add;
+        if QuantidadePecas > 0 then//Só existe faturamento de saida se tiver peças consumidas
+        begin
+          if VarToBool(G.GetFieldByName('GARANTIA')) then
+          begin
+            Eventos.New;
+            Eventos.SetFieldByName('ITEM',EventoSaidaGarantia);
+            Eventos.Add;
+          end else
+          begin
+            Eventos.New;
+            Eventos.SetFieldByName('ITEM',EventoSaidaForaGarantia);
+            Eventos.Add;
+
+            Eventos.New;
+            Eventos.SetFieldByName('ITEM',EventoRetornoConsignacao);
+            Eventos.Add;
+          end;
+        end;
       end;
 
       G.Next;
@@ -1059,23 +1171,94 @@ begin
     end else
     if OS.GetFieldAsString('STATUS') = '4' then//AG. FATURAMENTO
     begin
-      Eventos.New;
-      Eventos.SetFieldByName('ITEM',EventoSaidaDevolucao);
-      Eventos.Add;
+      if EventoPorClassCliente then
+      begin
+        Eventos.New;
+        Eventos.SetFieldByName('ITEM',EventoSaidaDevolucao);
+        Eventos.Add;
+      end;
 
-      Eventos.New;
-      if VarToBool(OS.GetFieldByName('GARANTIA')) then
-        Eventos.SetFieldByName('ITEM',EventoSaidaGarantia)
-      else
-        Eventos.SetFieldByName('ITEM',EventoSaidaForaGarantia);
-      Eventos.Add;
+      if QuantidadePecas > 0 then//Só existe faturamento de saida se tiver peças consumidas
+      begin
+        if VarToBool(OS.GetFieldByName('GARANTIA')) then
+        begin
+          Eventos.New;
+          Eventos.SetFieldByName('ITEM',EventoSaidaGarantia);
+          Eventos.Add;
+        end else
+        begin
+          Eventos.New;
+          Eventos.SetFieldByName('ITEM',EventoSaidaForaGarantia);
+          Eventos.Add;
+
+          Eventos.New;
+          Eventos.SetFieldByName('ITEM',EventoRetornoConsignacao);
+          Eventos.Add;
+        end;
+      end;
     end;
+  end;
+
+  //Vamos detectar todos os eventos que já ocorreram, assim removemos da lista
+  if SomenteEventosNaoUsados then
+  begin
+    if Grupo <> '' then
+    begin
+      C.Dim('GRUPO',Grupo);
+      C.Dim('ORDEM_SERVICO',Unassigned);
+    end else
+    begin
+      C.Dim('GRUPO',Unassigned);
+      C.Dim('ORDEM_SERVICO',Input.GetParamByName('ORDEM_SERVICO'));
+    end;
+    C.Execute('SELECT DISTINCT M.EVENTO FROM SI_ORDENS_SERVICO OS '+
+              'INNER JOIN SI_ORDENS_SERVICO_NFS OSNF ON OSNF.ORDEM_SERVICO = OS.ORDEM_SERVICO '+
+              'INNER JOIN MOVIMENTO M ON (M.TIPO_OPERACAO = OSNF.TIPO_OPERACAO) AND '+
+              '                          (M.COD_OPERACAO = OSNF.COD_OPERACAO) '+
+              'INNER JOIN NF ON (NF.TIPO_OPERACAO = M.TIPO_OPERACAO) AND '+
+              '                 (NF.COD_OPERACAO = M.COD_OPERACAO) AND '+
+              '                 (NF.CANCELADA = FALSE) '+
+              'WHERE [OS.ORDEM_SERVICO=:ORDEM_SERVICO] [OS.GRUPO=:GRUPO]');
+    EventosJaOcorrido := C.CreateRecordset;
   end;
 
   Eventos.First;
   C.DimAsData('EVENTO',Eventos);
   C.Execute('SELECT EVENTO,CODIGO,DESCRICAO FROM EVENTOS WHERE EVENTO IN #MAKELIST(EVENTO,ITEM)');
-  Output.AssignData(C);
+  while not C.EOF do
+  begin
+    if (EventosJaOcorrido = nil) or not EventosJaOcorrido.Locate(['EVENTO'],[C.GetFieldByName('EVENTO')]) then
+    begin
+      Output.NewRecord;
+      Output.SetFieldByName('EVENTO',C.GetFieldByName('EVENTO'));
+      Output.SetFieldByName('CODIGO',C.GetFieldByName('CODIGO'));
+      Output.SetFieldByName('DESCRICAO',C.GetFieldByName('DESCRICAO'));
+    end;
+    C.Next;
+  end;
+end;
+
+procedure AlteraStatusOrdem(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
+var
+  C: IwtsCommand;
+  QtdEventos,Status: Integer;
+  PermitirAlterarStatus: Boolean;
+  Fi:string;
+begin
+  C := DataPool.Open('MILLENIUM');
+  PermitirAlterarStatus := True;
+
+  C.Execute('SELECT GRUPO, STATUS FROM SI_ORDENS_SERVICO WHERE ORDEM_SERVICO=:ORDEM_SERVICO');
+  Status := C.GetFieldByName('STATUS');
+  if Status = 4 then //Só faz sentido esta verificação quando é AG. Faturamento de saida
+  begin
+     //ListaEventosPorClassificaoCliente só retorna eventos que ainda não foram faturados
+     C.Execute('#CALL MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.ListaEventosPorClassificaoCliente(ORDEM_SERVICO=:ORDEM_SERVICO,SOMENTE_NAO_USADO=TRUE)');
+     PermitirAlterarStatus := C.EOF;
+  end;
+
+  if PermitirAlterarStatus then
+    C.Execute('UPDATE SI_ORDENS_SERVICO SET STATUS = #IF(STATUS=1,2,5) WHERE ORDEM_SERVICO=:ORDEM_SERVICO;');
 end;
 
 initialization
@@ -1088,51 +1271,8 @@ initialization
    wtsRegisterProc('ACER.ImportarFechamento',ImportarFechamento);
 
    wtsRegisterProc('MOVIMENTACAO.DadosFaturamentoGenerico', DadosFaturamentoGenerico);
+   wtsRegisterProc('MOVIMENTACAO.AlteraStatusOrdem', AlteraStatusOrdem);
 
    wtsRegisterProc('ESTOQUES.GerarExcelConciliacao',GerarExcelConciliacao);
 end.
 
-
- {if FaturamentoEntrada then
-  begin
-    TabelaPreco := GetConfigSrv.ReadParamInt('SI_TABELA_PRECO_ENTRADA',-1);
-    
-    if DentroDoEstado and EmGarantia then
-      CFOP := GetConfigSrv.ReadParamInt('SI_CFOP_ENT_DE_GAR',-1);
-
-    if DentroDoEstado and not EmGarantia then
-      CFOP := GetConfigSrv.ReadParamInt('SI_CFOP_ENT_DE_FOR_GAR',-1);
-
-    if not DentroDoEstado and EmGarantia then
-      CFOP := GetConfigSrv.ReadParamInt('SI_CFOP_ENT_FE_GAR',-1);
-
-    if not DentroDoEstado and not EmGarantia then
-      CFOP := GetConfigSrv.ReadParamInt('SI_CFOP_ENT_FE_FOR_GAR',-1);
-  end else//Faturamento de Saida
-  begin
-    TabelaPreco := GetConfigSrv.ReadParamInt('SI_TABELA_PRECO_SAIDA',-1);
-
-    if DentroDoEstado and EmGarantia then
-      CFOP := GetConfigSrv.ReadParamInt('SI_CFOP_SAI_DE_GAR',-1);
-
-    if DentroDoEstado and not EmGarantia then
-      CFOP := GetConfigSrv.ReadParamInt('SI_CFOP_SAI_DE_FOR_GAR',-1);
-
-    if not DentroDoEstado and EmGarantia then
-      CFOP := GetConfigSrv.ReadParamInt('SI_CFOP_SAI_FE_GAR',-1);
-
-    if not DentroDoEstado and not EmGarantia then
-      CFOP := GetConfigSrv.ReadParamInt('SI_CFOP_SAI_FE_FOR_GAR',-1);
-
-    if DentroDoEstado and EmGarantia then
-      CFOPDev := GetConfigSrv.ReadParamInt('SI_CFOP_DEV_DE_GAR',-1);
-
-    if DentroDoEstado and not EmGarantia then
-      CFOPDev := GetConfigSrv.ReadParamInt('SI_CFOP_DEV_DE_FOR_GAR',-1);
-
-    if not DentroDoEstado and EmGarantia then
-      CFOPDev := GetConfigSrv.ReadParamInt('SI_CFOP_DEV_FE_GAR',-1);
-
-    if not DentroDoEstado and not EmGarantia then
-      CFOPDev := GetConfigSrv.ReadParamInt('SI_CFOP_DEV_FE_FOR_GAR',-1);
-  end;}

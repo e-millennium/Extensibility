@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <root>
   <OBJECT NAME="ORDENS_SERVICO">
-    <METHOD NAME="ReAgrupar" DESCRIPTION="Reagrupar Ordens Servi&#231;o" VERSION="10" INTFTYPE="17" THREADSAFE="1">
+    <METHOD NAME="ReAgrupar" DESCRIPTION="Reagrupar Ordens Servi&#231;o" VERSION="12" INTFTYPE="17" THREADSAFE="1">
       <PARAMS>
         <GROUPS>
           <GROUP/>
         </GROUPS>
         <PARAM NAME="ORDENS_SERVICO" FORMAT="R" PROJECTION="0" FIELDLABEL="Ordens Servico" NESTEDNAME="WTSSYSTEM.INTERNALTYPES.INTEGERARRAY" CTAB="0"/>
-        <PARAM NAME="COD_GRUPO" SIZE="5" FLAGS="17" DEFAULT="millenium.utils.default(['SI_COD_GRUPO_SERVICO',5],'Result',True)" PROJECTION="0" ORDER="1" FIELDLABEL="N&#176; Grupo da Ordem" CTAB="0"/>
+        <PARAM NAME="COD_GRUPO" SIZE="10" FLAGS="17" DEFAULT="millenium.utils.default(['SI_COD_GRUPO_SERVICO',10],'Result',True)" PROJECTION="0" ORDER="1" FIELDLABEL="N&#176; Grupo da Ordem" CTAB="0"/>
       </PARAMS>
       <FIELDS>
         <GROUPS>

@@ -1,0 +1,17 @@
+-Vericar porque está fechando a tela quando cancela a tela de nota fiscal no evento.
+
+-Não finaliza a ordem quando a nfe não foi homologada
+
+-Colocar ordem de serviço com status de erro, caso tenha consumo de peças após o fechamento da ordem
+
+-Colocar as ordens como finalizada, somente quando todas forem processadas. Na prática, somente quando o equipamento for devolvido
+
+
+-Nos casos de faturamento separado, garantir que a devolução seja a ultima operação.
+
+
+27.01
+
+OK
+
+-Sempre que houver fora garantia, criar um evento de "Evento - Retorno Consignação (301)" no cadastro na classficação do cliente e adicionar um evento, os que entrarão neste evento, são as peças de fora de garantia. 

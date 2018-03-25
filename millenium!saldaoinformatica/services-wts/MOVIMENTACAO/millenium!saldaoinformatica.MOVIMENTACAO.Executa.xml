@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
   <OBJECT NAME="MOVIMENTACAO">
-    <METHOD NAME="Executa" DESCRIPTION="" VERSION="17" TRIGGEROF="MOVIMENTACAO.EXECUTA" TRIGGERTYPE="0" THREADSAFE="1">
+    <METHOD NAME="Executa" DESCRIPTION="" VERSION="24" TRIGGEROF="MOVIMENTACAO.EXECUTA" TRIGGERTYPE="0" THREADSAFE="1">
       <PARAMS>
         <GROUPS>
           <GROUP/>
@@ -19,12 +19,29 @@ WHERE ROMANEIO=:ROMANEIO AND
       
 #EACH() SI_ORDENS_SERVICO AS OS
 #BEGIN
-  UPDATE SI_ORDENS_SERVICO SET STATUS = #IF(STATUS=1,2,5) WHERE ORDEM_SERVICO=:OS.ITEM;
-  
   INSERT INTO SI_ORDENS_SERVICO_NFS (ORDEM_SERVICO,TIPO_OPERACAO,COD_OPERACAO)
                              VALUES (:OS.ITEM,:MOV.TIPO_OPERACAO,:MOV.COD_OPERACAO)
                              #RETURN(ORDEM_SERVICO_NF);
+                             
+  #CALL MILLENIUM!SALDAOINFORMATICA.MOVIMENTACAO.AlteraStatusOrdem(ORDEM_SERVICO=:OS.ITEM);
 #END;
+
+#SELECT(MOV.TIPO_OPERACAO,'E':{#EACH() SELECT:PRE
+                                             OSP.ORDENS_SERVICO_PRODUTO,
+                                             PE.PRECO
+                                       FROM SI_ORDENS_SERVICO_NFS OSN
+                                       INNER JOIN SI_ORDENS_SERVICO_PRODUTOS OSP ON (OSP.ORDEM_SERVICO = OSN.ORDEM_SERVICO)
+                                       INNER JOIN PRODUTOS_EVENTOS PE ON (PE.TIPO_OPERACAO = OSN.TIPO_OPERACAO) AND
+                                                                         (PE.COD_OPERACAO = OSN.COD_OPERACAO) AND
+                                                                         (PE.PRODUTO = OSP.PRODUTO) AND
+                                                                         (PE.COR = OSP.COR) AND
+                                                                         (PE.ESTAMPA = OSP.ESTAMPA) AND
+                                                                         (PE.TAMANHO = OSP.TAMANHO)
+                                       WHERE OSP.EQUIPAMENTO = 'T' AND
+                                             OSN.ORDEM_SERVICO = #MAKELIST(SI_ORDENS_SERVICO,ITEM) AND
+                                             PE.COD_OPERACAO = :MOV.COD_OPERACAO AND
+                                             PE.TIPO_OPERACAO = :MOV.TIPO_OPERACAO;
+                                       UPDATE SI_ORDENS_SERVICO_PRODUTOS SET PRECO=:PRE.PRECO WHERE ORDENS_SERVICO_PRODUTO=:PRE.ORDENS_SERVICO_PRODUTO;},ELSE:{})
 </ACTIONSCRIPT>
     </METHOD>
   </OBJECT>
