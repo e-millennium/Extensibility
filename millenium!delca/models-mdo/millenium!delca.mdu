@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<root>
+  <cube>
+	<objects>
+		<object fullname="dca_orcamentos" caption="Orcamento"/>							
+	</objects>
+	
+    <relations>
+      <relation left="dca_orcamentos$dca_orcamentos.produto" right="produto$produto.produto"/>	  
+	</relations>  
+	
+	<perspectives>
+		 <perspective name="dca_orcamentos" caption="Orcamentos" >
+			<items>
+				<dimension name="dca_orcamentos"/>
+				<dimension name="data"/>
+				<dimension name="cliente"/>
+				<dimension name="produto"/>				
+			</items>
+		 </perspective>
+	</perspectives>
+	
+  </cube>
+</root>

@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<root>
+	<fact caption="Orcamentos">
+		<tables>
+			<table name="dca_orcamentos"/>
+			<table name="dca_orcamento_mps"/>
+			<table name="dca_orcamento_prs"/>
+			
+			
+		</tables>
+		
+		<relations>
+	      <relation cardinality="N-1">
+	        <condition connector="" left="dca_orcamento_mps.orcamento" right="dca_orcamentos.orcamento"/>
+	      </relation>
+	      <relation cardinality="N-1">
+	        <condition connector="AND" left="dca_orcamento_prs.orcamento" right="dca_orcamentos.orcamento"/>
+	      </relation>
+		  
+	    </relations>		
+		
+		<outriggers>						
+			<outrigger fullname="data_orcamento$data">
+				<relation cardinality="1-1">
+					<condition  left="data_orcamento" right="data_orcamento$data.data" />
+				</relation>
+			</outrigger>
+
+			<outrigger fullname="cliente$cliente">
+				<relation cardinality="1-1">
+					<condition  left="cliente" right="cliente$cliente.cliente" />
+				</relation>
+			</outrigger>		
+		</outriggers>
+	
+		<attributes>
+			<level name="orcamento" caption="Orcamento" keyattribute="orcamento" codeattribute="cod_orcamento" main="1">
+				<attribute name="orcamento"/>
+				<attribute name="cod_orcamento"  degenerate="1" caption="Codigo Orcamento"/>  
+				<attribute name="data_orcamento"/>  				
+				<attribute name="revisao" degenerate="1" caption="N Revisao"/>  		
+				<attribute name="cliente"/>
+				<attribute name="ativo" degenerate="1" caption="Ativo" datatype="Boolean"/>
+				
+			</level>
+			
+           <level name="orcamento_mps" tablename="dca_orcamento_mps" caption="Materias Primas">
+				<attribute name="orcamento_mp"/>
+				<attribute name="orcamento"/>		
+				<attribute name="produto"/>		
+				<attribute name="quantidade_unitaria_uso" degenerate="1" caption="Qtd. Unitaria Uso"/>  	
+				<attribute name="quantidade_total_uso" degenerate="1" caption="Qtd. Total Uso"/>  	
+				<attribute name="preco_custo" degenerate="1" caption="Preco Custo"/>  	
+				<attribute name="icms" degenerate="1" caption="Perc. ICMS"/>  	
+				<attribute name="pis" degenerate="1" caption="Perc. PIS"/>  	
+				<attribute name="cofins" degenerate="1" caption="Perc. Cofins"/>  	
+				<attribute name="frete" degenerate="1" caption="Perc. Frete"/>  	
+				<attribute name="custo_unitario" degenerate="1" caption="Custo Unitario"/>  	
+				<attribute name="unidade_medida" degenerate="1" caption="Unidade Medida"/>  	
+			</level>
+			
+           <level name="orcamento_prs" tablename="dca_orcamento_prs" caption="Processos">
+				<attribute name="dca_orcamento_pr"/>
+				<attribute name="orcamento"/>		
+				<attribute name="sequencia" degenerate="1" caption="sequencia"/>		
+				<attribute name="grupo_maquina" degenerate="1" caption="grupo_maquina"/>  	
+				<attribute name="operacao" degenerate="1" caption="operacao"/>  	
+				<attribute name="maquina" degenerate="1" caption="maquina"/>  	
+				<attribute name="tempo" degenerate="1" caption="tempo"/>  	
+				<attribute name="lote" degenerate="1" caption="lote"/>  	
+				<attribute name="setup_quantidade" degenerate="1" caption="setup_quantidade"/>  	
+				<attribute name="setup_tempo" degenerate="1" caption="setup_tempo"/>  	
+				<attribute name="custo_hora_maquina" degenerate="1" caption="custo_hora_maquina"/>  
+				<attribute name="custo_unitario" degenerate="1" caption="custo_unitario"/>  
+				<attribute name="procedimento_producao" degenerate="1" caption="procedimento_producao"/>  				
+			</level>			
+	
+		</attributes>
+	</fact>
+</root>
