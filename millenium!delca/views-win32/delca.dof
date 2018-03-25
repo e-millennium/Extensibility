@@ -39,7 +39,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=c:\millenium
+OutputDir=D:\millennium\fontes\Extensibility\millenium!delca\views-win32
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -83,6 +83,7 @@ $(DELPHI)\Bin\dcldss50.bpl=Borland Decision Cube Components
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlOutputDirectorry]
-Count=2
-Item0=c:\millenium
-Item1=c:\wts\files\apps
+Count=3
+Item0=D:\millennium\fontes\Extensibility\millenium!delca\views-win32
+Item1=c:\millenium
+Item2=c:\wts\files\apps

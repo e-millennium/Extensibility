@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <root>
-	<_currentid>DELCA_1</_currentid>
+	<_currentid>DELCA_10</_currentid>
 	<_name>RULES.DELCA</_name>
 
 	<link category="Produção\Cadastros\Ferramentas" target="standard.tdataedit" _id="DELCA_1">
@@ -9,7 +9,7 @@
 	
 	<link category="Produção\Frequência de Inspeções\Ficha" target="standard.tdataedit" _id="DELCA_4">
 		 <OBJECT>MILLENIUM!DELCA.FREQUENCIAS_INSPECOES</OBJECT>
-	</link>		
+	</link>	
 	
 	<link category="Produção\Frequência de Inspeções\Inspeções" target="standard.tdataedit" _id="DELCA_2">
 		 <METHOD>MILLENIUM!DELCA.INSPECOES.LISTA</METHOD>
@@ -45,7 +45,11 @@
 	
 	<link category="Vendas\Orçamentos\Cadastros\Impostos" target="standard.tdataedit" _id="DELCA_9">
 		 <OBJECT>MILLENIUM!DELCA.ORCAMENTOS.IMPOSTOS</OBJECT>			 
-	</link>			
+	</link>	
+
+	<link category="Vendas\Orçamentos\Cadastros\Denominações" target="standard.tdataedit" _id="DELCA_10">
+		 <OBJECT>MILLENIUM!DELCA.ORCAMENTOS.DENOMINACOES</OBJECT>			 
+	</link>				
 
 </root>
 
