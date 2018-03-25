@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
   <OBJECT NAME="ORCAMENTOS.DEPESAS">
-    <METHOD NAME="Listar" DESCRIPTION="Lista Despesas" VERSION="12" INTFTYPE="14" THREADSAFE="1">
+    <METHOD NAME="Listar" DESCRIPTION="Lista Despesas" VERSION="13" INTFTYPE="14" THREADSAFE="1">
       <PARAMS/>
       <FIELDS>
         <GROUPS>
