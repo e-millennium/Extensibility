@@ -21,7 +21,7 @@ type
     procedure ReprocessaQuantidadePedidaMateriaPrima(const APesoPeca: Real; AQuantidadePedida:Integer);
     procedure GetVarValueCurDataSet(sender: TObject; const varname: string; var value: variant);
     
-    function CalculaCustoUnitarioMateriaPrima(APrecoCusto,APercICMS,APercPIS,APercCofins,APercFrete,APercRefugo,AQuantidadeTotal: Double; AQuantidadePedida: Integer): Real;
+    function CalculaCustoUnitarioMateriaPrima(APrecoCusto,APercICMS,APercPIS,APercCofins,APercFrete,APercRefugo,AQuantidadeUnitaria: Double; AQuantidadePedida: Integer): Real;
     function ResolverCalculo(const AFormula: string;AOnVarValue: TOnGetVarValue): Real;
     procedure CalcularTotais;
     function TotalizaDataSet(const AData: TDataSet;AFieldName:string): Real;
@@ -120,11 +120,12 @@ begin
     R.First;
     while not R.Eof do
     begin
+      R.FieldValuesByName['QUANTIDADE_UNITARIA_USO'] := APesoPeca;
       R.FieldValuesByName['QUANTIDADE_TOTAL_USO'] := APesoPeca * AQuantidadePedida;
       R.FieldValuesByName['CUSTO_UNITARIO'] := CalculaCustoUnitarioMateriaPrima(VarToFloat(R.FieldValuesByName['PRECO_CUSTO']),
       VarToFloat(R.FieldValuesByName['ICMS']),VarToFloat(R.FieldValuesByName['PIS']),
       VarToFloat(R.FieldValuesByName['COFINS']),VarToFloat(R.FieldValuesByName['FRETE']),
-      VarToFloat(R.FieldValuesByName['REFUGO']),VarToFloat(R.FieldValuesByName['QUANTIDADE_TOTAL_USO']),
+      VarToFloat(R.FieldValuesByName['REFUGO']),VarToFloat(R.FieldValuesByName['QUANTIDADE_UNITARIA_USO']),
       AQuantidadePedida);
       R.Update;
       R.Next;
@@ -161,15 +162,21 @@ begin
       Param('KG_PECA').AsFloat := CalcularPesoPeca(Param('DENOMINACAO').AsInteger);
 
     if (Field.FieldName = 'KG_PECA') or (Field.FieldName = 'QUANTIDADE_PEDIDA') then
+    begin
       ReprocessaQuantidadePedidaMateriaPrima(Param('KG_PECA').AsFloat,Param('QUANTIDADE_PEDIDA').AsInteger);
-      
+      CalcularTotais
+    end;
+
+    if (Field.FieldName = 'MARGEM_LUCRO') then
+      CalcularTotais;
+
   finally
     FInternalChanging := False;
   end;
 end;
 
 function TOrcamentos.CalculaCustoUnitarioMateriaPrima(APrecoCusto,APercICMS, APercPIS,
-  APercCofins,APercFrete,APercRefugo,AQuantidadeTotal: Double; AQuantidadePedida: Integer): Real;
+  APercCofins,APercFrete,APercRefugo,AQuantidadeUnitaria: Double; AQuantidadePedida: Integer): Real;
 var
   ValorICMS,ValorPIS,ValorCofins,ValorFrete,ValorRefugo:Double;
 begin
@@ -179,7 +186,7 @@ begin
   ValorFrete := APrecoCusto * (APercFrete/100);
   ValorRefugo := APrecoCusto * (APercRefugo/100);
 
-  Result := ((APrecoCusto * AQuantidadeTotal) + (ValorICMS+ValorPIS+ValorCofins)+(ValorFrete+ValorRefugo));{/AQuantidadePedida};
+  Result := (((APrecoCusto * AQuantidadeUnitaria) + (ValorICMS+ValorPIS+ValorCofins)+(ValorFrete+ValorRefugo))){/AQuantidadePedida};
 end;
 
 function TOrcamentos.TotalizaDataSet(const AData: TDataSet;AFieldName:string): Real;
@@ -258,7 +265,7 @@ function TOrcamentos.ConsultarPercentualOutrosCustos(ADespesa: Integer): Double;
 var
   R: TwtsRecordset;
 begin                                                  
-  wtsCallEx('MILLENIUM!DELCA.ORCAMENTOS.DEPESAS.Consultar',['IMPOSTO'],[ADespesa],R);
+  wtsCallEx('MILLENIUM!DELCA.ORCAMENTOS.DEPESAS.Consultar',['DESPESA'],[ADespesa],R);
   try
     Result := VarToFloat(R.FieldValuesByName['PERCENTUAL']);
   finally
@@ -279,6 +286,7 @@ begin
     if Field.FieldName = 'PRODUTO' then
       Field.DataSet.FieldByName('PRECO_CUSTO').AsFloat := ConsultarCustoMateriaPrima(FCurDataSet.FieldByName('PRODUTO').AsInteger);
 
+    Field.DataSet.FieldByName('QUANTIDADE_UNITARIA_USO').AsFloat := Param('KG_PECA').AsFloat;
     Field.DataSet.FieldByName('QUANTIDADE_TOTAL_USO').AsFloat := Param('QUANTIDADE_PEDIDA').AsInteger * Param('KG_PECA').AsFloat;
 
     Field.DataSet.FieldByName('CUSTO_UNITARIO').AsFloat :=
@@ -286,7 +294,7 @@ begin
     CalculaCustoUnitarioMateriaPrima(FCurDataSet.FieldByName('PRECO_CUSTO').AsFloat,
       FCurDataSet.FieldByName('ICMS').AsFloat,FCurDataSet.FieldByName('PIS').AsFloat,
       FCurDataSet.FieldByName('COFINS').AsFloat,FCurDataSet.FieldByName('FRETE').AsFloat,
-      FCurDataSet.FieldByName('REFUGO').AsFloat,FCurDataSet.FieldByName('QUANTIDADE_TOTAL_USO').AsFloat,
+      FCurDataSet.FieldByName('REFUGO').AsFloat,FCurDataSet.FieldByName('QUANTIDADE_UNITARIA_USO').AsFloat,
       Param('QUANTIDADE_PEDIDA').AsInteger);
 
   end else
@@ -325,9 +333,13 @@ begin
   Param('TOTAL_PROCESSOS').AsFloat := TotalizaRecordSet('PROCESSOS','MILLENIUM!DELCA.ORCAMENTOS.PROCESSO','CUSTO_UNITARIO');
   Param('TOTAL_CUSTO').AsFloat := Param('TOTAL_MATERIA_PRIMA').AsFloat+Param('TOTAL_SERVICOS').AsFloat+Param('TOTAL_PROCESSOS').AsFloat;
 
-  Param('TOTAL_IMPOSTOS').AsFloat := TotalizaRecordSet('IMPOSTOS','MILLENIUM!DELCA.ORCAMENTOS.IMPOSTO','TOTAL');
-  Param('TOTAL_OUTROS_CUSTOS').AsFloat := TotalizaRecordSet('OUTROS_CUSTOS','MILLENIUM!DELCA.ORCAMENTOS.CUSTO_EXTRA','TOTAL');
+  Param('TOTAL_IMPOSTOS').AsFloat := TotalizaRecordSet('IMPOSTOS','MILLENIUM!DELCA.ORCAMENTOS.IMPOSTO','VALOR');
+  Param('TOTAL_OUTROS_CUSTOS').AsFloat := TotalizaRecordSet('OUTROS_CUSTOS','MILLENIUM!DELCA.ORCAMENTOS.CUSTO_EXTRA','VALOR');
   Param('TOTAL_DESPESAS').AsFloat := Param('TOTAL_IMPOSTOS').AsFloat+Param('TOTAL_OUTROS_CUSTOS').AsFloat;
+
+  Param('CUSTO_UNITARIO').AsFloat := Param('TOTAL_CUSTO').AsFloat +  Param('TOTAL_DESPESAS').AsFloat;
+  Param('PRECO_UNITARIO').AsFloat := Param('CUSTO_UNITARIO').AsFloat +  (Param('CUSTO_UNITARIO').AsFloat * Param('MARGEM_LUCRO').AsFloat/100);
+  Param('PRECO_TOTAL').AsFloat := Param('PRECO_UNITARIO').AsFloat * Param('QUANTIDADE_PEDIDA').AsFloat;
 
   Param('TOTAL_CACULADO').AsBoolean := True;
 end;
