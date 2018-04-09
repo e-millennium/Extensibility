@@ -1261,9 +1261,49 @@ begin
     C.Execute('UPDATE SI_ORDENS_SERVICO SET STATUS = #IF(STATUS=1,2,5) WHERE ORDEM_SERVICO=:ORDEM_SERVICO;');
 end;
 
+procedure EntradaAutomatica(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
+var
+  C,L: IwtsCommand;
+  OS: IwtsWriteData;
+  Evento: Integer;
+begin
+  C := DataPool.Open('MILLENIUM');
+  L := DataPool.Open('MILLENIUM');
+
+  Evento := GetConfigSrv.ReadParamInt('SI_EVENTO_ENTRADA',-1);
+
+  C.Execute('SELECT OS.ORDEM_SERVICO '+
+            'FROM SI_ORDENS_SERVICO OS '+
+            'INNER JOIN CLIENTES C ON (C.CLIENTE = OS.CLIENTE) '+
+            'INNER JOIN SI_CLASSIFICACAO_CLIENTE CC ON (CC.CLASSIFICACAO_CLIENTE = C.CLSCLIENTE) '+
+            'WHERE OS.STATUS = 1 AND '+
+            '      OS.ERRO = FALSE AND '+
+            '      CC.ENTRADA_AUTOMATICA = TRUE '+
+            'ORDER BY OS.DATA_ABERTURA ');
+  OS := C.CreateRecordset;
+  OS.First;         
+  while not OS.EOF do
+  begin
+    try
+      C.Dim('EVENTO',Evento);
+      C.Dim('DOC_GENERICO',OS.GetFieldByName('ORDEM_SERVICO'));
+      C.Execute('#CALL MILLENIUM!FATURAMENTO_SRV.DOC_GENERICO.Faturar(EVENTO=:EVENTO,DOC_GENERICO=:DOC_GENERICO);')
+    except on e: Exception do
+      begin
+        L.Dim('ORDEM_SERVICO',OS.GetFieldByName('ORDEM_SERVICO'));
+        L.Dim('PROBLEMAS',e.Message);
+        L.Execute('UPDATE SI_ORDENS_SERVICO SET ERRO=TRUE,PROBLEMAS=:PROBLEMAS WHERE ORDEM_SERVICO=:ORDEM_SERVICO');
+      end;
+    end;                         
+    OS.Next;
+  end;
+end;
+
+
 initialization
    wtsRegisterProc('ORDENS_SERVICO.ReavaliarRelacionamentos',ReavaliarRelacionamentos);
    wtsRegisterProc('ORDENS_SERVICO.ListaEventosPorClassificaoCliente',ListaEventosPorClassificaoCliente);
+   wtsRegisterProc('ORDENS_SERVICO.EntradaAutomatica',EntradaAutomatica);
 
    wtsRegisterProc('ACER.ImportarArquivosXML',ImportarArquivosXML);
    wtsRegisterProc('ACER.ImportarOrdens',ImportarOrdens);
