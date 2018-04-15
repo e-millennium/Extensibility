@@ -1139,19 +1139,18 @@ begin
           Eventos.Add;
         end;
 
-        if QuantidadePecas > 0 then//Só existe faturamento de saida se tiver peças consumidas
+        if VarToBool(G.GetFieldByName('GARANTIA')) then
         begin
-          if VarToBool(G.GetFieldByName('GARANTIA')) then
+          Eventos.New;
+          Eventos.SetFieldByName('ITEM',EventoSaidaGarantia);
+          Eventos.Add;
+        end else
+        begin
+          Eventos.New;
+          Eventos.SetFieldByName('ITEM',EventoSaidaForaGarantia);
+          Eventos.Add;
+          if QuantidadePecas > 0 then//Só existe faturamento de saida se tiver peças consumidas
           begin
-            Eventos.New;
-            Eventos.SetFieldByName('ITEM',EventoSaidaGarantia);
-            Eventos.Add;
-          end else
-          begin
-            Eventos.New;
-            Eventos.SetFieldByName('ITEM',EventoSaidaForaGarantia);
-            Eventos.Add;
-
             Eventos.New;
             Eventos.SetFieldByName('ITEM',EventoRetornoConsignacao);
             Eventos.Add;
@@ -1178,23 +1177,23 @@ begin
         Eventos.Add;
       end;
 
-      if QuantidadePecas > 0 then//Só existe faturamento de saida se tiver peças consumidas
+      if VarToBool(OS.GetFieldByName('GARANTIA')) then
       begin
-        if VarToBool(OS.GetFieldByName('GARANTIA')) then
-        begin
-          Eventos.New;
-          Eventos.SetFieldByName('ITEM',EventoSaidaGarantia);
-          Eventos.Add;
-        end else
-        begin
-          Eventos.New;
-          Eventos.SetFieldByName('ITEM',EventoSaidaForaGarantia);
-          Eventos.Add;
+        Eventos.New;
+        Eventos.SetFieldByName('ITEM',EventoSaidaGarantia);
+        Eventos.Add;
+      end else
+      begin
+        Eventos.New;
+        Eventos.SetFieldByName('ITEM',EventoSaidaForaGarantia);
+        Eventos.Add;
 
+        if QuantidadePecas > 0 then//Só existe faturamento de saida se tiver peças consumidas
+        begin
           Eventos.New;
           Eventos.SetFieldByName('ITEM',EventoRetornoConsignacao);
           Eventos.Add;
-        end;
+        end;  
       end;
     end;
   end;
