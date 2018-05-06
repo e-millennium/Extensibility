@@ -1139,28 +1139,32 @@ begin
           Eventos.Add;
         end;
 
-        if VarToBool(G.GetFieldByName('GARANTIA')) then
+        //Só temos saida quanto há peças consumidas ou o não é eventos por cliente, pois a devolução sai na mesma nota
+        if (QuantidadePecas > 0) or (not EventoPorClassCliente) then
         begin
-          Eventos.New;
-          Eventos.SetFieldByName('ITEM',EventoSaidaGarantia);
-          Eventos.Add;
-        end else
-        begin
-          Eventos.New;
-          Eventos.SetFieldByName('ITEM',EventoSaidaForaGarantia);
-          Eventos.Add;
-          if QuantidadePecas > 0 then//Só existe faturamento de saida se tiver peças consumidas
+          if VarToBool(G.GetFieldByName('GARANTIA')) then
           begin
             Eventos.New;
-            Eventos.SetFieldByName('ITEM',EventoRetornoConsignacao);
+            Eventos.SetFieldByName('ITEM',EventoSaidaGarantia);
             Eventos.Add;
+          end else
+          begin
+            Eventos.New;
+            Eventos.SetFieldByName('ITEM',EventoSaidaForaGarantia);
+            Eventos.Add;
+            if QuantidadePecas > 0 then//Só existe faturamento de saida se tiver peças consumidas
+            begin
+              Eventos.New;
+              Eventos.SetFieldByName('ITEM',EventoRetornoConsignacao);
+              Eventos.Add;
+            end;
           end;
         end;
       end;
 
       G.Next;
     end;
-  end else
+  end else //POR O.S.
   begin
     if OS.GetFieldAsString('STATUS') = '1' then//AG. FATURAMENTO ENTRADA
     begin
@@ -1177,23 +1181,27 @@ begin
         Eventos.Add;
       end;
 
-      if VarToBool(OS.GetFieldByName('GARANTIA')) then
+      //Só temos saida quanto há peças consumidas ou o não é eventos por cliente, pois a devolução sai na mesma nota
+      if (QuantidadePecas > 0) or (not EventoPorClassCliente) then
       begin
-        Eventos.New;
-        Eventos.SetFieldByName('ITEM',EventoSaidaGarantia);
-        Eventos.Add;
-      end else
-      begin
-        Eventos.New;
-        Eventos.SetFieldByName('ITEM',EventoSaidaForaGarantia);
-        Eventos.Add;
-
-        if QuantidadePecas > 0 then//Só existe faturamento de saida se tiver peças consumidas
+        if VarToBool(OS.GetFieldByName('GARANTIA')) then
         begin
           Eventos.New;
-          Eventos.SetFieldByName('ITEM',EventoRetornoConsignacao);
+          Eventos.SetFieldByName('ITEM',EventoSaidaGarantia);
           Eventos.Add;
-        end;  
+        end else
+        begin
+          Eventos.New;
+          Eventos.SetFieldByName('ITEM',EventoSaidaForaGarantia);
+          Eventos.Add;
+
+          if QuantidadePecas > 0 then//Só existe faturamento de saida se tiver peças consumidas
+          begin
+            Eventos.New;
+            Eventos.SetFieldByName('ITEM',EventoRetornoConsignacao);
+            Eventos.Add;
+          end;
+        end;
       end;
     end;
   end;
@@ -1254,10 +1262,12 @@ begin
      //ListaEventosPorClassificaoCliente só retorna eventos que ainda não foram faturados
      C.Execute('#CALL MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.ListaEventosPorClassificaoCliente(ORDEM_SERVICO=:ORDEM_SERVICO,SOMENTE_NAO_USADO=TRUE)');
      PermitirAlterarStatus := C.EOF;
+     C.Execute('UPDATE SI_ORDENS_SERVICO SET SUB_STATUS = #IF(STATUS=1,0,1) WHERE ORDEM_SERVICO=:ORDEM_SERVICO;');
+     //SUB_STATUS 1: EM FATURAMENTO
   end;
 
   if PermitirAlterarStatus then
-    C.Execute('UPDATE SI_ORDENS_SERVICO SET STATUS = #IF(STATUS=1,2,5) WHERE ORDEM_SERVICO=:ORDEM_SERVICO;');
+    C.Execute('UPDATE SI_ORDENS_SERVICO SET STATUS = #IF(STATUS=1,2,5), SUB_STATUS=0 WHERE ORDEM_SERVICO=:ORDEM_SERVICO;');
 end;
 
 procedure EntradaAutomatica(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);

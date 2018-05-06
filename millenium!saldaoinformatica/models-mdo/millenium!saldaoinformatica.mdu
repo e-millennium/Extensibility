@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<root>
+  <cube>
+	<objects>
+	  <object fullname="si_ordens_servico" caption="Ordem Servico"/>	
+      <object fullname="data_entrada$data" caption="Data Entrada" />		
+	</objects>
+	
+    <relations>
+	  <relation left="si_ordens_servico$si_ordens_servico.data" right="data_entrada$data.data"/>
+      <relation left="si_ordens_servico$si_ordens_servico.CLIENTE" right="cliente$cliente.CLIENTE" cardinality="1-0"/>	  
+	  
+      <relation left="si_ordens_servico$si_ordens_servico.PRODUTO" right="produto$produto.PRODUTO"/>
+      <relation left="si_ordens_servico$si_ordens_servico.COR" right="cor$cor.COR"/>
+      <relation left="si_ordens_servico$si_ordens_servico.ESTAMPA" right="estampa$estampa.ESTAMPA"/>
+      <relation left="si_ordens_servicossi_ordens_servico.TAMANHO" right="tamanho$tamanho.TAMANHO"/>
+      <relation left="si_ordens_servico$si_ordens_servico.TAMANHO" right="tamanho_grade$tamanho_grade.TAMANHO"/>
+      <relation left="si_ordens_servico$si_ordens_servico.PRODUTO" right="tamanho_grade$tamanho_grade.PRODUTO"/>		  
+	  
+      <relation left="si_ordens_servico$si_ordens_servico.cod_operacao" right="movimento$movimento.cod_operacao" cardinality="N-1"/>
+      <relation left="si_ordens_servico$si_ordens_servico.tipo_operacao" right="movimento$movimento.tipo_operacao" cardinality="N-1"/>  	  
+	</relations>  
+	
+	<perspectives>
+		 <perspective name="saldao_informatica" caption="Saldao Informatica" >
+			<items>
+				<dimension name="si_ordens_servico"/>
+	
+				<measure name="preco" expression="avg(si_ordens_servico.preco)" caption="Preco"/>	
+				<measure name="quantidade" expression="sum(si_ordens_servico.quantidade)" caption="Quantidadade"/>	
+				
+				<measure name="qtd_equipamentos" expression="sum(si_ordens_servico.quantidade){f:equipamento='T'}" caption="Quantidade Equipamentos"/>		
+				<measure name="qtd_pecas" expression="sum(si_ordens_servico.quantidade){f:equipamento='F'}" caption="Quantidade Pecas"/>						
+			</items>
+		 </perspective>
+	</perspectives>	
+	
+  </cube>
+</root>

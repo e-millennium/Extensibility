@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<root>
+  <fact>
+    <tables>
+      <table name="si_ordens_servico"/>
+      <table name="si_ordens_servico_produtos"/>
+      <table name="si_ordens_servico_nfs"/>	  
+    </tables>
+	
+    <relations>
+      <relation cardinality="N-1">
+        <condition connector="" left="si_ordens_servico_produtos.ordem_servico" right="si_ordens_servico.ordem_servico"/>
+      </relation>
+      <relation cardinality="N-1">
+        <condition connector="" left="si_ordens_servico_nfs.ordem_servico" right="si_ordens_servico.ordem_servico"/>
+      </relation>	  
+    </relations>
+	
+    <attributes>
+	
+      <level name="si_ordens_servico" main="1" caption="Ordem Servico" tablename="si_ordens_servico" keyattribute="ordem_servico" codeattribute="cod_ordem_servico" displayattribute="cod_ordem_servico">
+        <attribute name="ordem_servico"/>
+        <attribute name="cod_ordem_servico" degenerate="1" caption="Codigo" cangroup="1"/>
+		<attribute name="data_abertura" degenerate="1" caption="Data Abertura" cangroup="1"/>
+		<attribute name="cliente" cangroup="1"/>
+		<attribute name="garantia" degenerate="1" datatype="Boolean" caption="Garantia"/>
+		<attribute name="observacao" degenerate="1" caption="Observacoes" cangroup="1"/>
+		<attribute name="grupo" degenerate="1" caption="Grupo" cangroup="1"/>
+		<attribute name="status" degenerate="1" caption="Status" fieldname="cast(#translate($.status,1:'AG. FATURAMENTO ENTRADA',2:'AG. REPARO',3:'EM REPARO',4:'AG. FATURAMENTO',5:'FINALIZADO',else:'Status Desconhecido') as varchar(20))" cangroup="1" datatype="string" datasize="20"/>
+		<attribute name="erro" degenerate="1" datatype="Boolean" caption="Erro"/>
+		<attribute name="problemas" degenerate="1" caption="Problemas"/>
+		<attribute name="origem" degenerate="1" caption="Origem"/>
+		<attribute name="permitir_editar_fat"/>
+		<attribute name="sub_status"/>
+      </level>
+	  
+      <level name="produtos" tablename="si_ordens_servico_produtos" caption="Produtos">
+        <attribute name="ordens_servico_produto"/>
+        <attribute name="ordem_servico"/>
+        <attribute name="produto"/>
+        <attribute name="cor"/>
+        <attribute name="estampa"/>
+        <attribute name="tamanho"/>
+        <attribute name="numero_produto" degenerate="1" caption="Numero Produto"/>
+        <attribute name="quantidade"/>
+        <attribute name="numero_serie" degenerate="1" caption="Numero Serie"/>
+        <attribute name="preco"/>
+        <attribute name="equipamento" degenerate="1" datatype="Boolean" caption="Equipamento" cangroup="1"/>
+        <attribute name="data" degenerate="1" caption="Data"/>	
+        <attribute name="estoque_origem" degenerate="1" caption="Estoque Origem"/>
+		<attribute name="estoque_destino" degenerate="1" caption="Estoque Destino"/>
+      </level>	  
+	  
+      <level name="nfs" tablename="si_ordens_servico_nfs" caption="Notas Fiscais">
+        <attribute name="ordem_servico_nf"/>
+        <attribute name="ordem_servico"/>
+        <attribute name="tipo_operacao"/>
+        <attribute name="cod_operacao"/>
+      </level>	 	  
+	  
+    </attributes>
+  </fact>
+</root>
+
+
