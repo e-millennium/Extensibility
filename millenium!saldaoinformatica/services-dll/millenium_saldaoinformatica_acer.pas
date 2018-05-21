@@ -1081,9 +1081,9 @@ begin
     C.Dim('GRUPO',Grupo);
     C.Execute('SELECT OS.GARANTIA, '+
               '       OS.STATUS, '+
-              '       (SELECT SUM(P.QUANTIDADE) '+
+              '       SUM((SELECT SUM(COALESCE(P.QUANTIDADE,0)) '+
               '        FROM SI_ORDENS_SERVICO_PRODUTOS P '+
-              '        WHERE P.ORDEM_SERVICO = OS.ORDEM_SERVICO AND P.EQUIPAMENTO = FALSE) AS QUANTIDADE_PECAS '+
+              '        WHERE P.ORDEM_SERVICO = OS.ORDEM_SERVICO AND P.EQUIPAMENTO = FALSE)) AS QUANTIDADE_PECAS '+
               'FROM SI_ORDENS_SERVICO OS '+
               'WHERE OS.GRUPO=:GRUPO  '+//AND '+'      OS.STATUS IN (1,4)
               'GROUP BY OS.GARANTIA,OS.STATUS');
