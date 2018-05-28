@@ -1,0 +1,190 @@
+unit TransparentPanel;
+
+interface
+
+uses
+  GDIPAPI,GDIPOBJ,Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls,Background,DOM;
+
+type
+  TTransparentPanel = class(TPanel)
+  private
+    FTransparent: Integer;
+    FPartialDraw: Boolean;
+    FShadow: Boolean;
+    procedure SetFTransparent(const Value: Integer);
+    procedure SetPartialDraw(const Value: Boolean);
+    procedure SetShadow(const Value: Boolean);
+  protected
+    procedure Paint;override;
+  public
+    constructor Create(AOwner: TComponent); override;
+  published
+    property Transparent: Integer read FTransparent write SetFTransparent;
+    property PartialDraw: Boolean read FPartialDraw write SetPartialDraw;
+    property Shadow: Boolean read FShadow write SetShadow;
+  end;
+
+procedure Register;
+
+implementation
+
+{ TTransparentPanel }
+
+function DRToR(const R:TRect):DOMRect;
+begin
+     Result.left := r.Left;
+     Result.top :=  r.Top;
+     Result.width :=  r.Right;
+     Result.height :=  r.Bottom;
+end;
+
+
+procedure ShadowRect(Canvas: TGPGraphics; const Rect: DOMRect);
+const
+  opacity = 50;
+var
+  b: TGPBrush;
+  r: gdipapi.TRect;
+begin
+  //--vert shadow
+  r := MakeRect(Rect.Left, Rect.Top + 2, 2, Rect.Height div 2 - 2);
+
+  {b := TGPLinearGradientBrush.Create(r, MakeColor(0, 0), MakeColor(opacity, clRed), LinearGradientModeVertical);
+  Canvas.FillRectangle(b, r);
+  b.Free;
+
+  Inc(r.Y, Rect.Height div 2 - 2);
+
+  b := TGPLinearGradientBrush.Create(r, MakeColor(opacity, clRed), MakeColor(0, 0), LinearGradientModeVertical);
+  Canvas.FillRectangle(b, r);
+  b.Free;
+
+  r := MakeRect(Rect.Left + Rect.Width - 2, Rect.Top + 2, 2, Rect.Height div 2 - 2);
+
+  b := TGPLinearGradientBrush.Create(r, MakeColor(0, 0), MakeColor(opacity, clRed), LinearGradientModeVertical);
+  Canvas.FillRectangle(b, r);
+  b.Free;
+
+  Inc(r.Y, Rect.Height div 2 - 2);}
+
+  r := MakeRect(Rect.Left + Rect.Width - 2, Rect.Top, 2, Rect.Height-2);
+
+  b := TGPLinearGradientBrush.Create(r, MakeColor(20, clGray), MakeColor(20, clblack), LinearGradientModeVertical);
+  Canvas.FillRectangle(b, r);
+  b.Free;
+
+  //--horz shadow
+  //r := MakeRect(Rect.Left + 2, Rect.Top, Rect.Width div 2 - 2, 2);
+
+  //b := TGPLinearGradientBrush.Create(r, MakeColor(0, 0), MakeColor(opacity, clBlack), LinearGradientModeHorizontal);
+  //Canvas.FillRectangle(b, r);
+  //b.Free;
+
+  //Inc(r.X, Rect.Width div 2 - 2);
+                                                   
+  //b := TGPLinearGradientBrush.Create(r, MakeColor(opacity, clBlack), MakeColor(0, 0), LinearGradientModeHorizontal);
+  //Canvas.FillRectangle(b, r);
+  //b.Free;
+
+  r := MakeRect(Rect.Left, Rect.Height - 2, Rect.Width, 2);
+
+  b := TGPLinearGradientBrush.Create(r, MakeColor(20, clGray), MakeColor(20, clBlack), LinearGradientModeHorizontal);
+  Canvas.FillRectangle(b, r);
+  b.Free;
+
+  Inc(r.X, Rect.Width div 2 );
+
+//  b := TGPLinearGradientBrush.Create(r, MakeColor(opacity, clRed), MakeColor(0, 0), LinearGradientModeHorizontal);
+//  Canvas.FillRectangle(b, r);
+//  b.Free;
+end;
+
+
+function CreateBorderPath(X, Y, width, height, radius: Single): TGPGraphicsPath;
+var
+  gp: TGPGraphicsPath;
+begin
+  gp := TGPGraphicsPath.Create;
+
+  gp.AddLine(X + radius, Y, X + width - (radius * 2), Y);
+
+  gp.AddArc(X + width - (radius * 2), Y, radius * 2, radius * 2, 270, 90);
+
+  gp.AddLine(X + width, Y + radius * 2, X + width, Y + height);
+
+  gp.AddLine(X, Y + height, X, Y + radius);
+
+  gp.AddArc(X, Y, radius * 2, radius * 2, 180, 90);
+
+  gp.CloseFigure();
+
+  Result := gp;
+end;
+
+constructor TTransparentPanel.Create(AOwner: TComponent);
+begin
+  inherited;
+  FPartialDraw := True;
+end;
+
+procedure TTransparentPanel.Paint;
+var
+  R: TRect;
+  P: TPoint;
+  g: TGPGraphics;
+  gb: TGPSolidBrush;
+  pr: gdipapi.TRect;
+  pth:TGPGraphicsPath;
+  gp: TGPPen;
+  DC:Integer;
+  function RToScreen(const r:TRect):TRect;
+  begin
+    Result.TopLeft := ClientToScreen(r.TopLeft);
+    Result.BottomRight := ClientToScreen (r.BottomRight);
+  end;
+begin
+  DC := SaveDC(Canvas.Handle);
+  R := ClientRect;
+  if PartialDraw then
+    R := RToScreen(ClientRect);
+  DrawBackground(Canvas.Handle,R);
+
+  R := ClientRect;
+  g := TGPGraphics.Create(Canvas.Handle);
+  gb := TGPSolidBrush.Create(MakeColor(FTransparent, Color));
+  pr := gdipapi.TRect(r);
+  g.FillRectangle(gb, pr);
+  gb.Free;
+
+  if FShadow then
+    ShadowRect(g,DRToR(r));
+
+  g.Free;
+  RestoreDC(Canvas.Handle,DC);
+end;
+
+procedure Register;
+begin
+  RegisterComponents('Standard', [TTransparentPanel]);
+end;
+
+procedure TTransparentPanel.SetFTransparent(const Value: Integer);
+begin
+  FTransparent := Value;
+  Invalidate;
+end;
+
+procedure TTransparentPanel.SetPartialDraw(const Value: Boolean);
+begin
+  FPartialDraw := Value;
+  Invalidate;
+end;
+
+procedure TTransparentPanel.SetShadow(const Value: Boolean);
+begin
+  FShadow := Value;
+  Invalidate;
+end;
+
+end.
