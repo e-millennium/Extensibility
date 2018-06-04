@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="TERMINAL">
+    <METHOD NAME="CORES" DESCRIPTION="" VERSION="3" INTFTYPE="9" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="COR" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" FIELDLABEL="Cor" CTAB="0"/>
+        <PARAM NAME="DESCRICAO" SIZE="60" FLAGS="1" PROJECTION="0" FIELDLABEL="Descricao" CTAB="0"/>
+        <PARAM NAME="ATIVO" SIZE="1" FLAGS="1" PROJECTION="0" FIELDLABEL="Ativo" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

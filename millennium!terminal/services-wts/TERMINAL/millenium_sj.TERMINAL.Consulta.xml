@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="TERMINAL">
+    <METHOD NAME="Consulta" DESCRIPTION="" VERSION="79" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="COD_PRODUTO" SIZE="20" FLAGS="1" PROJECTION="0" FIELDLABEL="Cod Produto" CTAB="0"/>
+        <PARAM NAME="FILIAL" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" FIELDLABEL="Filial" CTAB="0"/>
+        <PARAM NAME="TABELA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" FIELDLABEL="Tabela" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="COD_PROD" SIZE="20" FLAGS="1" PROJECTION="0" FIELDLABEL="Cod Produto" CTAB="0"/>
+        <FIELD NAME="DESC_PROD" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Descricao" CTAB="0"/>
+        <FIELD NAME="PRECO_MEDIO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" FIELDLABEL="Preco Medio" CTAB="0"/>
+        <FIELD NAME="CORES" FORMAT="R" FLAGS="1" PROJECTION="0" FIELDLABEL="Cores" NESTEDNAME="millenium_sj.TERMINAL.CORES" CTAB="0"/>
+        <FIELD NAME="TAMANHOS" FORMAT="R" FLAGS="1" PROJECTION="0" FIELDLABEL="Tamanhos" NESTEDNAME="millenium_sj.TERMINAL.TAMANHOS" CTAB="0"/>
+        <FIELD NAME="ESTOQUES" FORMAT="R" FLAGS="1" PROJECTION="0" FIELDLABEL="Estoques" NESTEDNAME="millenium_sj.TERMINAL.ESTOQUES" CTAB="0"/>
+        <FIELD NAME="OBS_PROD" FLAGS="1" PROJECTION="0" FIELDLABEL="Obs Prod" CTAB="0"/>
+        <FIELD NAME="STATUS_PROD" SIZE="50" FLAGS="1" PROJECTION="0" FIELDLABEL="Status Prod" CTAB="0"/>
+        <FIELD NAME="URL_PRODUTO" SIZE="200" FLAGS="1" PROJECTION="0" FIELDLABEL="Url Produto" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT:P
+      PRO.PRODUTO,
+      PRO.COD_PRODUTO AS COD_PROD,
+      PRO.DESCRICAO1 AS DESC_PROD,
+      PRO.OBS AS OBS_PROD,
+      PRO.URL_PRODUTO,
+      SP.DESCRICAO AS STATUS_PROD,
+      AVG(PRE.PRECO) AS PRECO_MEDIO
+      
+      #ROWSET({SELECT:CORES
+                      C.COR,
+                      C.DESCRICAO,
+                      CP.ATIVO,
+                       SUM(E.SALDO)
+               FROM PRODUTOS P
+               INNER JOIN COR_PROD CP ON (CP.PRODUTO = P.PRODUTO)
+               INNER JOIN CORES C ON (C.COR = CP.COR)
+               LEFT JOIN ESTOQUES E ON (E.PRODUTO = P.PRODUTO) AND
+                                       (E.COR = C.COR) AND
+                                       (E.FILIAL=:FILIAL)
+               WHERE
+                    P.PRODUTO = :P.PRODUTO
+               GROUP BY C.COR,C.DESCRICAO,CP.ATIVO
+               ORDER BY SUM(E.SALDO) DESC,C.DESCRICAO})
+                        
+      #ROWSET({SELECT:TAMANHOS
+                      T.TAMANHO,
+                      SUM(E.SALDO)
+               FROM PRODUTOS P
+               INNER JOIN GRADES G ON (G.GRADE = P.GRADE)
+               INNER JOIN TAMANHOS T ON (T.GRADE = G.GRADE)
+               LEFT JOIN ESTOQUES E ON (E.PRODUTO = P.PRODUTO) AND
+                                       (E.TAMANHO = T.TAMANHO) AND
+                                       (E.FILIAL=:FILIAL)
+               WHERE
+                    P.PRODUTO = :P.PRODUTO
+               GROUP BY T.TAMANHO
+               ORDER BY SUM(E.SALDO) DESC,T.CTAMANHO})
+               
+      #ROWSET({SELECT:ESTOQUES
+                      C.DESCRICAO AS COR,
+                      E.TAMANHO,
+                      SUM(E.SALDO) AS ESTOQUE
+               FROM ESTOQUES E
+               INNER JOIN CORES C ON (C.COR = E.COR)
+               WHERE
+                    E.PRODUTO = :P.PRODUTO AND
+                    E.FILIAL =:FILIAL
+               GROUP BY C.DESCRICAO, E.TAMANHO})
+                        
+FROM PRODUTOS PRO
+LEFT JOIN PRECOS PRE ON (PRO.PRODUTO = PRE.PRODUTO) AND
+                        (PRE.TABELA =:TABELA)
+LEFT JOIN STATUS_PRODUTO SP ON (SP.STATUS_PRODUTO = PRO.STATUS)
+WHERE
+     (PRO.TIPO_PROD = 'AC') AND
+     ((PRO.COD_PRODUTO =:COD_PRODUTO OR PRO.REFERENCIA LIKE :COD_PRODUTO||'%') OR
+       EXISTS(SELECT 1 FROM CODIGO_BARRAS CB WHERE (CB.PRODUTO = PRO.PRODUTO) AND (CB.BARRA =:COD_PRODUTO)))
+GROUP BY
+         PRO.PRODUTO,
+         PRO.COD_PRODUTO,
+         PRO.DESCRICAO1,
+         PRO.URL_PRODUTO,
+         PRO.OBS,
+         SP.DESCRICAO
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

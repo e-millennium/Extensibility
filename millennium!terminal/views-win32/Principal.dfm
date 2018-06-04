@@ -1,10 +1,10 @@
 object FTerminal: TFTerminal
-  Left = -8
-  Top = -8
+  Left = 260
+  Top = 21
   BorderStyle = bsNone
   Caption = 'Terminal Consulta'
-  ClientHeight = 705
-  ClientWidth = 1366
+  ClientHeight = 543
+  ClientWidth = 957
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -23,8 +23,8 @@ object FTerminal: TFTerminal
   object pnlBkd: TTransparentPanel
     Left = 0
     Top = 0
-    Width = 1366
-    Height = 705
+    Width = 957
+    Height = 543
     Align = alClient
     Caption = 'pnlBkd'
     Color = clWhite
@@ -35,20 +35,20 @@ object FTerminal: TFTerminal
     object pnlDadosProd: TTransparentPanel
       Left = 15
       Top = 15
-      Width = 1346
+      Width = 937
       Height = 300
       Anchors = [akLeft, akTop, akRight]
       Caption = 'pnlDadosProd'
       Color = clTeal
       TabOrder = 0
-      Transparent = 100
+      Transparent = 0
       PartialDraw = True
       Shadow = True
       object TransparentPanel2: TTransparentPanel
         Left = 289
         Top = 1
-        Width = 1056
-        Height = 223
+        Width = 647
+        Height = 204
         Align = alClient
         Caption = 'TransparentPanel2'
         Color = clTeal
@@ -58,8 +58,8 @@ object FTerminal: TFTerminal
         Shadow = False
         object lblDescricaoProduto: TLabel
           Left = 1
-          Top = 74
-          Width = 1054
+          Top = 55
+          Width = 645
           Height = 148
           Align = alBottom
           AutoSize = False
@@ -67,7 +67,7 @@ object FTerminal: TFTerminal
           Color = 16744448
           Font.Charset = ANSI_CHARSET
           Font.Color = clWhite
-          Font.Height = -48
+          Font.Height = -45
           Font.Name = 'Segoe UI'
           Font.Style = [fsBold]
           ParentColor = False
@@ -78,8 +78,8 @@ object FTerminal: TFTerminal
         end
         object lblCodigoProduto: TLabel
           Left = 1
-          Top = 40
-          Width = 1054
+          Top = 21
+          Width = 645
           Height = 34
           Align = alBottom
           AutoSize = False
@@ -95,8 +95,8 @@ object FTerminal: TFTerminal
         end
         object lblCodigoDigitado: TLabel
           Left = 1
-          Top = -20
-          Width = 1054
+          Top = -39
+          Width = 645
           Height = 60
           Align = alBottom
           Alignment = taCenter
@@ -109,10 +109,10 @@ object FTerminal: TFTerminal
           Font.Style = [fsBold]
           ParentFont = False
           Transparent = True
-          Layout = tlCenter
+          Layout = tlBottom
         end
         object lblAlerta: TProEffectImage
-          Left = 985
+          Left = 576
           Top = 8
           Width = 64
           Height = 64
@@ -237,7 +237,7 @@ object FTerminal: TFTerminal
         Left = 1
         Top = 1
         Width = 288
-        Height = 223
+        Height = 204
         Align = alLeft
         Caption = 'TransparentPanel2'
         Color = clTeal
@@ -248,8 +248,8 @@ object FTerminal: TFTerminal
       end
       object TransparentPanel4: TTransparentPanel
         Left = 1
-        Top = 224
-        Width = 1344
+        Top = 205
+        Width = 935
         Height = 75
         Align = alBottom
         Caption = 'TransparentPanel4'
@@ -259,9 +259,9 @@ object FTerminal: TFTerminal
         PartialDraw = True
         Shadow = False
         object lblPrecoProduto: TLabel
-          Left = 993
+          Left = 552
           Top = 1
-          Width = 350
+          Width = 382
           Height = 73
           Align = alRight
           Alignment = taRightJustify
@@ -279,25 +279,76 @@ object FTerminal: TFTerminal
         object lblObs: TLabel
           Left = 1
           Top = 1
-          Width = 992
+          Width = 551
           Height = 73
           Align = alClient
           Caption = 'lblObs'
           Font.Charset = ANSI_CHARSET
           Font.Color = clWindowText
           Font.Height = -16
-          Font.Name = 'Segoe UI Semibold'
-          Font.Style = [fsBold, fsItalic]
+          Font.Name = 'Segoe UI'
+          Font.Style = []
           ParentFont = False
           Transparent = True
           WordWrap = True
         end
       end
+      object TransparentPanel5: TTransparentPanel
+        Left = 1
+        Top = 280
+        Width = 935
+        Height = 19
+        Align = alBottom
+        Caption = 'TransparentPanel5'
+        Color = clTeal
+        TabOrder = 3
+        Transparent = 0
+        PartialDraw = True
+        Shadow = False
+        object lblURLProd: TLabel
+          Left = 1
+          Top = 1
+          Width = 65
+          Height = 17
+          Cursor = crHandPoint
+          Align = alLeft
+          Caption = 'lblURLProd'
+          DragCursor = crHandPoint
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWhite
+          Font.Height = -13
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsUnderline]
+          ParentFont = False
+          Transparent = True
+          WordWrap = True
+          OnDblClick = lblURLProdDblClick
+        end
+        object lblURLApp: TLabel
+          Left = 873
+          Top = 1
+          Width = 61
+          Height = 17
+          Cursor = crHandPoint
+          Align = alRight
+          Caption = 'lblURLApp'
+          DragCursor = crHandPoint
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWhite
+          Font.Height = -13
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsUnderline]
+          ParentFont = False
+          Transparent = True
+          WordWrap = True
+          OnDblClick = lblURLAppDblClick
+        end
+      end
     end
     object TransparentPanel1: TTransparentPanel
       Left = 1
-      Top = 686
-      Width = 1364
+      Top = 524
+      Width = 955
       Height = 18
       Align = alBottom
       Caption = 'TransparentPanel1'
@@ -306,9 +357,9 @@ object FTerminal: TFTerminal
       PartialDraw = True
       Shadow = False
       object lblData: TLabel
-        Left = 1153
+        Left = 915
         Top = 1
-        Width = 210
+        Width = 39
         Height = 16
         Align = alRight
         Alignment = taRightJustify

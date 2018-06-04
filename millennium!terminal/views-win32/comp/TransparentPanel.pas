@@ -4,9 +4,13 @@ interface
 
 uses
   GDIPAPI,GDIPOBJ,Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls,Background,DOM;
+  ExtCtrls,Background;
 
 type
+   DOMRect=record
+         left,top,width,height:Integer;
+   end;
+
   TTransparentPanel = class(TPanel)
   private
     FTransparent: Integer;

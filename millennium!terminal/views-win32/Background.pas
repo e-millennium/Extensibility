@@ -3,7 +3,7 @@ unit Background;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
   StdCtrls, ExtCtrls;
 
   procedure DrawBackground(DC: HDC; const ARect: TRect);

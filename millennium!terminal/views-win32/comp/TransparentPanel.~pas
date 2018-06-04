@@ -4,9 +4,13 @@ interface
 
 uses
   GDIPAPI,GDIPOBJ,Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls,Background,DOM;
+  ExtCtrls,Background;
 
 type
+   DOMRect=record
+         left,top,width,height:Integer;
+   end;
+
   TTransparentPanel = class(TPanel)
   private
     FTransparent: Integer;
@@ -151,6 +155,7 @@ begin
   DrawBackground(Canvas.Handle,R);
 
   R := ClientRect;
+  InflateRect(R,1,1);
   g := TGPGraphics.Create(Canvas.Handle);
   gb := TGPSolidBrush.Create(MakeColor(FTransparent, Color));
   pr := gdipapi.TRect(r);

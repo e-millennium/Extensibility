@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="TERMINAL">
+    <METHOD NAME="ConsultaTabela" DESCRIPTION="" VERSION="2" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="TABELA" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Tabela" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="DESCRICAO" SIZE="25" FLAGS="1" PROJECTION="0" FIELDLABEL="Descricao" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT DESCRICAO FROM TABELAS_PRECO
+WHERE TABELA =:TABELA
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

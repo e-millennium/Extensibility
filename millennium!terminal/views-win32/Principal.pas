@@ -6,7 +6,7 @@ uses
   GDIPAPI,GDIPOBJ,Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, wtsPainter, dmPanel, wtsClient, wtsStream, IniFiles, ExtCtrls,
   Buttons,TransparentPanel, OleCtrls, SHDocVw, PngImage, ProEffectImage,
-  Grids;
+  Grids, ShellAPI;
 
 type
   TCor = class
@@ -70,18 +70,24 @@ type
     lblPrecoProduto: TLabel;
     lblObs: TLabel;
     lblAlerta: TProEffectImage;
+    TransparentPanel5: TTransparentPanel;
+    lblURLProd: TLabel;
+    lblURLApp: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure lblURLAppDblClick(Sender: TObject);
+    procedure lblURLProdDblClick(Sender: TObject);
   private
     { Private declarations }
     FCodigoProduto: string;
     FDescStatusAlerta: string;
     FFilial: Integer;
     FTabela: Integer;
+    FAlturaPainel: Integer;
     FMotraEstqoue: Boolean;
     FGrade: TGradeView;
     procedure ConsultarProduto(const ACodigoProduto: string);
@@ -267,6 +273,7 @@ begin
       lblDescricaoProduto.Caption := VarToStr(Produto.FieldValuesByName['DESC_PROD']);
       lblPrecoProduto.Caption := FormatFloat('R$ 0.00, ',VarToFloat(Produto.FieldValuesByName['PRECO_MEDIO']));
       lblObs.Caption := VarToStr(Produto.FieldValuesByName['OBS_PROD']);
+      lblURLProd.Caption :=  LowerCase(VarToStr(Produto.FieldValuesByName['URL_PRODUTO']));
       lblAlerta.Visible := SameText(VarToStr(Produto.FieldValuesByName['STATUS_PROD']),FDescStatusAlerta);
       Cores := Produto.CreateFieldRecordset('CORES');
       Tamanhos := Produto.CreateFieldRecordset('TAMANHOS');
@@ -278,6 +285,7 @@ begin
       lblDescricaoProduto.Caption := '';
       lblPrecoProduto.Caption := '';
       lblObs.Caption := '';
+      lblURLProd.Caption := '';
       lblAlerta.Visible := False;
       FGrade.Clear;
     end;
@@ -297,12 +305,16 @@ begin
   lblDescricaoProduto.Caption := '';
   lblPrecoProduto.Caption := '';
   lblObs.Caption := '';
+  lblURLProd.Caption := '';
   Ini := TIniFile.Create(ExtractFilePath(ParamStr(0))+'Terminal.ini');
   try
     FFilial := Ini.ReadInteger('config','filial',MaxInt);
     FTabela := Ini.ReadInteger('config','tabela',MaxInt);
     FMotraEstqoue := Ini.ReadBool('config','mostrar_estoque',False);
+    FAlturaPainel := Ini.ReadInteger('config','altura',300);
+    lblURLProd.Visible := Ini.ReadBool('config','mostrar_url_produto',False);
     FDescStatusAlerta := Ini.ReadString('config','status_alerta','');
+    lblURLApp.Caption := Ini.ReadString('config','url_app','');
   finally
     Ini.Free;
   end;
@@ -371,13 +383,14 @@ begin
   pnlDadosProd.Top := Margin;
   pnlDadosProd.Left := Margin;
   pnlDadosProd.Width := Screen.Width-(Margin*2);
-  pnlDadosProd.Height := 300;
+  pnlDadosProd.Height := FAlturaPainel;
 
   FGrade.Align := alNone;
   FGrade.Top := Margin+pnlDadosProd.Height+Margin;
   FGrade.Left := Margin;
   FGrade.Width := Screen.Width-(Margin*2);
   FGrade.Height := Screen.Height-(Margin*2)-pnlDadosProd.Height-Margin;
+  FGrade.Shadow := False;
 end;
 
 
@@ -397,7 +410,7 @@ var
   DCSaved: Integer;
 const
   CHeigthLine: Integer = 35;
-  CColumnWithDescription: Integer = 300;
+  CColumnWithDescription: Integer = 400;
 begin
   inherited;
   if FTamanhos.Count = 0 then
@@ -463,6 +476,17 @@ end;
 procedure TFTerminal.FormShow(Sender: TObject);
 begin
   Self.SetFocus;
+end;
+
+procedure TFTerminal.lblURLAppDblClick(Sender: TObject);
+begin
+  ShellExecute(handle, 'open', PChar(lblURLApp.Caption), nil, nil, SW_SHOWNORMAL);
+end;
+
+procedure TFTerminal.lblURLProdDblClick(Sender: TObject);
+begin
+  ShellExecute(handle, 'open', PChar(lblURLProd.Caption), nil, nil, SW_SHOWNORMAL);
+
 end;
 
 end.

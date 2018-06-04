@@ -24,12 +24,9 @@ package Install;
 {$IMAGEBASE $400000}
 {$IMPLICITBUILD OFF}
 
-requires
-  vcl50,
-  LittlePack;
-
 contains
   TransparentPanel in 'TransparentPanel.pas',
-  Background in '..\Background.pas';
+  Background in '..\Background.pas',
+  PngComponentsRegister in 'Z:\pngimage\PngComponentsRegister.pas';
 
 end.
