@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PEDIDO_VENDA">
+    <METHOD NAME="PEDIDO_VENDA" DESCRIPTION="" VERSION="1" INTFTYPE="9" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="COD_PEDIDOV" SIZE="20" FLAGS="1" PROJECTION="0" HINT="N&#250;mero do Pedido de Venda" FIELDLABEL="Cod Pedidov" CTAB="0"/>
+        <PARAM NAME="N_PEDIDO_CLIENTE" SIZE="50" FLAGS="1" PROJECTION="0" HINT="N&#250;mero do Pedido do Cliente" FIELDLABEL="N Pedido Cliente" CTAB="0"/>
+        <PARAM NAME="NUMERO" SIZE="15" FLAGS="1" PROJECTION="0" HINT="N&#250;mero do Pr&#233;-Faturamento" FIELDLABEL="Numero" CTAB="0"/>
+        <PARAM NAME="TIPO_PEDIDO_DESC" SIZE="30" FLAGS="1" PROJECTION="0" HINT="Tipo de Pedido (Descri&#231;&#227;o)" FIELDLABEL="Tipo Pedido Desc" CTAB="0"/>
+        <PARAM NAME="DATA_EMISSAO" SIZE="20" FLAGS="1" PROJECTION="0" HINT="Data Emiss&#227;o" FIELDLABEL="Data Emissao" CTAB="0"/>
+        <PARAM NAME="DATA_ENTREGA" SIZE="20" FLAGS="1" PROJECTION="0" HINT="Data entrega" FIELDLABEL="Data Entrega" CTAB="0"/>
+        <PARAM NAME="MODALIDADE_FRETE" SIZE="1" FLAGS="1" PROJECTION="0" HINT="Modalidade de frete.&lt;br>0-Emitente;&lt;br>1-Dest/Rem;&lt;br>2-Terceiros;&lt;br>9-Sem Frete;&lt;br>5-Emitente (soma Frete)" FIELDLABEL="Modalidade Frete" CTAB="0"/>
+        <PARAM NAME="TRANSPORTADORA_DESC" SIZE="120" FLAGS="1" PROJECTION="0" HINT="Transportadora (Nome)" FIELDLABEL="Transportadora Desc" CTAB="0"/>
+        <PARAM NAME="TIPO_FRETE_DESC" SIZE="30" FLAGS="1" PROJECTION="0" HINT="Tipo de Frete(Descri&#231;&#227;o)" FIELDLABEL="Tipo Frete Desc" CTAB="0"/>
+        <PARAM NAME="VALOR_FRETE" FORMAT="N" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" HINT="Valor do Frete" FIELDLABEL="Valor Frete" CTAB="0"/>
+        <PARAM NAME="PERCENTUAL_DESCONTO" FORMAT="N" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" HINT="Percentual Desconto" FIELDLABEL="Percentual Desconto" CTAB="0"/>
+        <PARAM NAME="PERCENTUAL_ACRESCIMO" FORMAT="N" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" HINT="Percentual Acr&#233;scimo" FIELDLABEL="Percentual Acrescimo" CTAB="0"/>
+        <PARAM NAME="VALOR_TOTAL" FORMAT="N" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" HINT="Valor Total (Soma dos Totais dos Produto - Desconto)" FIELDLABEL="Valor Total" CTAB="0"/>
+        <PARAM NAME="LANCAMENTOS" FORMAT="R" FLAGS="1" PROJECTION="0" HINT="Lan&#231;amentos" FIELDLABEL="Lancamentos" NESTEDNAME="millenium!mormaiimkt.PEDIDO_VENDA.LANCAMENTOS" CTAB="0"/>
+        <PARAM NAME="PRODUTOS" FORMAT="R" FLAGS="1" PROJECTION="0" HINT="Produtos" FIELDLABEL="Produtos" NESTEDNAME="millenium!mormaiimkt.PEDIDO_VENDA.PRODUTOS" CTAB="0"/>
+        <PARAM NAME="CLIENTES" FORMAT="R" FLAGS="1" PROJECTION="0" HINT="Clientes" FIELDLABEL="Clientes" NESTEDNAME="millenium!mormaiimkt.PEDIDO_VENDA.CLIENTES" CTAB="0"/>
+        <PARAM NAME="ENDERECO_ENTREGA" FORMAT="R" FLAGS="1" PROJECTION="0" HINT="Endere&#231;o de entrega do pedido" FIELDLABEL="Endereco Entrega" NESTEDNAME="millenium!mormaiimkt.PEDIDO_VENDA.ENDERECOS" CTAB="0"/>
+        <PARAM NAME="VALOR_DESCONTO" FORMAT="N" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" HINT="Valor do desconto do Pedido" FIELDLABEL="Valor Desconto" CTAB="0"/>
+        <PARAM NAME="APROVADO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" HINT="Pedido de venda est&#225; Aprovado" FIELDLABEL="Aprovado" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

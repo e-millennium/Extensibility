@@ -1,0 +1,12 @@
+library millennium_mormaiimkt;
+
+uses
+  wtsmemorym_intf,
+  wtsServerObjs;
+
+exports
+    wtsLibEntry,
+    wtsLibShutdown;
+
+begin
+end.

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2018/06/24 17:46:38.346.dproj,C:\Users\Flavio\Documents\RAD Studio\Projects\Project1.dproj=E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\millennium_mormaiimkt.dproj</Transaction>
+    <Transaction>2018/06/24 17:50:23.340.pas,E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\Unit1.pas=E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\millenium_mormaiimkt_estoques.pas</Transaction>
+    <Transaction>2018/06/24 18:35:07.016.pas,E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\Unit1.pas=E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\millenium_uteis.pas</Transaction>
+    <Transaction>2018/06/24 18:35:53.959.pas,E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\millenium_uteis.pas=E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\millenium_rest.pas</Transaction>
+    <Transaction>2018/06/24 18:36:05.989.pas,E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\millenium_rest.pas=E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\millenium_rest_client.pas</Transaction>
+    <Transaction>2018/06/24 19:27:49.063.pas,E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\Unit1.pas=E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\millenium_uteis.pas</Transaction>
+    <Transaction>2018/06/24 19:38:07.719.pas,E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\Unit2.pas=E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\millenium_integracao.pas</Transaction>
+    <Transaction>2018/06/24 19:44:55.232.dproj,E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\millennium_mormaiimkt.dproj=E:\Dev\Extensibility\millennium!mormaiimkt\services-dll\millenium_mormaiimkt.dproj</Transaction>
+    <Transaction>2018/06/24 20:40:15.969.pas,E:\Dev\Extensibility\millenium!mormaiimkt\services-dll\Unit2.pas=E:\Dev\Extensibility\millenium!mormaiimkt\services-dll\millenium_mormaiimkt_pedido_venda.pas</Transaction>
+    <Transaction>2018/06/24 20:44:30.197.pas,E:\Dev\Extensibility\millenium!mormaiimkt\services-dll\Unit2.pas=E:\Dev\Extensibility\millenium!mormaiimkt\services-dll\millenium_mormaiimkt_faturamento.pas</Transaction>
+  </Transactions>
+</BorlandProject>

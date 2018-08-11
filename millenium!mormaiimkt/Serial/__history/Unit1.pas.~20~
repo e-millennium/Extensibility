@@ -1,0 +1,71 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls;
+
+type
+  TForm1 = class(TForm)
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Button1: TButton;
+    procedure Button1Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+uses millenium_uteis,UTF8;
+
+{$R *.dfm}
+
+function AsciiToInt(Caracter: Char): Integer; 
+var 
+  i: Integer; 
+begin 
+  i := 12; 
+  while (i < 255)  do begin 
+    if Chr(i) = Caracter then 
+      Break; 
+    i := i + 1; 
+  end; 
+  Result := i; 
+end; 
+
+
+
+Function Criptografa(texto:string;chave:integer):String; 
+var 
+  cont:integer; 
+  retorno:string; 
+begin 
+  if (trim(texto)=EmptyStr) or (chave=0) then begin 
+    result:=texto; 
+  end else begin 
+    retorno:=''; 
+    for cont:=1 to length(texto) do begin 
+      retorno:=retorno+chr(asciitoint(texto[cont])+chave); 
+    end; 
+    result:=retorno; 
+  end; 
+end; 
+
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  Serial,
+  SerialCrypt: string;
+begin
+  Serial := Edit1.Text;
+  SerialCrypt := Criptografa(Serial,1);
+  Edit2.Text := (SerialCrypt);
+end;
+
+end.

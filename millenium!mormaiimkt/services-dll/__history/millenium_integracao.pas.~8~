@@ -1,0 +1,21 @@
+unit millenium_integracao;
+
+interface
+
+uses
+  Windows, Classes, wtsServerObjs,millenium_uteis;
+
+implementation
+
+uses ;
+
+procedure ListarSerial(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
+begin
+  Output.NewRecord;
+  Output.Se
+end;
+
+initialization
+   wtsRegisterProc('INTEGRACAO.ListarSerial',ListarSerial);
+
+end.

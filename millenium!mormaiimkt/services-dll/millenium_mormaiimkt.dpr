@@ -1,0 +1,18 @@
+library millenium_mormaiimkt;
+
+uses
+  wtsmemorym_intf,
+  wtsServerObjs,
+  millenium_mormaiimkt_estoques in 'millenium_mormaiimkt_estoques.pas',
+  millenium_rest_client in 'millenium_rest_client.pas',
+  millenium_uteis in 'millenium_uteis.pas',
+  millenium_integracao in 'millenium_integracao.pas',
+  millenium_mormaiimkt_pedido_venda in 'millenium_mormaiimkt_pedido_venda.pas',
+  millenium_mormaiimkt_faturamento in 'millenium_mormaiimkt_faturamento.pas';
+
+exports
+    wtsLibEntry,
+    wtsLibShutdown;
+
+begin
+end.

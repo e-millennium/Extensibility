@@ -1,0 +1,160 @@
+unit millenium_rest_client;
+
+interface
+
+uses
+  wtsServerObjs, RESTClient,logfiles,Activex,SysUtils, JsonSerialization,ServerCfgs;
+
+  
+  procedure PostRESTService(const AService,ARequest: string; var AResponse:string);
+  function GetRESTService(const AService: string):string;
+  function LoginService(const AService,AUsuario,ASenha: string):string;
+  function JsonIsValid(const AValue: string): Boolean;
+
+implementation
+
+var
+  GDadosInicializados: Boolean;
+  GServidor,
+  GUsuario,
+  GSenha: string;
+
+function JsonIsValid(const AValue: string): Boolean;
+begin
+  Result := (AValue<>'{}');
+end;
+
+function TranslateMessageError(const AMessage: string): string;
+var
+  I: Integer;
+begin
+  Result := AMessage;
+  I := Pos('EwtsMethodError',AMessage);
+  if I > 0 then
+    Result := Copy(AMessage,I+18,Length(AMessage)-I+21);
+end;  
+
+procedure CarregarDadosAcesso;
+begin
+  if not GDadosInicializados then
+  begin
+    GServidor := GetConfigSrv.ReadParamStr('MMKT_SERVER','');
+    GUsuario := GetConfigSrv.ReadParamStr('MMKT_USUARIO','');
+    GSenha := GetConfigSrv.ReadParamStr('MMKT_SENHA','');
+    GDadosInicializados := True;
+  end;
+end;
+
+function CriarSessao(const AUsuario,Senha: string): string;
+var
+  Json: string;
+  Sessao: IwtsWriteData;
+const
+  Servico: string = '/api/login';
+begin
+  CarregarDadosAcesso;
+  
+  Sessao := CurrentDatapool.CreateRecordset('MILLENIUM!MORMAIIMKT.SESSAO.SESSAO');
+  Json := LoginService(Servico,AUsuario,Senha);
+  FromJson(Json,Sessao);                  
+  Result := Sessao.AsString['SESSION'];
+end;
+
+procedure PostRESTService(const AService,ARequest: string; var AResponse:string);
+var
+  RESTClient: TRESTClient;
+  RequestUTF8: string;
+  ServiceURL:string;
+begin
+  ServiceURL := GServidor+AService;
+  
+  AResponse := '';
+  RequestUTF8 := UTF8Encode(ARequest);
+
+  AddLog(0,'','mormaii_mkt');
+  AddLog(0,'POST URL: '+ServiceURL,'mormaii_mkt');
+  AddLog(0,'Request: '+ARequest,'mormaii_mkt');
+  AddLog(0,'Request UTF8: '+RequestUTF8,'mormaii_mkt');
+
+  CoInitialize(nil);
+  RESTClient := nil;
+  try
+    RESTClient := TRESTClient.Create('');
+    try
+      RESTClient.Headers := 'Accept:application/json'#13#10+
+                            'Content-Type: application/json;charset=UTF-8'#13#10+
+                            'WTS-Session:'+ASession;
+
+      AResponse := RESTClient.post(ServiceURL,RequestUTF8,'');
+    except on e: Exception do
+      raise Exception.Create(TranslateMessageError(e.Message));
+    end;
+  finally
+    RESTClient.Free;
+    CoUninitialize;
+  end;
+  AddLog(0,'Response Sucess: '+AResponse,'mormaii_mkt');
+end;
+
+function GetRESTService(const AService: string):string;
+var
+  RESTClient: TRESTClient;
+  ServiceURL: string;
+begin
+  ServiceURL := GServer+AService;
+
+  Result := '';
+  AddLog(0,'','mormaii_mkt');
+  AddLog(0,'GET URL: '+ServiceURL,'mormaii_mkt');
+  
+  RESTClient := nil;
+  try       
+    CoInitialize(nil);
+    RESTClient := TRESTClient.Create('');
+    try
+      RESTClient.Headers := 'Accept:application/json;charset=UTF-8'#13#10+
+                            'WTS-Session:'+ASession;;
+      Result := RESTClient.Get(ServiceURL,True);
+    except on e: Exception do
+        Result := e.message;
+    end;
+  finally
+    RESTClient.Free;
+    CoUninitialize;
+  end;
+  AddLog(0,'Response Sucess: '+Result,'mormaii_mkt');
+end;
+
+function LoginService(const AService,AUsuario,ASenha: string):string;
+var
+  RESTClient: TRESTClient;
+  ServiceURL: string;
+begin
+  ServiceURL := GServidor+AService;
+
+  Result := '';
+  AddLog(0,'','mormaii_mkt');
+  AddLog(0,'GET URL: '+ServiceURL,'mormaii_mkt');
+  
+  RESTClient := nil;
+  try       
+    CoInitialize(nil);
+    RESTClient := TRESTClient.Create('');
+    try
+      RESTClient.Headers := 'WTS-Authorization:'+AUsuario+'/'+ASenha;
+      Result := RESTClient.Get(ServiceURL,True);
+    except on e: Exception do
+        Result := e.message;
+    end;
+  finally
+    RESTClient.Free;
+    CoUninitialize;
+  end;
+  AddLog(0,'Response Sucess: '+Result,'mormaii_mkt');
+end;
+
+initialization
+  GDadosInicializados := False;
+
+
+end.

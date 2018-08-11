@@ -1,0 +1,51 @@
+unit millenium_uteis;
+
+interface
+
+uses
+  Windows,SysUtils,UTF8, Cipher,DECUtil;
+  Function SerialNum(FDrive:String) :String;
+  function ValidarChaveLicenca(const AChave: string): Boolean;
+
+implementation
+
+Function SerialNum(FDrive:String) :String;
+Var
+	Serial:DWord;
+	DirLen,Flags: DWord;
+	DLabel : Array[0..11] of Char;
+begin
+	Try
+		GetVolumeInformation(PChar(FDrive+':\'),dLabel,12,@Serial,DirLen,Flags,nil,0);
+		Result := IntToHex(Serial,8);
+	Except 
+		Result :='';
+	end;
+end;
+
+function Criptografar(const pa, serial: String): String;
+var cy : TCipher_SAFER;
+begin
+  Result := '';
+  if (pa='') then Exit;
+
+  cy := TCipher_SAFER.Create(serial,nil);  // Aqui criar uma senha grande de preferencia
+  try
+    Result := cy.EncodeString(pa);   // Aqui criptografa
+    Result := StrToFormat(PChar(Result),Length(Result),fmtHex);  // Aqui gera uma string no formato Hexa para não precisar usar um blob
+  finally
+    FreeAndNil(cy);
+  end;
+end;
+
+function ValidarChaveLicenca(const AChave: string): Boolean;
+var
+  Serial,
+  SerialCript: string;
+begin
+  Serial := SerialNum(ExtractFileDrive(ParamStr(0)));
+  SerialCript := Crypt('CRYPT',Serial);
+  Result := SameText(UTF8ToString(SerialCript),AChave);
+end;
+
+end.

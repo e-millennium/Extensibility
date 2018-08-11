@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="FATURAMENTO">
+    <METHOD NAME="Enviar" DESCRIPTION="" VERSION="1" CATEGORY="MORMAII" THREADSAFE="0">
+      <PARAMS/>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

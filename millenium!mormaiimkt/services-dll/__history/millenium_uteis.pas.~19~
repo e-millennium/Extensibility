@@ -1,0 +1,58 @@
+unit millenium_uteis;
+
+interface
+
+uses
+  Windows,SysUtils,UTF8;
+
+  function ValidarChaveLicenca(const AChave: string): Boolean;
+
+implementation
+
+Function SerialNum(FDrive:String) :String;
+Var
+	Serial:DWord;
+	DirLen,Flags: DWord;
+	DLabel : Array[0..11] of Char;
+begin
+	Try
+		GetVolumeInformation(PChar(FDrive+':\'),dLabel,12,@Serial,DirLen,Flags,nil,0);
+		Result := IntToHex(Serial,8);
+	Except 
+		Result :='';
+	end;
+end;
+
+Function Crypt(Opcao : String; Dados : String): String;
+var
+  I : Integer;
+  Key : Word;
+  Res : String;
+const
+  C1    = 33598;
+  C2    = 24219;
+  Chave = 16854;
+begin
+  Key := Chave;
+  for I := 1 to length(Dados) do
+    begin
+      Res := Res + Char(Byte(Dados[I]) xor (Key shr 8));
+      if Opcao = 'CRYPT' then
+        Key := (Byte(Res[I]) + Chave) * C1 + C2;
+      if Opcao = 'DECRYPT' then
+        Key := (Byte(Dados[I]) + Chave) * C1 + C2;
+    end;
+  Result := Res;
+end;
+
+function ValidarChaveLicenca(const AChave: string): Boolean;
+var
+  Serial,
+  SerialCript: string;
+begin
+  Serial := SerialNum(ExtractFileDrive(ParamStr(0)));
+  SerialCript := Crypt('CRYPT',Serial);
+  Result := SameText(UTF8ToString(SerialCript),AChave);
+end;
+
+end.

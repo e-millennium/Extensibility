@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<root>
+	<_currentid>MORMAIIMKT_1</_currentid>
+	<_name>RULES.MORMAIIMKT</_name>
+  
+	<link category="Mormaii\Monitor Integrações" target="standard.tdataedit" _id="MORMAIIMKT_1">
+		<METHOD>MILLENIUM!MORMAIIMKT.LOGS.LISTAR</METHOD>
+	</link>	
+	
+</root>

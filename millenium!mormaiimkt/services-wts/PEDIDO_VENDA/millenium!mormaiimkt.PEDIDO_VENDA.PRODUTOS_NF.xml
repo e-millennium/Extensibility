@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PEDIDO_VENDA">
+    <METHOD NAME="PRODUTOS_NF" DESCRIPTION="" VERSION="2" INTFTYPE="9" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="EAN" SIZE="60" FLAGS="1" PROJECTION="0" HINT="EAN" FIELDLABEL="Ean" CTAB="0"/>
+        <PARAM NAME="QUANTIDADE" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" HINT="Quantidade" FIELDLABEL="Quantidade" CTAB="0"/>
+        <PARAM NAME="VALOR" FORMAT="N" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" HINT="Valor unit&#225;rio" FIELDLABEL="Valor" CTAB="0"/>
+        <PARAM NAME="TOTAL" FORMAT="N" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" HINT="Total (Quantidade * Pre&#231;o Unit&#225;rio)" FIELDLABEL="Total" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

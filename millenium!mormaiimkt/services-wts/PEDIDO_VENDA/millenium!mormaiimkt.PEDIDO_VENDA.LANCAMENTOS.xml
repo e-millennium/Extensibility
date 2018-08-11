@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PEDIDO_VENDA">
+    <METHOD NAME="LANCAMENTOS" DESCRIPTION="Lan&#231;amentos do pedido" VERSION="2" INTFTYPE="9" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="FORMA_PAGAMENTO" SIZE="50" FLAGS="1" PROJECTION="0" HINT="Forma Pagamento (Descri&#231;&#227;o EX: CART&#195;O 3X)" ORDER="1" FIELDLABEL="Forma Pagamento" CTAB="0"/>
+        <PARAM NAME="VALOR" FORMAT="N" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" HINT="Valor" ORDER="2" FIELDLABEL="Valor" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

@@ -1,0 +1,13 @@
+library millennium_mormaiimkt;
+
+uses
+  wtsmemorym_intf,
+  wtsServerObjs,
+  millenium_mormaiimkt_estoques in 'millenium_mormaiimkt_estoques.pas';
+
+exports
+    wtsLibEntry,
+    wtsLibShutdown;
+
+begin
+end.

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2018/06/24 19:50:45.610.pas,C:\Users\Flavio\Documents\RAD Studio\Projects\Unit1.pas=E:\Dev\Extensibility\millenium!mormaiimkt\Serial\Unit1.pas</Transaction>
+    <Transaction>2018/06/24 19:50:45.610.dfm,C:\Users\Flavio\Documents\RAD Studio\Projects\Unit1.dfm=E:\Dev\Extensibility\millenium!mormaiimkt\Serial\Unit1.dfm</Transaction>
+    <Transaction>2018/06/24 19:50:50.293.dproj,C:\Users\Flavio\Documents\RAD Studio\Projects\Project1.dproj=E:\Dev\Extensibility\millenium!mormaiimkt\Serial\SerialGen.dproj</Transaction>
+  </Transactions>
+</BorlandProject>

@@ -1,0 +1,10 @@
+library millennium_mormaiimkt;
+
+uses
+  SysUtils,
+  Classes;
+
+{$R *.res}
+
+begin
+end.
