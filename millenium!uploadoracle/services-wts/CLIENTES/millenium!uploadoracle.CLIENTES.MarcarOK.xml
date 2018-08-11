@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="CLIENTES">
+    <METHOD NAME="MarcarOK" DESCRIPTION="" VERSION="4" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="ID" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" FIELDLABEL="Id" CTAB="0"/>
+        <PARAM NAME="MSG" SIZE="500" FLAGS="1" PROJECTION="0" FIELDLABEL="Msg" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>UPDATE CLIENTES_RAKUTEN SET OK = 'T',MSG=:MSG WHERE ID=:ID;
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>
