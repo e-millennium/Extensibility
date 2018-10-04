@@ -6,7 +6,7 @@ uses
   wtsServerObjs, RESTClient,logfiles,Activex,SysUtils, JsonSerialization,ServerCfgs;
 
   
-  procedure PostRESTService(const AService,ARequest: string; var AResponse:string);
+  procedure PostRESTService(const AService,ARequest:string;AReturnList:Boolean; var AResponse:string);
   function GetRESTService(const AService: string):string;
   function LoginService(const AUsuario,ASenha: string):string;
   function JsonIsValid(const AValue: string): Boolean;
@@ -58,12 +58,13 @@ begin
   Result := Sessao.AsString['SESSION'];
 end;
 
-procedure PostRESTService(const AService,ARequest: string; var AResponse:string);
+procedure PostRESTService(const AService,ARequest:string;AReturnList:Boolean; var AResponse:string);
 var
   RESTClient: TRESTClient;
   RequestUTF8: string;
   ServiceURL:string;
   Session: string;
+  XHttp: string;
 begin
   Session := CriarSessao(GUsuario,GSenha);
 
@@ -77,6 +78,10 @@ begin
   AddLog(0,'Request: '+ARequest,'mormaii_mkt');
   AddLog(0,'Request UTF8: '+RequestUTF8,'mormaii_mkt');
 
+  XHttp := '';
+  if AReturnList then
+    XHttp := 'X-HTTP-Method: GET'#13#10;
+
   CoInitialize(nil);
   RESTClient := nil;
   try
@@ -84,6 +89,7 @@ begin
     try
       RESTClient.Headers := 'Accept:application/json'#13#10+
                             'Content-Type: application/json;charset=UTF-8'#13#10+
+                            XHttp+
                             'WTS-Session:'+Session;
 
       AResponse := RESTClient.post(ServiceURL,RequestUTF8,'');

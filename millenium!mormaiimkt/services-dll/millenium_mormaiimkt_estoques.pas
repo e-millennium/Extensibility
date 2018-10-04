@@ -29,9 +29,9 @@ begin
   C := DataPool.Open('MILLENIUM');
   L := DataPool.Open('MILLENIUM');
   try
-    Chave := GetConfigSrv.ReadParamStr('MMKT_CHAVE','');
+    {Chave := GetConfigSrv.ReadParamStr('MMKT_CHAVE','');
     if not ValidarChaveLicenca(Chave) then
-      raise Exception.Create('Chave de licença inválida.');
+      raise Exception.Create('Chave de licença inválida.');}
 
     Filial := GetConfigSrv.ReadParamInt('MMKT_FILIAL_ESTOQUE',0);
     TransID := GetConfigSrv.ReadParamInt('MMKT_TRANS_ID_ESTOQUE',0);
@@ -76,15 +76,15 @@ begin
               '                      [AND P.CATEGORIA IN #REPLACE(:CATEGORIAS)] '+
               '                      [AND P.DEPARTAMENTO IN #REPLACE(:DEPARTAMENTOS)] '+
               '                      [AND P.MARCA IN #REPLACE(:MARCAS)] '+
-
-              '               GROUP BY CB.BARRA})'+
+              '               GROUP BY CB.BARRA '+
+              '               HAVING SUM(E.SALDO) >= 0})'+
               'FROM DUAL');
      E := C.CreateRecordset;
      if E.RecordCount > 0 then
      begin
        JsonRequest := ToJson(E,['PRODUTOS'],False);
        if JsonIsValid(JsonRequest) then
-         PostRESTService(Servico,JsonRequest,JsonResponse);
+         PostRESTService(Servico,JsonRequest,False,JsonResponse);
      end;
      L.Dim('MENSAGEM','Estoque enviado com sucesso');
      L.Dim('JSON',JsonRequest);

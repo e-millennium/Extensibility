@@ -43,13 +43,14 @@ end;
 procedure Receber(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
 var
   PV,CL,C,L: IwtsCommand;
-  PedidoVenda,Cliente,Gerador,Endereco,Produtos,Barras,ProdutosPV,PVIncluir,LancamentosPV:IwtsWriteData;
+  PedidoVenda,Cliente,Gerador,Endereco,Produtos,Barras,ProdutosPV,PVIncluir,LancamentosPV,Response,Values:IwtsWriteData;
   ClientePV,EnderecoEntrega,Lancamentos: IwtsData;
   JsonResponse,CodCliente,Cli,Pedidov,CodigoPedidoVenda,LogMsg,Chave: string;
   CodEndereco: Integer;
   UpdCli,UpdEnd: Boolean;
   Transportadoras,TiposPagtos: IwtsWriteData;
-  Filial,TipoPedidoVenda,Transportadora,TipoFrete,CodEnderecoEntrega: Variant;
+  Filial,TipoPedidoVenda,Transportadora,TipoFrete,CodEnderecoEntrega,CondicaoPagamento: Variant;
+  I,X: Integer;
 const
   Servico: string = '/api/millenium_eco!mmormaii/pedido_venda/listar';
 begin
@@ -59,24 +60,32 @@ begin
   CL := DataPool.Open('MILLENIUM');
 
   PedidoVenda := DataPool.CreateRecordset('MILLENIUM!MORMAIIMKT.PEDIDO_VENDA.PEDIDO_VENDA');
+  Response := DataPool.CreateRecordset('MILLENIUM!MORMAIIMKT.PEDIDO_VENDA.VALUE');
   try
     Filial := GetConfigSrv.ReadParamInt('MMKT_FILIAL_PEDIDO_VENDA',0);
     TipoPedidoVenda := GetConfigSrv.ReadParamInt('MMKT_TIPO_PEDIDO',0);
     Transportadoras :=  GetConfigSrv.CreateRecordSet('MMKT_TRANSPORTADORAS');
     TiposPagtos :=  GetConfigSrv.CreateRecordSet('MMKT_TIPOS_PAGTOS');
+    CondicaoPagamento := GetConfigSrv.ReadParamInt('MMKT_CONDICOES_PGTO',0);
 
     Chave := GetConfigSrv.ReadParamStr('MMKT_CHAVE','');
-    if not ValidarChaveLicenca(Chave) then
-      raise Exception.Create('Chave de licença inválida.');
+    //if not ValidarChaveLicenca(Chave) then
+    //  raise Exception.Create('Chave de licença inválida.');
 
     if Filial = 0 then
       raise Exception.Create('Filial não configurada');
 
+    if CondicaoPagamento = 0 then
+      raise Exception.Create('Condição de pagamento não configurada');
+
     if TipoPedidoVenda = 0 then
       raise Exception.Create('Tipo de pedido de venda não configurada');
 
+    if Transportadoras = nil then
+      raise Exception.Create('Não há transportadoras configuradas');
+
     try
-      PostRESTService(Servico,'',JsonResponse);
+      PostRESTService(Servico,'',True,JsonResponse);
     except on E: Exception do
       raise Exception.Create('Erro solicitando dados '+E.Message);
     end;
@@ -84,10 +93,23 @@ begin
     //aqui passar x-http
 
     try
-      FromJson(JsonResponse,PedidoVenda);
+      FromJson(JsonResponse,Response);
     except on E: Exception do
       raise Exception.Create('Erro convertendo dados '+E.Message);
     end;
+
+    Values := (Response.AsData['VALUE'] as IwtsWriteData);
+    while not Values.EOF do
+    begin
+      PedidoVenda.New;
+      for X := 0 to Values.FieldCount-1 do
+      begin
+        PedidoVenda.SetField(X,Values.GetField(X));
+      end;
+      PedidoVenda.Add;     
+      Values.Next;
+    end;
+      
 
     PedidoVenda.First;
     while not PedidoVenda.EOF do                    
@@ -248,6 +270,12 @@ begin
           raise Exception.Create(E.Message);
         end;
 
+        if VarToStr(PedidoVenda.Value['TRANSPORTADORA_DESC']) = '' then
+          raise Exception.Create('Transportadora não preenchida no pedido de venda da Mormaii');
+
+        if VarToStr(PedidoVenda.Value['TIPO_FRETE_DESC']) = '' then
+          raise Exception.Create('Tipo de frete não preenchido no pedido de venda da Mormaii');
+
         Transportadora := Unassigned;
         if Transportadoras.Locate(['DESC_TRANSPORTADORA'],[PedidoVenda.Value['TRANSPORTADORA_DESC']]) then
           Transportadora := Transportadoras.Value['TRANSPORTADORA']
@@ -258,7 +286,7 @@ begin
         if Transportadoras.Locate(['DESC_TIPO_FRETE'],[PedidoVenda.Value['TIPO_FRETE_DESC']]) then
           TipoFrete := Transportadoras.Value['TIPO_FRETE']
         else
-          raise Exception.Create('Tipo de frete não encontrada para '+VarToStr(PedidoVenda.Value['TRANSPORTADORA_DESC']));
+          raise Exception.Create('Tipo de frete não encontrada para '+VarToStr(PedidoVenda.Value['TIPO_FRETE_DESC']));
 
         //  TRATRAR LANCAMENTO
 
@@ -296,6 +324,7 @@ begin
         PVIncluir.Value['LANCAMENTOS'] := LancamentosPV.Data;
         PVIncluir.Value['TOTAL'] := PedidoVenda.Value['VALOR_TOTAL'];
         PVIncluir.Value['APROVADO'] := VarToBool(PedidoVenda.Value['APROVADO']);
+        PVIncluir.Value['CONDICOES_PGTO'] := CondicaoPagamento;
         PVIncluir.Add;
 
         Pedidov := Call('MILLENIUM.PEDIDO_VENDA.INCLUI',PVIncluir,'PEDIDOV',True);
@@ -321,7 +350,7 @@ begin
     end;
   except on E: Exception do
     begin
-      L.Dim('MENSAGEM','Erro processameto pedido de venda '+E.Message);
+      L.Dim('MENSAGEM','Erro processamento pedido de venda '+E.Message);
       L.Dim('JSON',JsonResponse);
       L.Execute('#CALL MILLENIUM!MORMAIIMKT.LOGS.INCLUIR(MENSAGEM=:MENSAGEM,JSON=:JSON,TIPO=2)');
     end;
