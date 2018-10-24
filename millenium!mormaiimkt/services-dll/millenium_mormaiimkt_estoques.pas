@@ -29,9 +29,9 @@ begin
   C := DataPool.Open('MILLENIUM');
   L := DataPool.Open('MILLENIUM');
   try
-    {Chave := GetConfigSrv.ReadParamStr('MMKT_CHAVE','');
+    Chave := GetConfigSrv.ReadParamStr('MMKT_CHAVE','');
     if not ValidarChaveLicenca(Chave) then
-      raise Exception.Create('Chave de licença inválida.');}
+      raise Exception.Create('Chave de licença inválida.');
 
     Filial := GetConfigSrv.ReadParamInt('MMKT_FILIAL_ESTOQUE',0);
     TransID := GetConfigSrv.ReadParamInt('MMKT_TRANS_ID_ESTOQUE',0);
@@ -57,7 +57,7 @@ begin
     C.Dim('MARCAS',Marcas);
     C.Execute('SELECT NULL AS DUAL '+
               '       #ROWSET({SELECT:PRODUTOS '+
-              '                       CB.BARRA AS EAN,'+
+              '                       IIF(STRLEN(CB.BARRA)=12,CB.BARRA||EAN13CS(CB.BARRA),CB.BARRA) AS EAN,'+
               '                       SUM(E.SALDO) AS QUANTIDADE '+
               '                FROM ESTOQUES E '+
               '                INNER JOIN PRODUTOS P ON (P.PRODUTO = E.PRODUTO) '+

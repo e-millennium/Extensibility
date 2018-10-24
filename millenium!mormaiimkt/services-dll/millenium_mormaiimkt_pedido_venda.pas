@@ -69,8 +69,8 @@ begin
     CondicaoPagamento := GetConfigSrv.ReadParamInt('MMKT_CONDICOES_PGTO',0);
 
     Chave := GetConfigSrv.ReadParamStr('MMKT_CHAVE','');
-    //if not ValidarChaveLicenca(Chave) then
-    //  raise Exception.Create('Chave de licença inválida.');
+    if not ValidarChaveLicenca(Chave) then
+      raise Exception.Create('Chave de licença inválida.');
 
     if Filial = 0 then
       raise Exception.Create('Filial não configurada');
