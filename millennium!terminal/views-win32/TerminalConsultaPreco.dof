@@ -43,7 +43,7 @@ OutputDir=C:\millenium
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=
+SearchPath=E:\Dev\Extensibility\millennium!terminal\views-win32\comp
 Packages=Vcl50;Vclx50;VclSmp50;Vcldb50;vclado50;ibevnt50;Vclbde50;Vclmid50;vclie50;Inetdb50;Inet50;NMFast50;webmid50;dclocx50;Qrpt50;vcldbx50;VCLIB50;LittlePack
 Conditionals=
 DebugSourceDirs=
@@ -77,11 +77,14 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 [Excluded Packages]
-$(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 $(DELPHI)\Bin\dcldss50.bpl=Borland Decision Cube Components
+$(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[HistoryLists\hlSearchPath]
+Count=1
+Item0=E:\Dev\Extensibility\millennium!terminal\views-win32\comp
 [HistoryLists\hlOutputDirectorry]
 Count=1
 Item0=C:\millenium

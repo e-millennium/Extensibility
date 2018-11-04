@@ -4,13 +4,16 @@ uses
   Forms,
   Principal in 'Principal.pas' {FTerminal},
   Background in 'views-win32\Background.pas',
-  ListaProdutos in 'ListaProdutos.pas' {FListaProdutos};
+  ListaProdutos in 'ListaProdutos.pas' {FListaProdutos},
+  Observacao in 'Observacao.pas' {Form1};
 
 {$R *.RES}
 
 begin
   Application.Initialize;
+  Application.Title := 'Terminal de Consulta de Produtos';
   Application.CreateForm(TFTerminal, FTerminal);
   Application.CreateForm(TFListaProdutos, FListaProdutos);
+  Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.

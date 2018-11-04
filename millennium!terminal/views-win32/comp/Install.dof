@@ -43,7 +43,7 @@ OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=Z:\WDTS\client\common
+SearchPath=Z:\WDTS\client\common;Z:\WDTS\client\common
 Packages=
 Conditionals=
 DebugSourceDirs=
@@ -77,12 +77,12 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 [Excluded Packages]
-$(DELPHI)\Projects\Bpl\Install.bpl=(untitled)
-$(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 $(DELPHI)\Bin\dcldss50.bpl=Borland Decision Cube Components
+$(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=1
-Item0=Z:\WDTS\client\common
+Count=2
+Item0=Z:\WDTS\client\common;Z:\WDTS\client\common
+Item1=Z:\WDTS\client\common

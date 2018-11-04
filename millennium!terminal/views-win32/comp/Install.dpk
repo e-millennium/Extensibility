@@ -1,5 +1,6 @@
 package Install;
 
+
 {$R *.RES}
 {$ALIGN ON}
 {$ASSERTIONS ON}
@@ -29,8 +30,12 @@ requires
   Vclx50;
 
 contains
+  GDIPOBJ,
+  DirectDraw,
+  DXCommon,
+  GDIPAPI,
   TransparentPanel in 'TransparentPanel.pas',
   Background in '..\Background.pas',
-  PngComponentsRegister in 'Z:\pngimage\PngComponentsRegister.pas';
+  ProEffectImage in 'Z:\WDTS\client\common\ProEffectImage.pas';
 
 end.

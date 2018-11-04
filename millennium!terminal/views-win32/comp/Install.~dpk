@@ -1,5 +1,6 @@
 package Install;
 
+
 {$R *.RES}
 {$ALIGN ON}
 {$ASSERTIONS ON}
@@ -24,9 +25,16 @@ package Install;
 {$IMAGEBASE $400000}
 {$IMPLICITBUILD OFF}
 
+requires
+  Vcl50,
+  Vclx50;
+
 contains
+  GDIPOBJ,
+  DirectDraw,
+  DXCommon,
+  GDIPAPI,
   TransparentPanel in 'TransparentPanel.pas',
-  Background in '..\Background.pas',
-  PngComponentsRegister in 'Z:\pngimage\PngComponentsRegister.pas';
+  Background in '..\Background.pas';
 
 end.
