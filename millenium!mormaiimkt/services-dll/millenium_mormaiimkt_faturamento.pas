@@ -43,7 +43,7 @@ begin
               '       NF.VALOR, '+
               '       VE.NUMERO_OBJETO AS URL_TRACKING_PEDIDO '+
               '       #ROWSET({SELECT:PRODUTOS '+
-              '                       CB.BARRA AS EAN, '+
+              '                       IIF(STRLEN(CB.BARRA)=12,CB.BARRA||EAN13CS(CB.BARRA),CB.BARRA) AS EAN, '+
               '                       SUM(PE.QUANTIDADE) AS QUANTIDADE, '+
                '                       AVG(PE.PRECO) AS VALOR, '+
               '                       SUM(PE.QUANTIDADE * PE.PRECO) AS TOTAL '+

@@ -45,7 +45,7 @@ var
   PV,CL,C,L: IwtsCommand;
   PedidoVenda,Cliente,Gerador,Endereco,Produtos,Barras,ProdutosPV,PVIncluir,LancamentosPV,Response,Values:IwtsWriteData;
   ClientePV,EnderecoEntrega,Lancamentos: IwtsData;
-  JsonResponse,CodCliente,Cli,Pedidov,CodigoPedidoVenda,LogMsg,Chave: string;
+  JsonResponse,CodCliente,Cli,Pedidov,CodigoPedidoVenda,LogMsg,Chave,Barra: string;
   CodEndereco: Integer;
   UpdCli,UpdEnd: Boolean;
   Transportadoras,TiposPagtos: IwtsWriteData;
@@ -243,8 +243,20 @@ begin
         end;
 
         try
+          //Vamos sempre  consultar a barra com no máximo 12 digitos
+          ProdutosPV.First;
+          while not ProdutosPV.EOF do
+          begin
+            Barra := Trim(Copy(ProdutosPV.AsString['EAN'],1,12));
+
+            ProdutosPV.SetFieldByName('EAN',Barra);
+            ProdutosPV.Update;
+            ProdutosPV.Next;
+          end;
+
+          ProdutosPV.First;
           C.DimAsData('PRODUTOS',ProdutosPV);
-          C.Execute('SELECT * FROM CODIGO_BARRAS WHERE BARRA IN #MAKELIST(PRODUTOS,EAN)');
+          C.Execute('SELECT * FROM CODIGO_BARRAS WHERE SUBSTR(BARRA,1,12) IN #MAKELIST(PRODUTOS,EAN)');
           Barras := c.CreateRecordset;
 
           Produtos := DataPool.CreateRecordset('MILLENIUM.PEDIDO_VENDA.PRODUTOS');
