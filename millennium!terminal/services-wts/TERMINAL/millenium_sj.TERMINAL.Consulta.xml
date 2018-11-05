@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
   <OBJECT NAME="TERMINAL">
-    <METHOD NAME="Consulta" DESCRIPTION="" VERSION="84" THREADSAFE="0">
+    <METHOD NAME="Consulta" DESCRIPTION="" VERSION="86" THREADSAFE="0">
       <PARAMS>
         <GROUPS>
           <GROUP/>
@@ -38,9 +38,9 @@
 
       #ROWSET({SELECT:CORES
                       C.COR,
-                      C.DESCRICAO,
+                      #NULL_TO_S(C.DESCRICAO_TRADUZIDA,C.DESCRICAO) AS DESCRICAO,
                       CP.ATIVO,
-                       SUM(E.SALDO)
+                      SUM(E.SALDO)
                FROM PRODUTOS P
                INNER JOIN COR_PROD CP ON (CP.PRODUTO = P.PRODUTO)
                INNER JOIN CORES C ON (C.COR = CP.COR)
@@ -49,9 +49,9 @@
                                        (E.FILIAL=:FILIAL)
                WHERE
                     P.PRODUTO = :P.PRODUTO
-               GROUP BY C.COR,C.DESCRICAO,CP.ATIVO
-               ORDER BY SUM(E.SALDO) DESC,C.DESCRICAO})
-                        
+               GROUP BY C.COR,#NULL_TO_S(C.DESCRICAO_TRADUZIDA,C.DESCRICAO),CP.ATIVO
+               ORDER BY #TRANSLATE(CP.ATIVO, "A":0,"I":2,"R":1, ELSE:0), SUM(E.SALDO) DESC,#NULL_TO_S(C.DESCRICAO_TRADUZIDA,C.DESCRICAO)})
+
       #ROWSET({SELECT:TAMANHOS
                       T.TAMANHO,
                       SUM(E.SALDO)
@@ -64,10 +64,10 @@
                WHERE
                     P.PRODUTO = :P.PRODUTO
                GROUP BY T.TAMANHO
-               ORDER BY SUM(E.SALDO) DESC,T.CTAMANHO})
-               
+               ORDER BY T.CTAMANHO})
+
       #ROWSET({SELECT:ESTOQUES
-                      C.DESCRICAO AS COR,
+                      #NULL_TO_S(C.DESCRICAO_TRADUZIDA,C.DESCRICAO) AS COR,
                       E.TAMANHO,
                       SUM(E.SALDO) AS ESTOQUE
                FROM ESTOQUES E
@@ -75,14 +75,13 @@
                WHERE
                     E.PRODUTO = :P.PRODUTO AND
                     E.FILIAL =:FILIAL
-               GROUP BY C.DESCRICAO, E.TAMANHO})
-                        
+               GROUP BY #NULL_TO_S(C.DESCRICAO_TRADUZIDA,C.DESCRICAO), E.TAMANHO})
+
 FROM PRODUTOS PRO
 LEFT JOIN PRECOS PRE ON (PRO.PRODUTO = PRE.PRODUTO) AND
                         (PRE.TABELA =:TABELA)
 LEFT JOIN PRECOS PRE2 ON (PRO.PRODUTO = PRE2.PRODUTO) AND
                          (PRE2.TABELA =:TABELA_2)
-
 LEFT JOIN STATUS_PRODUTO SP ON (SP.STATUS_PRODUTO = PRO.STATUS)
 WHERE
      (PRO.TIPO_PROD = 'AC') AND
@@ -95,7 +94,6 @@ GROUP BY
          PRO.URL_PRODUTO,
          PRO.OBS,
          SP.DESCRICAO
-
 </ACTIONSCRIPT>
     </METHOD>
   </OBJECT>
