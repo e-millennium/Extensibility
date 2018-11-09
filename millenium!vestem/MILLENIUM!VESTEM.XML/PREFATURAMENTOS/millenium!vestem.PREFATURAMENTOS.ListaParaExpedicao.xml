@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PREFATURAMENTOS">
+    <METHOD NAME="ListaParaExpedicao" DESCRIPTION="" VERSION="60" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PEDIDOV" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Pedidov" CTAB="0"/>
+        <PARAM NAME="DATA_INICIAL" FORMAT="D" SIZE="10" FLAGS="10" PROJECTION="0" ORDER="1" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="DATA_FINAL" FORMAT="D" SIZE="10" FLAGS="10" PROJECTION="0" ORDER="3" FIELDLABEL="Data Final" CTAB="0"/>
+        <PARAM NAME="TIPO_PEDIDO" SIZE="100" FLAGS="10" STYLE="4" PROJECTION="0" ORDER="2" LOOKUP="TIPOS_PEDIDO.Lista" LOOKUPKEY="TIPO_PEDIDO" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="TIPO_PEDIDO" FIELDLABEL="Tipo Pedidos" CTAB="0"/>
+        <PARAM NAME="COLECAO" SIZE="100" FLAGS="10" PROJECTION="0" LOOKUP="COLECOES.LISTA" LOOKUPKEY="COLECAO" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Colecao" CTAB="0"/>
+        <PARAM NAME="NOME_CLIENTE" SIZE="100" FLAGS="10" PROJECTION="0" FIELDLABEL="Nome Cliente" CTAB="0"/>
+        <PARAM NAME="ORDEM" SIZE="30" FLAGS="10" PROJECTION="0" LOOKUP="list:'0','Cliente','1','Atendimento';" FIELDLABEL="Ordem" CTAB="0"/>
+        <PARAM NAME="EXPEDICAO" FORMAT="B" SIZE="1" FLAGS="10" PROJECTION="0" FIELDLABEL="Expedicao" CTAB="0"/>
+        <PARAM NAME="OPCAO_DATA" SIZE="100" FLAGS="10" PROJECTION="0" LOOKUP="list:'1','Libera&#231;&#227;o Expedicao','0','Pre-Faturamento';" FIELDLABEL="Opcao Data" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="PEDIDOV" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Pedidov" CTAB="0"/>
+        <FIELD NAME="COD_PEDIDOV" SIZE="25" FLAGS="1" PROJECTION="0" ORDER="3" FIELDLABEL="Pedido" CTAB="0"/>
+        <FIELD NAME="CLIENTE" SIZE="60" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Cliente" CTAB="0"/>
+        <FIELD NAME="QT_PEDIDO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Qt Pedido" CTAB="0"/>
+        <FIELD NAME="VALOR_PEDIDO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="10" FIELDLABEL="Valor Pedido" CTAB="0"/>
+        <FIELD NAME="ENTREGUE" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Entregue" CTAB="0"/>
+        <FIELD NAME="VALOR_ENTREGUE" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="9" FIELDLABEL="Valor Entregue" CTAB="0"/>
+        <FIELD NAME="SALDO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Saldo" CTAB="0"/>
+        <FIELD NAME="PRE_FAT" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Pre Fat" CTAB="0"/>
+        <FIELD NAME="VALOR_PREFAT" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="12" FIELDLABEL="Valor Prefat" CTAB="0"/>
+        <FIELD NAME="PENDENTE" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Pendente" CTAB="0"/>
+        <FIELD NAME="VALOR_PENDENTE" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="11" FIELDLABEL="Valor Pendente" CTAB="0"/>
+        <FIELD NAME="INSTRUCAO" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Instrucao" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select p2.pedidov,p2.cod_pedidov,c.cod_cliente||' - '||c.nome AS CLIENTE,
+sum(p2.pedida)                      as qt_pedido,
+sum(Valor_Pedido)                   as Valor_Pedido,
+sum(p2.entregue)                    as entregue,
+sum(p2.valor_entregue)              as Valor_Entregue,
+sum(p2.saldo)                       as saldo,
+sum(p2.pre_fat)                     as pre_fat,
+sum((p2.valor_prefat) * ( 1 + Pv2.acerto / 100 ) )                as Valor_prefat,
+sum(p2.saldo-p2.pre_fat)            as Pendente,
+sum(p2.Valor_Pedido - p2.valor_entregue)-sum((p2.valor_prefat) * ( 1 + Pv2.acerto / 100 ) ) as Valor_Pendente,
+//(SELECT MAX(I.DESCRICAO) FROM PREFATURAMENTOS P3
+//                    INNER JOIN instrucoes I ON I.instrucao=P3.funcionario WHERE P3.PEDIDOV=P2.PEDIDOV )                    as instrucao
+
+(SELECT MAX(I.DESCRICAO) FROM instrucoes_eventos P3
+                    INNER JOIN instrucoes I ON I.instrucao=P3.INSTRUCAO WHERE P3.COD_OPERACAO=P2.PEDIDOV AND P3.TIPO_OPERACAO='V') as instrucao
+
+from(
+select pv.pedidov,pv.cod_pedidov,pv.cliente,
+       ppv.produto,
+       sum(ppv.quantidade)                                                      as pedida,
+       sum(ppv.entregue)                                                        as entregue ,
+       sum((PPV.preco*ppv.entregue) * ( 1 + PV.acerto / 100 ) )                 as valor_entregue,
+       sum(ppv.quantidade-ppv.entregue)                                         as saldo,
+       sum((PPV.preco* ppv.quantidade) * ( 1 + PV.acerto / 100 ) )              as Valor_Pedido,
+
+       sum((PPV.preco*ppv.quantidade-ppv.entregue) * ( 1 + PV.acerto / 100 ) )  as valor_pendente,
+        0                                                                       as pre_fat,
+        0                                                                       as valor_prefat,
+        avg(ppv.preco)                                                          as preco
+ from pedido_venda pv
+       inner join produto_pedidov ppv on ppv.pedidov=pv.pedidov
+       INNER join produtos pr on pr.produto=ppv.produto
+inner join (select p.pedidov from prefaturamentos p
+             where
+              #select(opcao_data, 0:{p.data},
+                                  1:{p.data_expedicao}) between :DATA_INICIAL and :DATA_FINAL+1
+
+               AND #select(opcao_data, 0:{p.expedicao='F'},
+                                       1:{p.expedicao='T'})
+               and p.entregue='F'
+               and p.excluido='F'
+group by p.pedidov) x on x.pedidov=pv.pedidov
+group by 1,2,3,4
+
+union all
+//--prefaturamento
+select  p.pedidov,pv.cod_pedidov,pv.cliente,
+        ppf.produto,
+        0                   as pedida,
+        0                   as entregue ,
+        0                   as valor_entregue,
+        0                   as saldo,
+        0                   as Valor_Pedido,
+        0                   as Valor_Pendente,
+    sum(ppf.quantidade)   as pre_fat,
+    SUM (( ppf.QUANTIDADE ) ) * ( SELECT AVG ( PRECO ) FROM PRODUTO_PEDIDOV PV
+                                WHERE PV.PEDIDOV = P.PEDIDOV AND PV.PRODUTO = ppf.PRODUTO
+                                )AS VALOR_PREFAT,
+                                 0 as Valor
+    from prefaturamentos p
+    inner join pedido_venda pv on pv.pedidov=p.pedidov
+    inner join produto_prefat ppf on ppf.prefaturamento=p.prefaturamento
+    INNER join produtos pr on ppf.produto=pr.produto
+where  #select(opcao_data, 0:{p.data},
+                           1:{p.data_expedicao}) between :DATA_INICIAL and :DATA_FINAL+1
+
+AND #select(opcao_data, 0:{p.expedicao='F'},
+                        1:{p.expedicao='T'})
+
+and p.entregue='F'
+and p.excluido='F'
+[AND PV.tipo_pedido IN #REPLACE(:TIPO_PEDIDO)]
+[AND PR.COLECAO IN #REPLACE(:COLECAO)]
+group by 1,2,3,4
+ ) as p2
+      INNER JOIN pedido_venda PV2 ON PV2.pedidov=P2.PEDIDOV
+      inner join clientes c on c.cliente=p2.cliente
+where [c.nome LIKE '%'||(:NOME_CLIENTE)||'%']
+group by p2.pedidov,p2.cod_pedidov,c.cod_cliente,c.nome
+order by #select(ordem, 0:C.nome,
+                        1:11,C.nome);
+
+
+
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

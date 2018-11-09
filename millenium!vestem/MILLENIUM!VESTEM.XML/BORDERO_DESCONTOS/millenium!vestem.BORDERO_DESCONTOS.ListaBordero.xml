@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="BORDERO_DESCONTOS">
+    <METHOD NAME="ListaBordero" DESCRIPTION="" VERSION="0" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="CONTA" FORMAT="N" SIZE="8" FLAGS="19" PROJECTION="0" ORDER="2" FIELDLABEL="Conta" CTAB="0"/>
+        <PARAM NAME="BANCO" FORMAT="N" SIZE="8" FLAGS="19" PROJECTION="0" ORDER="1" FIELDLABEL="Banco" CTAB="0"/>
+        <PARAM NAME="BO_CHEQUE" SIZE="1" FLAGS="2" PROJECTION="0" FIELDLABEL="Bo Cheque" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="BORDERO" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Bordero" CTAB="0"/>
+        <FIELD NAME="COD_BORDERO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="A" CTAB="0"/>
+        <FIELD NAME="DESCRICAO" SIZE="60" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="A" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select bordero,
+       cod_bordero,
+       descricao
+  from bordero
+ where conta_cobranca = :conta
+   and banco          = :banco
+   and remessa is null
+  [and bo_cheque      = :bo_cheque]
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

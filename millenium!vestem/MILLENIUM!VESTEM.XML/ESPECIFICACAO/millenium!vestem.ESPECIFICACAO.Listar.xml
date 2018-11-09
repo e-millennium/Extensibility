@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="ESPECIFICACAO">
+    <METHOD NAME="Listar" DESCRIPTION="Listar" VERSION="3" INTFTYPE="5" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="F_225274430" FORMAT="N" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="F 225274430" CTAB="0"/>
+        <PARAM NAME="F_1802195444" SIZE="60" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Especificacao" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="F_225274430" FORMAT="N" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="F 225274430" CTAB="0"/>
+        <FIELD NAME="F_1802195444" SIZE="60" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Especificacao" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select:MAIN F_4057260610.especificacao as F_225274430,
+F_4057260610.descricao as F_1802195444
+ from especificacoes F_4057260610;
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

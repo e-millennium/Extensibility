@@ -1,0 +1,221 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="BORDERO_DESCONTOS">
+    <METHOD NAME="Incluir" DESCRIPTION="" VERSION="11" INTFTYPE="1" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP STYLE="1"/>
+          <GROUP NAME="Taxa Financeira"/>
+          <GROUP NAME="T&#237;tulos" STYLE="1"/>
+        </GROUPS>
+        <PARAM NAME="COD_BORDERO" SIZE="20" FLAGS="17" PROJECTION="0" ORDER="3" FIELDLABEL="C&#243;digo" CTAB="0"/>
+        <PARAM NAME="DESCRICAO" SIZE="60" FLAGS="17" PROJECTION="0" ORDER="4" FIELDLABEL="Descricao" CTAB="0"/>
+        <PARAM NAME="DATA" FORMAT="D" SIZE="10" FLAGS="17" DEFAULT="TODAY" PROJECTION="0" ORDER="2" FIELDLABEL="Data" CTAB="0"/>
+        <PARAM NAME="BORDERO_LANCAMENTOS" FORMAT="R" FLAGS="1" STYLE="3" PROJECTION="0" ORDER="16" LOOKUP="BORDERO_DESCONTOS.Seleciona_Titulo" FIELDLABEL="T&#237;tulos" NESTEDNAME="millenium!vestem.BORDERO_DESCONTOS.BORDERO_LANCAMENTOS" GROUPNAME="T&#237;tulos" CTAB="0"/>
+        <PARAM NAME="BANCO" FORMAT="N" SIZE="8" FLAGS="17" PROJECTION="0" ORDER="5" LOOKUP="millenium.BANCOS.ListaMeusBancos" LOOKUPKEY="BANCO" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_BANCO" FIELDLABEL="Banco" CTAB="0"/>
+        <PARAM NAME="CARTEIRA" FORMAT="N" SIZE="8" FLAGS="17" PROJECTION="0" ORDER="7" LOOKUP="millenium.CARTEIRAS.Lista_Carteiras_bco" LOOKUPKEY="CARTEIRA" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="COD_CARTEIRA" FIELDLABEL="Carteira" CTAB="0"/>
+        <PARAM NAME="CONTA" FORMAT="N" SIZE="8" FLAGS="17" PROJECTION="0" ORDER="6" LOOKUP="millenium.CONTAS.Lista_CC" LOOKUPKEY="CONTA" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="NUMERO" FIELDLABEL="Conta" CTAB="0"/>
+        <PARAM NAME="ORIGEM" FORMAT="N" SIZE="8" PROJECTION="0" ORDER="9" FIELDLABEL="Nota" CTAB="0"/>
+        <PARAM NAME="OBS" SIZE="60" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Observa&#231;&#227;o" CTAB="0"/>
+        <PARAM NAME="COD_BANCO" SIZE="10" FLAGS="10" PROJECTION="0" FIELDLABEL="Cod Banco" CTAB="0"/>
+        <PARAM NAME="CONTROLA_DESCONTADO" FORMAT="B" SIZE="1" FLAGS="10" DEFAULT="1" PROJECTION="0" FIELDLABEL="Controla Descontado" CTAB="0"/>
+        <PARAM NAME="BANCO_ADIANTAMENTO" FORMAT="N" SIZE="8" FLAGS="1" VISIBILITYRULE="(CONTROLA_DESCONTADO=TRUE)" PROJECTION="0" ORDER="8" LOOKUP="millenium.BANCOS.ListaBancosAdiantamentos" LOOKUPKEY="BANCO_ADIATAMENTO" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_BANCO_ADIATAMENTO" FIELDLABEL="Banco de adiantamento" CTAB="0"/>
+        <PARAM NAME="CONTA_ADIANTAMENTO" FORMAT="N" SIZE="8" FLAGS="1" VISIBILITYRULE="(CONTROLA_DESCONTADO=TRUE)" PROJECTION="0" ORDER="9" LOOKUP="millenium.CONTAS.Lista_CC_Adiantamento" LOOKUPKEY="CONTA_ADIANTAMENTO" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="NUMERO" FIELDLABEL="Conta de adiantamento" CTAB="0"/>
+        <PARAM NAME="TAXA_FINANCEIRA" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="4" VISIBILITYRULE="(CONTROLA_DESCONTADO=TRUE) AND (TAXA_FINANCEIRA_VALOR='')" PROJECTION="0" ORDER="13" FIELDLABEL="Taxa Financeira (%)" GROUPNAME="Taxa Financeira" CTAB="0"/>
+        <PARAM NAME="TIPO_PGTO" FORMAT="N" SIZE="8" FLAGS="1" VISIBILITYRULE="(CONTROLA_DESCONTADO=TRUE)" PROJECTION="0" ORDER="10" LOOKUP="millenium.TIPOS_PGTOS.LISTA" LOOKUPKEY="TIPO_PGTO" LOOKUPDISPLAY="DESCRICAO" FIELDLABEL="Tipo de pagamento" CTAB="0"/>
+        <PARAM NAME="TAXA_FINANCEIRA_VALOR" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="4" VISIBILITYRULE="(CONTROLA_DESCONTADO=TRUE) AND (TAXA_FINANCEIRA='')" PROJECTION="0" ORDER="14" FIELDLABEL="Taxa Financeira (Valor)" GROUPNAME="Taxa Financeira" CTAB="0"/>
+        <PARAM NAME="TIPO_BORDERO" FORMAT="N" SIZE="8" FLAGS="129" DEFAULT="0" PROJECTION="0" ORDER="1" LOOKUP="list:'0','CNAB - Contas &#224; Receber';'1','PAGFOR - Contas &#224; Pagar';" FIELDLABEL="Tipo Bordero" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="BORDERO" FORMAT="+" SIZE="8" FLAGS="1048" PROJECTION="0" FIELDLABEL="Bordero" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>
+#CHECK("SELECT COUNT(COD_BORDERO) AS N FROM BORDERO WHERE COD_BORDERO=:COD_BORDERO", N>0, const.COD_DUPL);
+
+#private() #call:liq millenium.configuracoes.lerparam ( 'VL_LIQ_BORDERO', 'B' );
+
+SELECT:CO FILIAL FROM CONTAS WHERE CONTA=:CONTA;
+
+SELECT:CDBCO COD_BANCO FROM BANCOS WHERE BANCO = :BANCO;
+
+INSERT:BO INTO BORDERO( COD_BORDERO,
+                        DESCRICAO,
+                        DATA,
+                        BANCO,
+                        CONTA_COBRANCA,
+                        CARTEIRA,
+                        OBS,
+                        TIPO_BORDERO,
+                        BANCO_ADIANTAMENTO,
+                        CONTA_ADIANTAMENTO,
+                        TAXA_FINANCEIRA,
+                        TIPO_PGTO,
+                        TAXA_FINANCEIRA_VALOR)
+
+               VALUES ( :COD_BORDERO,
+                        :DESCRICAO,
+                        :DATA,
+                        :BANCO,
+                        :CONTA,
+                        :CARTEIRA,
+                        :OBS,
+                        :TIPO_BORDERO,
+                        :BANCO_ADIANTAMENTO,
+                        :CONTA_ADIANTAMENTO,
+                        :TAXA_FINANCEIRA,
+                        :TIPO_PGTO,
+                        :TAXA_FINANCEIRA_VALOR
+                        )
+#RETURN (BORDERO);
+
+#EACH() BORDERO_LANCAMENTOS AS BLC;
+UPDATE LANCAMENTOS
+SET CONTA_ORIGEM = CONTA
+#SELECT( CONTROLA_DESCONTADO, TRUE: {,DESCONTADO_FACTORY = TRUE}, ELSE:{})
+WHERE (LANCAMENTOS.LANCAMENTO=:BLC.LANCAMENTO AND LANCAMENTOS.CONTA_ORIGEM IS NULL);
+
+#EACH() BORDERO_LANCAMENTOS AS BL;
+UPDATE LANCAMENTOS
+   SET COBRANCA=TRUE,
+       DESCONTADO_FACTORY = TRUE,
+       COD_PORTADOR=:BANCO,
+       GERADOR_PORTADOR='B',
+       BORDERO=:BO.BORDERO,
+       CARTEIRA=:CARTEIRA,
+       TIPO_COBRANCA='B',
+       CONTA=:CONTA,
+       CONTA_COBRANCA=:CONTA,
+       FILIAL=:CO.FILIAL
+WHERE (LANCAMENTOS.LANCAMENTO=:BL.LANCAMENTO);
+
+#EACH() BORDERO_LANCAMENTOS AS BL3;
+INSERT INTO BORDERO_LANCAMENTOS(BORDERO,
+                                LANCAMENTO)
+                         VALUES(:BO.BORDERO,
+                                :BL3.LANCAMENTO)
+#RETURN(BO_LANCAMENTO);
+
+#SELECT( CONTROLA_DESCONTADO,
+TRUE: {
+
+       SELECT:TOT SUM(CALC.VAL_LIQ) AS TOTAL
+       FROM BORDERO_LANCAMENTOS BL
+       INNER JOIN CALC_VAL_LIQ CALC ON CALC.LANCAMENTO = BL.LANCAMENTO
+       WHERE BL.BORDERO = :BO.BORDERO;
+
+       #call:def millenium.utils.default('n_documento',10);
+
+       select:data #date() as data,
+              'BO'||#replacet(def.result) as numero,
+              #replacet(tot.total) as tot,
+              'TITULO GERADOR ATRAVES DE BORDERO DESCONTATO - BORDERO: ' || #REPLACET( :COD_BORDERO ) || ' -' || #REPLACET(:DESCRICAO ) AS OBS from dual;
+
+       #select(CONTA_ADIANTAMENTO,NULL:{#check({select 1 as c from dual}, c > 0,"Informar Conta de adiantamento (Cadastro de Contas)!");},ELSE:{})
+
+       //TITULO A PAGAR NA CONTA DE DESCONTO
+       #call millenium.lancamentos.inclancamento( tipo_pgto =:tipo_pgto,
+                                                  efetuado  = false,
+                                                  conta     =:conta,
+                                                  previsao  = false,
+                                                  valor_inicial =:tot.total,
+                                                  filial    =:co.filial,
+                                                  tipo      = 'P',
+                                                  data_digitado = :data.data,
+                                                  data_vencimento = :data.data,
+                                                  gerador   = 'B',
+                                                  data_emissao = :data.data,
+                                                  n_documento = :data.numero,
+                                                  cod         = :banco,
+                                                  titulo      = True,
+                                                  obs         = :data.obs,
+                                                  credito     = false,
+                                                  prorrogado  = false,
+                                                  devolvido   = false,
+                                                  cartorio    = false,
+                                                  protesto    = false,
+                                                  descontado  = false,
+                                                  tipo_origem = 'R',
+                                                  origem      = :bo.bordero
+                                                   );
+
+
+       SELECT:COA FILIAL FROM CONTAS WHERE CONTA=:CONTA_ADIANTAMENTO;
+
+       #call:def2 millenium.utils.default('n_documento',10);
+
+       select:data2 #date() as data,
+              'BO'||#replacet(def2.result) as numero from dual;
+
+       //TITULO A RECEBER NA CONTA DE ADIANTAMENTO
+       #call millenium.lancamentos.inclancamento( tipo_pgto =:tipo_pgto,
+                                                  efetuado  = false,
+                                                  conta     =:conta_adiantamento,
+                                                  previsao  = false,
+                                                  valor_inicial = :tot.total,
+                                                  filial    =:coa.filial,
+                                                  tipo      = 'R',
+                                                  data_digitado = :data2.data,
+                                                  data_vencimento = :data2.data,
+                                                  gerador   = 'B',
+                                                  data_emissao = :data2.data,
+                                                  n_documento = :data2.numero,
+                                                  cod         = :banco_adiantamento,
+                                                  titulo      = True,
+                                                  obs         = :data.obs,
+                                                  credito     = false,
+                                                  prorrogado  = false,
+                                                  devolvido   = false,
+                                                  cartorio    = false,
+                                                  protesto    = false,
+                                                  descontado  = false,
+                                                  tipo_origem = 'R',
+                                                  origem      = :bo.bordero
+                                                   );
+
+
+       #call:def3 millenium.utils.default('n_documento',10);
+
+       select:data3 #date() as data,
+              'BO'||#replacet(def3.result) as numero,
+              #SELECT(TAXA_FINANCEIRA_VALOR,null:{
+                            #select(TAXA_FINANCEIRA,NULL:{#check({select 1 as c from dual}, c > 0,"Informar Taxa Financeira (%) ou Taxa Financeira (Valor)!");},ELSE:{})
+                            cast( #replacet(:tot.total) as numeric(10,2)) * ( cast( #replacet( :taxa_financeira ) as numeric(10,2)) / 100 ) },
+                      ELSE:{ cast( #replacet(:tot.total) as numeric(10,2)) - #replacet( :taxa_financeira_valor ) }) AS TOT_RECEBER from dual;
+
+       #call millenium.lancamentos.inclancamento( tipo_pgto =:tipo_pgto,
+                                                  efetuado  = false,
+                                                  conta     =:conta_adiantamento,
+                                                  previsao  = false,
+                                                  //valor_inicial = :data3.tot_receber,
+                                                  valor_inicial = 1,
+                                                  filial    =:coa.filial,
+                                                  tipo      = 'P',
+                                                  data_digitado = :data3.data,
+                                                  data_vencimento = :data3.data,
+                                                  gerador   = 'B',
+                                                  data_emissao = :data3.data,
+                                                  n_documento = :data3.numero,
+                                                  cod         = :banco_adiantamento,
+                                                  titulo      = True,
+                                                  obs         = :data.obs,
+                                                  credito     = false,
+                                                  prorrogado  = false,
+                                                  devolvido   = false,
+                                                  cartorio    = false,
+                                                  protesto    = false,
+                                                  descontado  = false,
+                                                  tipo_origem = 'R',
+                                                  origem      = :bo.bordero
+                                                   );
+
+      },
+ELSE:{} )
+
+#CALL MILLENIUM.CONTABILIDADE.CONTABILIZA("O",:BO.BORDERO);
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

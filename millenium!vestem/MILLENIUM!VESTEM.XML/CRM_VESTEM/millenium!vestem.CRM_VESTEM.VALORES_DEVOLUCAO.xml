@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="CRM_VESTEM">
+    <METHOD NAME="VALORES_DEVOLUCAO" DESCRIPTION="" VERSION="11" INTFTYPE="9" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="TIPO_PGTO" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Tipo Pgto" CTAB="0"/>
+        <PARAM NAME="DESC_TIPO_PGTO" SIZE="30" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Desc Tipo Pgto" CTAB="0"/>
+        <PARAM NAME="VALOR" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="3" FIELDLABEL="Valor" CTAB="0"/>
+        <PARAM NAME="FORMA_DEVOLUCAO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="2" LOOKUP="list:'0','tipo pagto original do t&#237;tulo a receber';'1','em cr&#233;dito';'2','em reembolso';'3','estorno';" FIELDLABEL="Forma" CTAB="0"/>
+        <PARAM NAME="OPCAO_PERGUNTA" FORMAT="N" SIZE="8" PROJECTION="0" LOOKUP="list:'0','n&#227;o pergunta, somente leitura na grid';'1','pergunta: em cr&#233;dito, em reembolso';'2','pergunta: em cr&#233;dito, estorno';" FIELDLABEL="Opcao Pergunta" CTAB="0"/>
+        <PARAM NAME="BANCO" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Banco" CTAB="0"/>
+        <PARAM NAME="AGENCIA" SIZE="13" PROJECTION="0" FIELDLABEL="Agencia" CTAB="0"/>
+        <PARAM NAME="C_C" SIZE="30" PROJECTION="0" FIELDLABEL="C C" CTAB="0"/>
+        <PARAM NAME="TRANSACAO_GP" SIZE="40" PROJECTION="0" FIELDLABEL="Transacao Gp" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

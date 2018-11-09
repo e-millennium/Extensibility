@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="MOVIMENTO_FRANQUIAS">
+    <METHOD NAME="AtualizarNota" DESCRIPTION="" VERSION="6" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="COD_OPERACAO" FORMAT="N" SIZE="8" FLAGS="3" PROJECTION="0" FIELDLABEL="Cod Operacao" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>//Atualiza nf entrada
+UPDATE NF
+SET
+  V_PIS = 0
+ ,v_COFINS=0
+ ,B_PIS = 0
+ ,DESC_SUFRAMA = 0
+ ,ICMSSE=0
+ ,B_ISS_RET=0
+ ,V_ISS_RET=0
+WHERE TIPO_OPERACAO = 'E'
+AND COD_OPERACAO = :COD_OPERACAO ;
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PRODUTOSAC">
+    <METHOD NAME="GerenciarVitrine" DESCRIPTION="Gerenciar Vitrine" VERSION="550" INTFTYPE="5" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="VITRINE" SIZE="20" FLAGS="17" PROJECTION="0" ORDER="2" LOOKUP="PRODUTOSAC.ListaVitrine" LOOKUPKEY="VITRINE" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="VITRINE" FIELDLABEL="Vitrine" CTAB="0"/>
+        <PARAM NAME="TIPO" SIZE="20" FLAGS="17" DEFAULT="1" PROJECTION="0" ORDER="1" LOOKUP="list:'0','Todos';'1','Inconsistencia';" FIELDLABEL="Tipo" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="COD_PRODUTO" SIZE="15" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Cod Produto" CTAB="0"/>
+        <FIELD NAME="DESCRICAO" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Descricao" CTAB="0"/>
+        <FIELD NAME="MARCA" SIZE="30" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Marca" CTAB="0"/>
+        <FIELD NAME="DEPARTAMENTO" SIZE="30" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Departamento" CTAB="0"/>
+        <FIELD NAME="TIPO" SIZE="30" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Tipo" CTAB="0"/>
+        <FIELD NAME="COR" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Cor" CTAB="0"/>
+        <FIELD NAME="ESTOQUE" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Estoque" CTAB="0"/>
+        <FIELD NAME="TAMANHO" SIZE="6" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Tamanho" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT P.cod_produto,P.descricao1 AS DESCRICAO,
+  M.descricao AS marca,
+  D.descricao AS departamento,
+  T.descricao AS TIPO,
+  CR.DESCRICAO AS COR,
+  sk.tamanho,
+    (SELECT SUM(E.SALDO) FROM ESTOQUES E
+       INNER JOIN VITRINE V ON V.FILIAL=E.FILIAL AND V.VITRINE=:VITRINE
+  WHERE E.produto=SK.produto AND E.COR=SK.cor AND E.estampa=SK.estampa AND E.tamanho=SK.tamanho
+  AND E.filial=VT.FILIAL
+         )AS ESTOQUE
+   FROM vitrine_produtos_sku  SK
+   INNER JOIN vitrine VT ON VT.vitrine=:VITRINE
+   INNER JOIN PRODUTOS P ON
+        P.produto=sk.produto
+   INNER JOIN cores CR ON CR.COR=sk.cor
+   INNER JOIN estampas es ON ES.estampa=sk.estampa
+   LEFT join marcas m on
+        m.marca=p.marca
+   LEFT JOIN DEPARTAMENTOS D ON
+        D.DEPARTAMENTO=P.DEPARTAMENTO
+   LEFT JOIN TIPOS T ON
+        T.TIPO=P.TIPO
+WHERE
+ #SELECT(tipo,0:{},1:{
+ SK.incluir='F'
+ and
+ (SELECT SUM(E.SALDO) FROM ESTOQUES E
+       INNER JOIN VITRINE V ON V.FILIAL=E.FILIAL AND V.VITRINE=:VITRINE
+  WHERE E.produto=SK.produto AND E.COR=SK.cor AND E.estampa=SK.estampa AND E.tamanho=SK.tamanho
+  AND E.filial=VT.FILIAL)>=1
+ })
+  GROUP BY 1,2,3,4,5,6,7 ;
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

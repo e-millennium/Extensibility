@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="GRUPO_LOJAS">
+    <METHOD NAME="lista_por_gerador" DESCRIPTION="" VERSION="2" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="GERADOR" SIZE="1" FLAGS="2" DEFAULT="C" PROJECTION="0" FIELDLABEL="Gerador" CTAB="0"/>
+        <PARAM NAME="NOME" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Nome" CTAB="0"/>
+        <PARAM NAME="GRUPO_LOJA" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Grupo Loja" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="GRUPO_LOJA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Grupo Loja" CTAB="0"/>
+        <FIELD NAME="COD_GRUPO" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="3" FIELDLABEL="Cod Grupo" CTAB="0"/>
+        <FIELD NAME="NOME" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Nome" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select grupo_loja,
+       cod_grupo,
+       nome
+
+from grupo_lojas
+
+where
+[and nome like #replacetr(nome)]
+[and grupo_loja = :grupo_loja]
+
+#select ( gerador , 'F'  : { and fornecedor = true } ,
+                    'C'  : { and cliente = true } ,
+                    else : { } );
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

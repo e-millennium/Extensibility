@@ -1,0 +1,105 @@
+unit millenium_mormaiimkt_faturamento;
+
+interface
+
+uses
+  Windows, Classes, wtsServerObjs, SysUtils, ServerCfgs, millenium_variants,
+  JsonSerialization,millenium_rest_client,UTF8;
+
+implementation
+
+procedure Enviar(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
+var
+  C,L: IwtsCommand;
+  Faturamento: IwtsWriteData;
+  JsonRequest,JsonResponse: string;
+  TipoPedidoVenda: Integer;
+  Minutos: Variant;
+const
+  Servico: string = '/api/millenium_eco!mmormaii/pedido_venda/faturar';
+begin
+  JsonRequest := '';
+  C := DataPool.Open('MILLENIUM');
+  L := DataPool.Open('MILLENIUM');
+  Faturamento := DataPool.CreateRecordset('MILLENIUM!MORMAIIMKT.FATURAMENTO.FATURAMENTO');
+  try
+    {Chave := GetConfigSrv.ReadParamStr('MMKT_CHAVE','');
+    if not ValidarChaveLicenca(Chave) then
+      raise Exception.Create('Chave de licença inválida.');}
+
+    Minutos := GetConfigSrv.ReadParamInt('MMKT_MINUTOS_ENVIAR_FATURAMENTO',0);
+    TipoPedidoVenda := GetConfigSrv.ReadParamInt('MMKT_TIPO_PEDIDO',0);
+
+    C.Dim('TIPO_PEDIDO',TipoPedidoVenda);
+    C.Execute('SELECT S.SAIDA, '+
+              '       PV.COD_PEDIDOV, '+
+              '       PF.NUMERO, '+
+              '       S.DATA AS DATA_EMISSAO_NF, '+
+              '       NF.NOTA, '+
+              '       NF.SERIE AS SERIE_NF, '+
+              '       NF.IDNFE, '+
+              '       NF.VALOR, '+
+              '       VE.NUMERO_OBJETO AS URL_TRACKING_PEDIDO '+
+              '       /*PRODUTOS '+
+              '         EAN '+
+              '         QUANTIDADE '+
+              '         VALOR '+
+              '         TOTAL */ '+
+              'FROM SAIDAS S '+
+              'INNER JOIN PRODUTOS_EVENTOS PE ON (PE.COD_OPERACAO = S.SAIDA) AND '+
+              '                                  (PE.TIPO_OPERACAO = "S") '+
+              'INNER JOIN PEDIDO_VENDA PV ON (PV.PEDIDOV = PE.PEDIDO) '+
+              'INNER JOIN NF ON (NF.COD_OPERACAO = S.SAIDA) AND '+
+              '                 (NF.TIPO_OPERACAO = "S") AND '+
+              '                 (NF.NOTA = PE.NOTA) '+
+              'LEFT JOIN VOLUMES_EVENTO VE ON (VE.COD_OPERACAO = S.SAIDA) AND '+
+              '                                (VE.TIPO_OPERACAO = "S") '+
+              'LEFT JOIN PREFATURAMENTOS PF ON (PF.PREFATURAMENTO = PE.PRE_FATURAMENTO) '+
+              'WHERE PV.TIPO_PEDIDO = :TIPO_PEDIDO AND '+
+              '      NOT EXISTS (SELECT FE.NOTA '+
+              '                  FROM MOR_FAT_ENVIADOS FE '+
+              '                  WHERE FE.NOTA = NF.NOTA) '+
+              'ORDER BY NF.NOTA');
+
+    while not C.EOF do
+    begin
+      Faturamento.Clear;
+      Faturamento.New;
+      Faturamento.SetFieldByName('COD_PEDIDOV',C.GetFieldByName('COD_PEDIDOV'));
+      Faturamento.SetFieldByName('NUMERO',C.GetFieldByName('NUMERO'));
+      Faturamento.SetFieldByName('DATA_EMISSAO_NF',C.GetFieldByName('DATA_EMISSAO_NF'));
+      Faturamento.SetFieldByName('NOTA',C.GetFieldByName('NOTA'));
+      Faturamento.SetFieldByName('SERIE_NF',C.GetFieldByName('SERIE_NF'));
+      Faturamento.SetFieldByName('IDNFE',C.GetFieldByName('IDNFE'));
+      Faturamento.SetFieldByName('VALOR',C.GetFieldByName('VALOR'));
+      Faturamento.SetFieldByName('NUMERO_OBJETO',C.GetFieldByName('NUMERO_OBJETO'));
+      Faturamento.SetFieldByName('PRODUTOS',C.GetFieldByName('PRODUTOS'));
+      Faturamento.Add;
+
+      JsonRequest := ToJson(Faturamento,[],False);
+      if JsonIsValid(JsonRequest) then
+        PostRESTService(Servico,JsonRequest,False,JsonResponse);
+
+      L.Dim('MENSAGEM','Faturamento enviado com sucesso');
+      L.Dim('JSON',JsonRequest);
+      L.Execute('#CALL MILLENIUM!MORMAIIMKT.LOGS.INCLUIR(MENSAGEM=:MENSAGEM,JSON=:JSON,TIPO=3)');
+
+      L.Dim('SAIDA',C.GetFieldByName('SAIDA'));
+      L.Execute('INSERT INTO MOR_FAT_ENVIADOS(SAIDA) VALUES (:SAIDA) #RETURN (MOR_FAT_ENVIADO);');
+
+      C.Next;
+    end;
+   except on E: Exception do
+     begin
+       L.Dim('MENSAGEM',E.Message);
+       L.Dim('JSON',JsonRequest);
+       L.Execute('#CALL MILLENIUM!MORMAIIMKT.LOGS.INCLUIR(MENSAGEM=:MENSAGEM,JSON=:JSON,TIPO=3)');
+     end;
+   end;
+end;
+
+initialization
+   wtsRegisterProc('FATURAMENTO.Enviar',Enviar);
+
+end.
+

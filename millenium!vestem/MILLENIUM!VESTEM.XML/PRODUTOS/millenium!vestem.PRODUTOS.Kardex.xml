@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PRODUTOS">
+    <METHOD NAME="Kardex" DESCRIPTION="" VERSION="26" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="DATAI" FORMAT="D" SIZE="10" FLAGS="1" DEFAULT="TODAY" PROJECTION="0" ORDER="1" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="DATAF" FORMAT="D" SIZE="10" FLAGS="1" DEFAULT="TODAY" PROJECTION="0" ORDER="2" FIELDLABEL="Data Final" CTAB="0"/>
+        <PARAM NAME="FILIAL" SIZE="1000" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="3" LOOKUP="MILLENIUM.FILIAIS.LISTA_SIMPLES" LOOKUPKEY="FILIAL" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_FILIAL" FIELDLABEL="Filiais" CTAB="0"/>
+        <PARAM NAME="TIPO" SIZE="1000" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="4" LOOKUP="MILLENIUM.TIPOS.LISTA_SIMPLES" LOOKUPKEY="TIPO" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="COD_TIPO" FIELDLABEL="Tipo" CTAB="0"/>
+        <PARAM NAME="PRODUTO" SIZE="1000" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="5" LOOKUP="MILLENIUM.PRODUTOS.Lista_Popup3" LOOKUPKEY="PRODUTOAC" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Produto" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="COD_FILIAL" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Filial" CTAB="0"/>
+        <FIELD NAME="DESC_PRODUTO" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Produto" CTAB="0"/>
+        <FIELD NAME="DESC_COR" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Cor" CTAB="0"/>
+        <FIELD NAME="TAMANHO" SIZE="15" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Tamanho" CTAB="0"/>
+        <FIELD NAME="DATA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Data" CTAB="0"/>
+        <FIELD NAME="MOVIMENTO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Movimento" CTAB="0"/>
+        <FIELD NAME="DOCUMENTO" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="13" FIELDLABEL="Documento" CTAB="0"/>
+        <FIELD NAME="QUANTIDADE" FORMAT="N" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="14" FIELDLABEL="Quantidade" CTAB="0"/>
+        <FIELD NAME="VLR_CUSTO_UNIT_ALOC" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="15" FIELDLABEL="Custo Unit. Aloc." CTAB="0"/>
+        <FIELD NAME="FATOR_ATUALIZACAO" FORMAT="N" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="16" FIELDLABEL="Fator Atualiza&#231;&#227;o" CTAB="0"/>
+        <FIELD NAME="VLR_CUSTO_TOTAL" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="17" FIELDLABEL="Custo Total" CTAB="0"/>
+        <FIELD NAME="VLR_ACUMULADO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="18" FIELDLABEL="Vlr Acumulado" CTAB="0"/>
+        <FIELD NAME="SALDO" FORMAT="N" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="19" FIELDLABEL="Saldo" CTAB="0"/>
+        <FIELD NAME="CUSTO_MEDIO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="20" FIELDLABEL="Custo M&#233;dio" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT
+  F.COD_FILIAL                                               AS COD_FILIAL,
+  //F.NOME                                                   AS NOME_FILIAL,
+  ME.DATA                                                    AS DATA,
+  #translate(me.tipo_origem
+        ,"L" :"Transf. de Local"
+        ,"S" :"Saida"
+        ,"E" :"Entrada"
+        ,"F" :"Pre-Fat Venda"
+        ,"D" :"Producao"
+        ,"I" :"Invent&#225;rio"
+        ,"R" :"Pre-Fat Transf"
+        ,else:'')                                            AS MOVIMENTO,
+  //P.COD_PRODUTO                                            AS CODIGO_PRODUTO,
+  P.COD_PRODUTO||" - "||P.DESCRICAO1                         AS DESC_PRODUTO,
+  C.COD_COR||" - "||C.DESCRICAO                              AS DESC_COR,
+  ME.TAMANHO                                                 AS TAMANHO,
+  ME.NUMDOCTO                                                AS DOCUMENTO,
+  ME.QUANTIDADE+ME.EMPENHO+ME.RECEBIMENTO+#null_to_z(me.kit) AS QUANTIDADE,
+  ME.VALOR                                                   AS VLR_CUSTO_UNIT_ALOC,
+  ME.ATUALIZACSMEDIO                                         AS FATOR_ATUALIZACAO,
+  ME.VALOR                                                   AS VLR_CUSTO_TOTAL,
+  ME.VALOR_ACUM                                              AS VLR_ACUMULADO,
+  #null_to_z(ME.QUANT_ACUM)                                  AS SALDO,
+  ME.CUSTO_MEDIO                                             AS CUSTO_MEDIO
+FROM MOV_ESTOQUE ME
+  INNER JOIN FILIAIS  F ON F.FILIAL = ME.FILIAL
+  INNER JOIN PRODUTOS P ON P.PRODUTO = ME.PRODUTO
+  INNER JOIN CORES    C ON C.COR     = ME.COR
+  INNER JOIN TIPOS T ON T.TIPO = COALESCE(P.TIPO, -2000000000)
+WHERE (ME.QUANTIDADE+ME.EMPENHO+ME.RECEBIMENTO)&lt;>0
+  [ AND ME.DATA BETWEEN #REPLACET(:DATAI) AND #REPLACET(:DATAF) ]
+  [ and f.filial  in #replace(:FILIAl)]
+  [ and p.tipo    in #replace(:tipo)]
+  [ and p.produto IN #replace(produto)]
+
+ORDER BY
+  ME.FILIAL,
+  ME.PRODUTO||ME.COR||ME.ESTAMPA||ME.TAMANHO,
+  ME.DATA,
+  ME.SEQUENCIA_CUSTO
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

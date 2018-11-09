@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PREFATURAMENTOS_SAIDA">
+    <METHOD NAME="LibExpedicao" DESCRIPTION="Enviar prefaturamento para expedi&#231;&#227;o" VERSION="18" INTFTYPE="17" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PREFS" FORMAT="R" PROJECTION="0" FIELDLABEL="Prefs" NESTEDNAME="WTSSYSTEM.INTERNALTYPES.INTEGERARRAY" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>#PRIVATE()
+#CALL:CFG millenium.configuracoes.consulta();
+
+//#EACH() PREFS; as PF1
+//  #check("select count(*) as n from pedido_venda pv inner join prefaturamentos pf on pf.pedidov = pv.pedidov where pf.prefaturamento=:PF1.ITEM and pv.aprovado = FALSE", n=0,"H&#225; pedidos n&#227;o aprovados");
+  
+#EACH() PREFS;
+  UPDATE PREFATURAMENTOS SET EXPEDICAO = TRUE, DATA_EXPEDICAO = #NOW(), USU_EXPEDICAO = #USER() WHERE PREFATURAMENTO =:PREFS.ITEM;
+
+#EACH() PREFS AS EV;
+  SELECT:PV PF.PEDIDOV  AS PEDIDOV FROM PREFATURAMENTOS PF WHERE PF.prefaturamento = :EV.ITEM;
+  #CALL millenium!vestem.PREFATURAMENTOS_SAIDA.ev_prefat_liberado(:PV.PEDIDOV);
+
+
+
+
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="CRM_VESTEM">
+    <METHOD NAME="Lista - Varejo" DESCRIPTION="Lista de Protocolos - SAC - Varejo" VERSION="11" INTFTYPE="5" TRIGGEROF="millenium!crm.XRM.CHAMADOS.Lista" TRIGGERTYPE="0" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="VOID" FORMAT="N" PROJECTION="0" FIELDLABEL="Void" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>SELECT C.*,
+       CC.*
+FROM #REPLACE(PARENT_RESULT) C
+INNER JOIN CHAMADOS_CRM CC ON (CC.CHAMADO = C.CHAMADO)
+WHERE CC.EVL_SEGUIMENTO IS NULL;
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

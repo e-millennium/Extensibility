@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="SAIDAS">
+    <METHOD NAME="vendas_documento" DESCRIPTION="" VERSION="12" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="TIPO_DOCUMENTO" FORMAT="N" SIZE="8" FLAGS="1" VISIBILITYRULE="(TIPO_DOCUMENTO=8)" PROJECTION="0" ORDER="2" LOOKUP="list:'0','Boletos/Duplicatas';'1','Romaneios';'2','Notas Fiscais';'8','Danfe (NFe)';'9','Confer&#234;ncia Danfe (NFe)';'3','Guias de Transporte';'4','Conhecimentos de Frete';'5','Lista de Visitas';'6','Carta de Cobran&#231;a';'10','Mensagens de Pedidos de Venda';'11','GNRE IE';" FIELDLABEL="Tipo Documento" CTAB="0"/>
+        <PARAM NAME="CFOP" SIZE="1000" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="1" LOOKUP="MILLENIUM.CFOP.LISTA" LOOKUPKEY="CFOP" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="NAT_OPERACAO" FIELDLABEL="Cfop" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>#SELECT(TIPO_DOCUMENTO,
+8:{
+  SELECT
+    C.*
+  FROM #REPLACE(PARENT_RESULT) C
+  WHERE
+  [AND EXISTS (SELECT * FROM PRODUTOS_EVENTOS PE WHERE PE.TIPO_OPERACAO = C.TIPO_ORIGEM AND PE.COD_OPERACAO = C.ORIGEM AND PE.CFOP IN #REPLACE(:CFOP))]
+},
+ELSE:{})
+;
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

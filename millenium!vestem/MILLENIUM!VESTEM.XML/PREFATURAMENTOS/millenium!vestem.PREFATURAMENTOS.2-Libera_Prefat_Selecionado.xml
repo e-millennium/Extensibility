@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PREFATURAMENTOS">
+    <METHOD NAME="2-Libera_Prefat_Selecionado" DESCRIPTION="Libera Pedidos Para Expedi&#231;&#227;o" VERSION="10" INTFTYPE="5" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="DATA_INICIAL" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="DATA_FINAL" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" FIELDLABEL="Data Final" CTAB="0"/>
+        <PARAM NAME="PEDIDOV" FORMAT="R" FLAGS="1" PROJECTION="0" FIELDLABEL="Pedidov" NESTEDNAME="millenium!md.PREFATURAMENTOS.1-Seleciona_Prefat_Liberacao" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>#each() pedidov;
+     #select( pedidos.seleciona, true:
+     { update prefaturamentos set expedicao = 'T', data_expedicao = #now(), usu_expedicao = #user()
+     where PEDIDOV=:PEDIDOV
+     #call millenium!md.PREFATURAMENTOS_SAIDA.ev_prefat_liberado(:PEDIDOV);
+     },else:{})
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

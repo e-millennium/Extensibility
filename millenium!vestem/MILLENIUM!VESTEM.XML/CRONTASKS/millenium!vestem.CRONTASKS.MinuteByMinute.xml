@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="CRONTASKS">
+    <METHOD NAME="MinuteByMinute" DESCRIPTION="!Atividades programadas para executar a cada minuto" VERSION="27" THREADSAFE="0">
+      <PARAMS/>
+      <FIELDS/>
+      <ACTIONSCRIPT>//Ajusta codigos dos clientes transformando em numeros sequenciais
+//Edson Vidal em 09-07-2017
+SELECT * FROM VSTM_AJUSTA_COD_CLIENTE;
+
+//Gera compras automaticamente para as franquias
+//Edson Vidal em 17-01-2018
+#call millenium!vestem.MOVIMENTO_FRANQUIAS.Processar();
+
+//Marca pedidos do atacado e pronta entrega como orcamento ate que esteja aprovado
+//Edson Vidal em 23-03-2018
+update pedido_venda pv
+  set pv.orcamento = 'T'
+where pv.efetuado = 'F'
+  and pv.aprovado = 'F'
+  and pv.orcamento = 'F'
+  and pv.tipo_pedido in (8,29);
+
+//Marca como aprovado pedidos da loja virtual digitado manualmente
+//Edson Vidal em 12-07-2018
+update pedido_venda pv2
+  set pv2.aprovado = 'T'
+where pv2.tipo_pedido = 3
+  and pv2.efetuado = 'F'
+  and pv2.aprovado = 'F'
+  and pv2.origem_pedido = 'MANUAL';
+
+//Atualiza clientes PF que n&#227;o sejam consumidores ou do exterior
+//Edson Vidal em 20-07-2018
+update geradores c
+set
+  c.tipo_empresa = 0,
+  c.naocontribuinte_icms = 'T'
+where c.pf_pj = 'PF'
+and c.tipo_empresa not in(0,99)
+and c.gerador not in (select distinct(ex.gerador) from enderecos_cadastro ex where ex.estado = 'EX');
+  
+  
+  
+  
+
+
+
+
+
+  
+  
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

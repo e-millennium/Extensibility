@@ -256,7 +256,7 @@ begin
 
           ProdutosPV.First;
           C.DimAsData('PRODUTOS',ProdutosPV);
-          C.Execute('SELECT * FROM CODIGO_BARRAS WHERE SUBSTR(BARRA,1,12) IN #MAKELIST(PRODUTOS,EAN)');
+          C.Execute('SELECT SUBSTR(BARRA,1,12) AS BARRA,PRODUTO,COR,ESTAMPA,TAMANHO FROM CODIGO_BARRAS WHERE SUBSTR(BARRA,1,12) IN #MAKELIST(PRODUTOS,EAN)');
           Barras := c.CreateRecordset;
 
           Produtos := DataPool.CreateRecordset('MILLENIUM.PEDIDO_VENDA.PRODUTOS');

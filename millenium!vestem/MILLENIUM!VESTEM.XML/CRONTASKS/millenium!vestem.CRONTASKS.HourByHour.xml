@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="CRONTASKS">
+    <METHOD NAME="HourByHour" DESCRIPTION="!Atividades programadas para executar a cada minuto" VERSION="28" THREADSAFE="0">
+      <PARAMS/>
+      <FIELDS/>
+      <ACTIONSCRIPT>//Atualiza cadastro de produtos e evita restricao de consultas(ex: marketing)
+//Edson Vidal em 05-03-2018
+update produtos p set p.pconta = -2000000000 where p.pconta is null;
+
+//Atualiza cadastro de cliente para retirar filial e evitar que a restricao de acesso de filais restringe acesso aos dados de movimentacoes
+//Edson Vidal em 05-04-2018
+update iclientes c set c.filial = null where c.filial is not null;
+
+//Atualizar clientes consumidores
+//Edson Vidal em 21-02-2018
+
+//UPDATE GERADORES G
+//SET
+//  TIPO_EMPRESA=0,
+//  APLICAR_ICMS_ST = 'F',
+//  NAOCONTRIBUINTE_ICMS = 'T'
+//WHERE PF_PJ= 'PF'
+//  AND TIPO_EMPRESA&lt;>0
+//  AND UFIE&lt;>'EX' OR (UFIE IS NULL) ;
+
+
+//Comando para limpar tabela de relacao qualidade x defeito no cadastro de ficha tecnica
+//Edson Vidal em 25-01-2018 para servicedesk: 137
+delete from produtos_defeitos;
+
+//Ajuste para resolver problema com titulos do apagar com o status de autorizado nao deixando alterar
+//Edson Vidal 18-01-2018
+//Chamado: 98 pendente de analise de causa raiz
+UPDATE LANCAMENTOS L SET L.AUTPAGAMENTO = 'G' WHERE L.TIPO = 'P' AND L.AUTPAGAMENTO = 'A';
+
+//Libera cr&#233;ditos de pedidos em que o tipo de pagamento n&#227;o seja boleto (natureza= 2)
+//Edson Vidal em 20-09-2017
+UPDATE LANCAMENTOS L
+ SET L.TRANSACAO_APROVADA = 'T'
+WHERE L.TIPO = 'R'
+ AND L.EFETUADO = 'F'
+ AND L.TIPO_ORIGEM = 'V'
+ AND COALESCE(L.TRANSACAO_APROVADA, 'F') = 'F'
+ AND L.TIPO_PGTO IN (SELECT TP.TIPO_PGTO FROM TIPOS_PGTOS TP WHERE TP.NATUREZA &lt;> 2)
+;
+
+//Gerar url PDV Omni
+//Edson Vidal 7-05-2018
+select * from evl_geral_url_omni;
+select * from evl_geral_url_matriz;
+
+//Elimina cor unica das vitrines, essa cor n&#227;o &#233; utilizada
+//Edson Vidal 19-07-2018
+delete from vitrine_produtos_sku vp where vp.cor = 0
+
+//Gerar OBS do movimento em titulos de entradas
+//Edson Vidal 7-05-2018
+select * from evl_gera_obs_titulos_entradas;
+
+//Marca preco_total para movimentos do Storemanager
+//Edson Vidal em 28-05-2018
+update iclientes c
+set
+  c.bloqueia_pedidos = 'F',
+  c.bloqueia_vendas = 'F'
+where c.pf_pj = 'PF'
+and c.bloqueia_vendas is null or (c.bloqueia_pedidos is null);
+
+update entradas e set e.atualizar_tabela = 'F' where e.evento = 1000114 and e.atualizar_tabela is null;
+update entradas e set e.considerar_frete_impostos = 'F' where e.evento = 1000114 and e.considerar_frete_impostos is null;
+update entradas e set e.modalidade_frete = '0' where e.evento = 1000114 and e.modalidade_frete is null;
+update entradas e set e.frete_informado = 'F' where e.evento = 1000114 and e.frete_informado is null;
+update entradas e set e.condicoes_pgto = 9 where e.evento = 1000114 and e.condicoes_pgto = 9;
+
+//Marca preco_total para movimentos onde estao nulos DRE gerencial
+//Edson Vidal em 12-04-2018
+UPDATE PRODUTOS_EVENTOS PE SET PE.PRECO_TOTAL = PE.PRECO WHERE PE.PRECO_TOTAL IS NULL;
+
+
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

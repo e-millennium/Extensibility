@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="ACERTOS_FORNECEDOR">
+    <METHOD NAME="Listar Consig_Acertar" DESCRIPTION="Listagem de Consigna&#231;&#227;o a Acertar" VERSION="15" INTFTYPE="14" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="DATA_VENDA_INICIAL" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Data Venda Inicial" CTAB="0"/>
+        <PARAM NAME="DATA_VENDA_FINAL" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Data Venda Final" CTAB="0"/>
+        <PARAM NAME="FORNECEDOR" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="3" LOOKUP="FORNECEDORES.Lista_FiltroPopUp" LOOKUPKEY="FORNECEDOR" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_FORNECEDOR" FIELDLABEL="Fornecedor" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="FORNECEDOR" SIZE="120" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Fornecedor" CTAB="0"/>
+        <FIELD NAME="COD_PRODUTO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Cod Produto" CTAB="0"/>
+        <FIELD NAME="DESCRICAO1" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Descricao1" CTAB="0"/>
+        <FIELD NAME="COR" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Cor" CTAB="0"/>
+        <FIELD NAME="ESTAMPA" SIZE="30" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Estampa" CTAB="0"/>
+        <FIELD NAME="TAMANHO" SIZE="6" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Tamanho" CTAB="0"/>
+        <FIELD NAME="QUANTIDADE" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Quantidade" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select       F.cod_fornecedor||' - '|| F.nome AS FORNECEDOR,
+             P.cod_produto,
+             p.descricao1 ,
+             C.descricao AS cor,
+             ES.descricao AS estampa,
+             me.tamanho,
+             SUM(me.quantidade*-1) AS QUANTIDADE
+      from mov_estoque me
+      INNER JOIN PRODUTOS P ON P.produto=ME.produto
+      INNER JOIN CORES C ON C.cor=ME.cor
+      INNER JOIN estampas ES ON ES.estampa=ME.estampa
+      inner join movimento m on m.cod_operacao=me.origem and m.tipo_operacao=me.tipo_origem
+      inner join eventos e on e.evento=m.evento
+      inner join lotes l on l.produto=me.produto and
+                            l.cor=me.cor and
+                            l.estampa=me.estampa and
+                            l.tamanho=me.tamanho and
+                            l.lote=me.lote
+      inner join entradas ent on ent.entrada=l.origem and ent.tipo_operacao_e=l.tipo_origem
+      inner join fornecedores f on f.gerador=ent.gerador
+      where me.data between :data_venda_inicial and :data_venda_final
+           [AND F.FORNECEDOR=:FORNECEDOR]
+           and ( ( e.tipo_evento='S' and e.tipo_saida='V' ) or
+            ( e.tipo_evento='E' and e.tipo_entrada='V' ) )
+           and l.terceiro&lt;>'F'
+group BY 1,2,3,4,5,6
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

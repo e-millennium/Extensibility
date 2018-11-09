@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PREFATURAMENTOS_SAIDA">
+    <METHOD NAME="Lista" DESCRIPTION="Lista Pr&#233;-Faturamentos de Sa&#237;da - Vestem" VERSION="349" INTFTYPE="5" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP NAME="Sele&#231;&#227;o por Data"/>
+          <GROUP NAME="Demais condi&#231;&#245;es de Filtro"/>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PEDIDOV" FORMAT="N" SIZE="8" FLAGS="8" PROJECTION="0" ORDER="7" FIELDLABEL="Pedido" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="DATAI" FORMAT="D" SIZE="10" FLAGS="3" DEFAULT="01/01/1930" PROJECTION="0" ORDER="1" FIELDLABEL="Data Inicial" GROUPNAME="Sele&#231;&#227;o por Data" CTAB="0"/>
+        <PARAM NAME="DATAF" FORMAT="D" SIZE="10" FLAGS="3" DEFAULT="Today" PROJECTION="0" ORDER="2" FIELDLABEL="Data Final" GROUPNAME="Sele&#231;&#227;o por Data" CTAB="0"/>
+        <PARAM NAME="ENTREGUE" FORMAT="B" SIZE="1" FLAGS="1" VISIBILITYRULE="(PENDENTE_IMPRESSAO &lt;> TRUE)" DEFAULT="FALSE" PROJECTION="0" ORDER="15" FIELDLABEL="Faturado" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="CLIENTE" FORMAT="N" SIZE="8" STYLE="5" PROJECTION="0" ORDER="8" LOOKUP="millenium.CLIENTES.Lista_FiltroPopup" LOOKUPKEY="CLIENTE" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_CLIENTE" FIELDLABEL="Cliente" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="NUMERO" SIZE="15" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="N&#250;mero do Pr&#233;-Faturamento" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="PRODUTO" FORMAT="N" SIZE="8" FLAGS="1" STYLE="5" PROJECTION="0" ORDER="8" LOOKUP="millenium.PRODUTOS.Lista_Popup3" LOOKUPKEY="PRODUTOAC" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Produto" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="CONFERIDO" FORMAT="B" SIZE="1" FLAGS="3" VISIBILITYRULE="(PENDENTE_IMPRESSAO &lt;> TRUE)" PROJECTION="0" ORDER="14" FIELDLABEL="Conferido" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="PODECONFERIR" FORMAT="B" SIZE="1" FLAGS="3" VISIBILITYRULE="(PENDENTE_IMPRESSAO &lt;> TRUE)" PROJECTION="0" ORDER="13" FIELDLABEL="Separa&#231;&#227;o" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="PREFATURAMENTO" FORMAT="+" SIZE="8" FLAGS="1034" PROJECTION="0" FIELDLABEL="Prefaturamento" CTAB="0"/>
+        <PARAM NAME="FILIAIS" SIZE="1000" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="18" LOOKUP="millenium.FILIAIS.LISTA_SIMPLES" LOOKUPKEY="FILIAL" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_FILIAL" FIELDLABEL="Filiais" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="EXPEDICAO" FORMAT="B" SIZE="1" FLAGS="3" VISIBILITYRULE="(PENDENTE_IMPRESSAO &lt;> TRUE)" PROJECTION="0" ORDER="12" FIELDLABEL="Logistica" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="EXCLUIDO" FORMAT="B" SIZE="1" FLAGS="3" DEFAULT="FALSE" PROJECTION="0" ORDER="16" FIELDLABEL="Exclu&#237;do" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="PENDENTE_IMPRESSAO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Pendente de Impress&#227;o" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="TRANSPORTADORA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="17" LOOKUP="millenium.TRANSPORTADORAS.ListaTodos" LOOKUPKEY="TRANSPORTADORA" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_TRANSPORTADORA" FIELDLABEL="Transportadora" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="TIPO_FRETE" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="19" LOOKUP="millenium.TIPOS_FRETE.LISTAR" LOOKUPKEY="TIPO_FRETE" LOOKUPDISPLAY="DESCRICAO" FIELDLABEL="Tipo Frete" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="TIPO_PEDIDO" SIZE="1000" FLAGS="1" VISIBILITYRULE="(GERADOR='C') OR (GERADOR='')" STYLE="6" PROJECTION="0" ORDER="4" LOOKUP="millenium.TIPOS_PEDIDO.Lista" LOOKUPKEY="TIPO_PEDIDO" LOOKUPDISPLAY="DESCRICAO" FIELDLABEL="Tipo de Pedido" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="COD_PEDIDOV" SIZE="20" FLAGS="1" VISIBILITYRULE="(GERADOR='C') OR (GERADOR='')" PROJECTION="0" ORDER="9" FIELDLABEL="N&#250;mero do Pedido" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="GERADOR" SIZE="1" FLAGS="1" DEFAULT="C" PROJECTION="0" ORDER="5" LOOKUP="list:'C','Cliente';'F','Fornecedor';" FIELDLABEL="Tipo de Gerador" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="COD" FORMAT="N" SIZE="8" FLAGS="1" STYLE="5" PROJECTION="0" ORDER="6" LOOKUP="millenium.TITULOS.Lista_Gerador_Popup" LOOKUPKEY="COD" LOOKUPDISPLAY="NOME" LOOKUPCODE="CODIGO" FIELDLABEL="Gerador" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+        <PARAM NAME="APROVADO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Aprovado" GROUPNAME="Demais condi&#231;&#245;es de Filtro" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="PREFATURAMENTO" FORMAT="+" SIZE="8" FLAGS="1032" PROJECTION="0" FIELDLABEL="Prefaturamento" CTAB="0"/>
+        <FIELD NAME="PEDIDOV" FORMAT="N" SIZE="8" FLAGS="8" PROJECTION="0" ORDER="6" FIELDLABEL="Pedido" CTAB="0"/>
+        <FIELD NAME="NUMERO" SIZE="15" FLAGS="1" PROJECTION="0" ORDER="21" FIELDLABEL="N&#250;mero" CTAB="0"/>
+        <FIELD NAME="DATA" FORMAT="D" SIZE="14" FLAGS="1" PROJECTION="0" ORDER="22" FIELDLABEL="Data" CTAB="0"/>
+        <FIELD NAME="COD_PEDIDOV" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="23" FIELDLABEL="Pedido" CTAB="0"/>
+        <FIELD NAME="CLIENTE" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="26" FIELDLABEL="Cliente" CTAB="0"/>
+        <FIELD NAME="ENTREGUE" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="31" FIELDLABEL="Faturado" CTAB="0"/>
+        <FIELD NAME="CONFERIDO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="30" FIELDLABEL="Conferido" CTAB="0"/>
+        <FIELD NAME="PODECONFERIR" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="29" FIELDLABEL="Separa&#231;&#227;o" CTAB="0"/>
+        <FIELD NAME="CONFERINDO" FORMAT="B" SIZE="1" PROJECTION="0" ORDER="32" FIELDLABEL="Conferindo" CTAB="0"/>
+        <FIELD NAME="VENDEDOR" SIZE="80" PROJECTION="0" ORDER="30" FIELDLABEL="Vendedor" CTAB="0"/>
+        <FIELD NAME="QTDE_PREFAT" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="32" FIELDLABEL="Qtde Prefat" CTAB="0"/>
+        <FIELD NAME="EXPEDICAO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="28" FIELDLABEL="Log&#237;stica" CTAB="0"/>
+        <FIELD NAME="TRANSPORTADORA" SIZE="50" PROJECTION="0" ORDER="18" FIELDLABEL="Permite Conferencia" CTAB="0"/>
+        <FIELD NAME="CIF_FOB" SIZE="1" PROJECTION="0" FIELDLABEL="Cif Fob" CTAB="0"/>
+        <FIELD NAME="EXCLUIDO" FORMAT="B" SIZE="1" PROJECTION="0" ORDER="41" FIELDLABEL="Excluido" CTAB="0"/>
+        <FIELD NAME="DATA_EXCLUSAO" FORMAT="H" SIZE="18" PROJECTION="0" ORDER="42" FIELDLABEL="Data Exclusao" CTAB="0"/>
+        <FIELD NAME="DATA_PODECONFERIR" FORMAT="H" SIZE="18" PROJECTION="0" ORDER="38" FIELDLABEL="Data Pode Conferir" CTAB="0"/>
+        <FIELD NAME="DESC_GRUPO_SEPARACAO" SIZE="30" PROJECTION="0" ORDER="31" FIELDLABEL="Grupo Separa&#231;&#227;o" CTAB="0"/>
+        <FIELD NAME="STATUS_WORKFLOW" SIZE="50" PROJECTION="0" ORDER="43" FIELDLABEL="Status Workflow" CTAB="0"/>
+        <FIELD NAME="DIVERGENCIA" FORMAT="B" SIZE="1" PROJECTION="0" ORDER="33" FIELDLABEL="Diverg&#234;ncia" CTAB="0"/>
+        <FIELD NAME="MOTIVO_DIVERGENCIA" SIZE="60" PROJECTION="0" ORDER="34" FIELDLABEL="Motivo Diverg&#234;ncia" CTAB="0"/>
+        <FIELD NAME="TIPO_GERADOR" SIZE="15" PROJECTION="0" ORDER="25" FIELDLABEL="Tipo de Gerador" CTAB="0"/>
+        <FIELD NAME="DESC_GERADOR" SIZE="120" PROJECTION="0" ORDER="26" FIELDLABEL="Gerador" CTAB="0"/>
+        <FIELD NAME="NOTA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="24" FIELDLABEL="Nota" CTAB="0"/>
+        <FIELD NAME="VALOR_PREFAT" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="33" FIELDLABEL="Valor Prefat" CTAB="0"/>
+        <FIELD NAME="QTDE_PEDIDO" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="34" FIELDLABEL="Qtde Pedido" CTAB="0"/>
+        <FIELD NAME="VALOR_PEDIDO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="35" FIELDLABEL="Valor Pedido" CTAB="0"/>
+        <FIELD NAME="QTDE_ENTREGUE" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="36" FIELDLABEL="Qtde Entregue" CTAB="0"/>
+        <FIELD NAME="VALOR_ENTREGUE" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="37" FIELDLABEL="Valor Entregue" CTAB="0"/>
+        <FIELD NAME="QTDE_PENDENTE" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="38" FIELDLABEL="Qtde Pendente" CTAB="0"/>
+        <FIELD NAME="VALOR_PENDENTE" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="39" FIELDLABEL="Valor Pendente" CTAB="0"/>
+        <FIELD NAME="APROVADO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="27" FIELDLABEL="Aprovado" CTAB="0"/>
+        <FIELD NAME="TIPO_PEDIDO" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="25" FIELDLABEL="Tipo Pedido" CTAB="0"/>
+        <FIELD NAME="ID" FORMAT="N" SIZE="8" FLAGS="8" PROJECTION="0" FIELDLABEL="Id" CTAB="0"/>
+        <FIELD NAME="COD_OPERACAO" FORMAT="N" SIZE="8" FLAGS="8" PROJECTION="0" FIELDLABEL="Cod Operacao" CTAB="0"/>
+        <FIELD NAME="TIPO_OPERACAO" SIZE="1" FLAGS="8" PROJECTION="0" FIELDLABEL="Tipo Operacao" CTAB="0"/>
+        <FIELD NAME="MODELO_NF" SIZE="2" FLAGS="8" PROJECTION="0" FIELDLABEL="Modelo Nf" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT
+  P2.PREFATURAMENTO,
+  P2.NUMERO,
+  P2.DATA,
+  PV2.APROVADO,
+  P2.ENTREGUE,
+  P2.CONFERIDO,
+  P2.PODECONFERIR,
+  P2.EXPEDICAO,
+  P2.PEDIDOV                        AS PEDIDOV,
+  P2.COD_PEDIDOV                    AS COD_PEDIDOV,
+  TP.DESCRICAO                      AS TIPO_PEDIDO,
+  C.COD_CLIENTE||' - '||C.NOME AS CLIENTE,
+  SUM(P2.QTDE_PEDIDO)                    AS QTDE_PEDIDO,
+  SUM(P2.VALOR_PEDIDO)                   AS VALOR_PEDIDO,
+  SUM(P2.QTDE_ENTREGUE)                  AS QTDE_ENTREGUE,
+  SUM(P2.VALOR_ENTREGUE)                 AS VALOR_ENTREGUE,
+  SUM(P2.SALDO)                          AS SALDO,
+  SUM(P2.QTDE_PREFAT)                    AS QTDE_PREFAT,
+  SUM((P2.VALOR_PREFAT) * ( 1 + PV2.ACERTO / 100 ) )                AS VALOR_PREFAT,
+  SUM(P2.SALDO-P2.QTDE_PREFAT)        AS QTDE_PENDENTE,
+  SUM(P2.VALOR_PEDIDO - P2.VALOR_ENTREGUE)-SUM((P2.VALOR_PREFAT) * ( 1 + PV2.ACERTO / 100 ) ) AS VALOR_PENDENTE,
+  (select max(distinct nf.id)
+	     from produto_pedidov ppv
+		 left join nf on nf.cod_operacao=ppv.saida and nf.tipo_operacao="S" and
+	                     #null_to_s(cancelada,false)=false and #null_to_s(nf.estornado,false)=False
+		 where ppv.pedidov=pv2.pedidov and ppv.saida is not null and nf.id is not null) as id,
+    (select max(distinct nf.cod_operacao)
+	     from produto_pedidov ppv
+		 left join nf on nf.cod_operacao=ppv.saida and nf.tipo_operacao="S" and
+	                     #null_to_s(cancelada,false)=false and #null_to_s(nf.estornado,false)=False
+		 where ppv.pedidov=pv2.pedidov and ppv.saida is not null and nf.id is not null) as cod_operacao,
+	(select max(distinct nf.tipo_operacao)
+	     from produto_pedidov ppv
+		 left join nf on nf.cod_operacao=ppv.saida and nf.tipo_operacao="S" and
+	                     #null_to_s(cancelada,false)=false and #null_to_s(nf.estornado,false)=False
+		 where ppv.pedidov=pv2.pedidov and ppv.saida is not null and nf.id is not null) as tipo_operacao,
+  	(select max(distinct nf.modelo)
+	     from produto_pedidov ppv
+		 left join nf on nf.cod_operacao=ppv.saida and nf.tipo_operacao="S" and
+	                     #null_to_s(cancelada,false)=false and #null_to_s(nf.estornado,false)=False
+		 where ppv.pedidov=pv2.pedidov and ppv.saida is not null and nf.id is not null) as MODELO_NF,
+   	(select max(distinct nf.NUMERO_NOTA)
+	     from produto_pedidov ppv
+		 left join nf on nf.cod_operacao=ppv.saida and nf.tipo_operacao="S" and
+	                     #null_to_s(cancelada,false)=false and #null_to_s(nf.estornado,false)=False
+		 where ppv.pedidov=pv2.pedidov and ppv.saida is not null and nf.id is not null) as NOTA
+
+FROM(
+  SELECT
+    PV.PEDIDOV,
+    PF.PREFATURAMENTO,
+    PF.NUMERO,
+    PF.DATA,
+    PV.COD_PEDIDOV,
+    PF.ENTREGUE,
+    PF.CONFERIDO,
+    PF.PODECONFERIR,
+    PF.EXPEDICAO,
+    PV.CLIENTE,
+    PPV.PRODUTO,
+    SUM(PPV.QUANTIDADE)                                                     AS QTDE_PEDIDO,
+    SUM(PPV.ENTREGUE)                                                       AS QTDE_ENTREGUE ,
+    SUM((PPV.PRECO*PPV.ENTREGUE) * ( 1 + PV.ACERTO / 100 ) )                AS VALOR_ENTREGUE,
+    SUM(PPV.QUANTIDADE-PPV.ENTREGUE)                                        AS SALDO,
+    SUM((PPV.PRECO* PPV.QUANTIDADE) * ( 1 + PV.ACERTO / 100 ) )             AS VALOR_PEDIDO,
+    SUM((PPV.PRECO*PPV.QUANTIDADE-PPV.ENTREGUE) * ( 1 + PV.ACERTO / 100 ) ) AS VALOR_PENDENTE,
+    0                                                                       AS QTDE_PREFAT,
+    0                                                                       AS VALOR_PREFAT,
+    AVG(PPV.PRECO)                                                          AS PRECO
+
+   FROM PEDIDO_VENDA PV
+     INNER JOIN PRODUTO_PEDIDOV PPV ON PPV.PEDIDOV=PV.PEDIDOV
+     INNER JOIN PRODUTOS PR ON PR.PRODUTO=PPV.PRODUTO
+     INNER JOIN PREFATURAMENTOS PF ON PF.PEDIDOV = PV.PEDIDOV
+     INNER JOIN (SELECT P.PEDIDOV FROM PREFATURAMENTOS P
+                 WHERE P.DATA BETWEEN :DATAI AND :DATAF+1
+                   AND P.ENTREGUE='F'
+                   AND P.EXCLUIDO='F'
+                 GROUP BY P.PEDIDOV
+                ) X ON X.PEDIDOV=PV.PEDIDOV
+     WHERE 1=1
+    [AND PPV.PRODUTO = :PRODUTO]
+    [AND PV.APROVADO = :APROVADO]
+GROUP BY 1,2,3,4,5,6,7,8,9,10,11
+
+UNION ALL
+//--PREFATURAMENTO
+
+  SELECT
+    P.PEDIDOV,
+    P.PREFATURAMENTO,
+    P.NUMERO,
+    P.DATA,
+    PV.COD_PEDIDOV,
+    P.ENTREGUE,
+    P.CONFERIDO,
+    P.PODECONFERIR,
+    P.EXPEDICAO,
+    PV.CLIENTE,
+    PPF.PRODUTO,
+    0                   AS QTDE_PEDIDO,
+    0                   AS QTDE_ENTREGUE ,
+    0                   AS VALOR_ENTREGUE,
+    0                   AS SALDO,
+    0                   AS VALOR_PEDIDO,
+    0                   AS VALOR_PENDENTE,
+    SUM(PPF.QUANTIDADE) AS QTDE_PREFAT,
+    SUM((PPF.QUANTIDADE)) * (SELECT AVG(PV.PRECO) FROM PRODUTO_PEDIDOV PV
+                              WHERE PV.PEDIDOV = P.PEDIDOV AND PV.PRODUTO = PPF.PRODUTO)
+                        AS VALOR_PREFAT,
+                        0 AS VALOR
+    FROM PREFATURAMENTOS P
+      INNER JOIN PEDIDO_VENDA PV ON PV.PEDIDOV=P.PEDIDOV
+      INNER JOIN PRODUTO_PREFAT PPF ON PPF.PREFATURAMENTO=P.PREFATURAMENTO
+      INNER JOIN PRODUTOS PR ON PPF.PRODUTO=PR.PRODUTO
+    WHERE P.DATA BETWEEN :DATAI AND :DATAF+1
+      [AND P.EXPEDICAO = :EXPEDICAO]
+      [AND P.ENTREGUE  = :ENTREGUE]
+      [AND P.EXCLUIDO  = :EXCLUIDO]
+      [AND PPF.PRODUTO = :PRODUTO]
+      [AND PV.APROVADO = :APROVADO]
+
+
+GROUP BY 1,2,3,4,5,6,7,8,9,10,11
+ ) AS P2
+  INNER JOIN PEDIDO_VENDA    PV2 ON PV2.PEDIDOV=P2.PEDIDOV
+  INNER JOIN CLIENTES        C   ON C.CLIENTE=P2.CLIENTE
+  INNER JOIN PREFATURAMENTOS PF  ON PF.PREFATURAMENTO = P2.PREFATURAMENTO
+  INNER JOIN TIPOS_PEDIDO    TP  ON TP.TIPO_PEDIDO = PV2.TIPO_PEDIDO
+  WHERE P2.DATA BETWEEN :DATAI AND :DATAF+1
+  [AND P2.NUMERO=:NUMERO]
+  [AND C.CLIENTE = :CLIENTE]
+  [AND PV2.COD_PEDIDOV=:COD_PEDIDOV]
+  [AND PV2.TIPO_PEDIDO IN #REPLACE ( TIPO_PEDIDO )]
+  [AND PF.FILIAL IN #REPLACE ( FILIAIS )]
+  [AND PF.TRANSPORTADORA = :TRANSPORTADORA]
+  [AND PF.TIPO_FRETE in #replace(:TIPO_FRETE)]
+  [AND PF.GERADOR=:GERADOR]
+  [AND PF.CLIENTE=:CLIENTE]
+  [AND PV2.APROVADO = :APROVADO]
+  #SELECT(GERADOR,'C':{ [AND PF.CLIENTE=:COD] },
+                'F':{ [AND PF.FORNECEDOR=:COD] },
+                 ELSE:{})
+
+  [AND PF.EXCLUIDO = :EXCLUIDO]
+  #SELECT(PENDENTE_IMPRESSAO,
+         TRUE:{AND PF.ENTREGUE = FALSE
+               AND PF.CONFERIDO = FALSE
+               AND PF.PODECONFERIR = FALSE
+               AND PF.EXPEDICAO = TRUE},
+         ELSE:{[AND PF.ENTREGUE=:ENTREGUE]
+               [AND PF.CONFERIDO = :CONFERIDO]
+               [AND PF.PODECONFERIR =:PODECONFERIR]
+               [AND #IIF_S(PF.EXPEDICAO,PF.EXPEDICAO,'F') = :EXPEDICAO]})
+GROUP BY
+  P2.PREFATURAMENTO,
+  P2.NUMERO,
+  P2.DATA,
+  PV2.APROVADO,
+  P2.ENTREGUE,
+  P2.CONFERIDO,
+  P2.PODECONFERIR,
+  P2.EXPEDICAO,
+  P2.PEDIDOV,
+  TP.DESCRICAO,
+  P2.COD_PEDIDOV,
+  C.COD_CLIENTE,
+  C.NOME
+//--ORDER BY #SELECT(ORDEM, 0:C.NOME,1:11,C.NOME);
+
+
+
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

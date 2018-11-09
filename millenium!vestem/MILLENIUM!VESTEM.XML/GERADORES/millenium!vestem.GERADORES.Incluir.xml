@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="GERADORES">
+    <METHOD NAME="Incluir" DESCRIPTION="" VERSION="19" INTFTYPE="1" TRIGGEROF="GERADORES.INCLUIR" TRIGGERTYPE="0" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="VOID" FORMAT="N" SIZE="8" PROJECTION="0" ORDER="1" FIELDLABEL="Tipo Empresa" CTAB="0"/>
+        <PARAM NAME="E_MAIL" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="E Mail" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>#SELECT(E_MAIL,
+          NULL:{},
+          ELSE:{
+      #CHECK("SELECT COUNT(E_MAIL) AS N FROM GERADORES WHERE E_MAIL IS NOT NULL AND E_MAIL=:E_MAIL AND GERADOR &lt;> :WTSSYS_OBJECT", N>0,
+               "E-mail j&#225; cadastrado, por favor utilize um outro !");
+          }
+        )
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

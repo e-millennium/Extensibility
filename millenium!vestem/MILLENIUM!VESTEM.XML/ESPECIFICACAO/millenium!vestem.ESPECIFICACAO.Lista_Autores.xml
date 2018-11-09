@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="ESPECIFICACAO">
+    <METHOD NAME="Lista_Autores" DESCRIPTION="Lista Autores" VERSION="11" THREADSAFE="1">
+      <PARAMS/>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="especificacao" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Espe" CTAB="0"/>
+        <FIELD NAME="descricao" SIZE="30" FLAGS="1" PROJECTION="0" FIELDLABEL="Descricao" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select:MAIN e.especificacao,e.descricao
+ from especificacoes e where (e.descricao like'%AUTOR%' or e.descricao like '%ORGANIZADOR%' or e.descricao like '%COMENTARISTA%')
+ and e.tipo = '0'
+ and e.tipo_espec='02'
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

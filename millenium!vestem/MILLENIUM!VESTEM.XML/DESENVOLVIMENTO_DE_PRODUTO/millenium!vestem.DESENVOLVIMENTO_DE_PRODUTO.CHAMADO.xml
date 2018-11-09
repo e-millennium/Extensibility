@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="DESENVOLVIMENTO_DE_PRODUTO">
+    <METHOD NAME="CHAMADO" DESCRIPTION="Desenvolvimento de Produto" VERSION="16" INTFTYPE="10" TRIGGEROF="XRM.CHAMADOS.CHAMADO" TRIGGERTYPE="1" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PRODUTO" FORMAT="N" SIZE="8" FLAGS="17" PROJECTION="0" ORDER="1" LOOKUP="millenium.produtosac.lista" LOOKUPKEY="produtoac" LOOKUPDISPLAY="descricao1" LOOKUPCODE="cod_produto" FIELDLABEL="Produto" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

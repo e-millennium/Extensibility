@@ -23,7 +23,7 @@ var
       Result := AValue;
   end;
 const
-  Servico: string = '/api/millenium_eco_mmormaii/estoques/receber';
+  Servico: string = '/api/millenium_eco!mmormaii/estoques/receber';
 begin
   JsonRequest := '';
   C := DataPool.Open('MILLENIUM');
@@ -86,6 +86,8 @@ begin
        if JsonIsValid(JsonRequest) then
          PostRESTService(Servico,JsonRequest,False,JsonResponse);
      end;
+     JsonResponse
+
      L.Dim('MENSAGEM','Estoque enviado com sucesso');
      L.Dim('JSON',JsonRequest);
      L.Execute('#CALL MILLENIUM!MORMAIIMKT.LOGS.INCLUIR(MENSAGEM=:MENSAGEM,JSON=:JSON,TIPO=1)');

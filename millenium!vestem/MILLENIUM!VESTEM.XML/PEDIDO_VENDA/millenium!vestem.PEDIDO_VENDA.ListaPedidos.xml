@@ -1,0 +1,495 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PEDIDO_VENDA">
+    <METHOD NAME="ListaPedidos" DESCRIPTION="Lista de Pedidos de Venda" VERSION="77" INTFTYPE="14" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+          <GROUP NAME="Lista de Casamento"/>
+          <GROUP NAME="Status"/>
+          <GROUP NAME="Endere&#231;o"/>
+        </GROUPS>
+        <PARAM NAME="SCRIPTFILIAL" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="8" LOOKUP="MILLENIUM.FILIAIS.LISTA_SIMPLES" LOOKUPKEY="FILIAL" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_FILIAL" FIELDLABEL="Empresas" CTAB="0"/>
+        <PARAM NAME="DATAI" FORMAT="D" SIZE="10" FLAGS="1" DEFAULT="today" PROJECTION="0" ORDER="4" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="DATAF" FORMAT="D" SIZE="10" FLAGS="1" DEFAULT="today" PROJECTION="0" ORDER="5" FIELDLABEL="Data Final" CTAB="0"/>
+        <PARAM NAME="TIPO" SIZE="2" DEFAULT="AC" PROJECTION="0" ORDER="5" LOOKUP="list:'AC','Produto Acabado';'MP','Mat&#233;ria-Prima';" FIELDLABEL="Tipo" CTAB="0"/>
+        <PARAM NAME="EFETUADO" SIZE="1" DEFAULT="2" PROJECTION="0" ORDER="3" LOOKUP="list:'1','Efetuados';'2','N&#227;o Efetuados';'3','Ambos';'4','';" FIELDLABEL="Efetuado" CTAB="0"/>
+        <PARAM NAME="CLIENTE" FORMAT="N" SIZE="8" FLAGS="1" VISIBILITYRULE="(LISTA_CASAMENTO&lt;>TRUE)" STYLE="5" PROJECTION="0" ORDER="14" LOOKUP="MILLENIUM.CLIENTES.Lista_FiltroPopup" LOOKUPKEY="CLIENTE" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_CLIENTE" FIELDLABEL="Cliente" CTAB="0"/>
+        <PARAM NAME="ORDEM" FORMAT="N" SIZE="8" FLAGS="17" DEFAULT="0" PROJECTION="0" ORDER="1" LOOKUP="list:'0','N.&#186; do Pedido';'1','Filial';'2','Data Emiss&#227;o';'3','Data Entrega';'4','Cliente';" FIELDLABEL="Ordem" CTAB="0"/>
+        <PARAM NAME="COD_PEDIDOV" SIZE="20" FLAGS="9" PROJECTION="0" ORDER="6" FIELDLABEL="Pedido" CTAB="0"/>
+        <PARAM NAME="OPCAO_DATA" FORMAT="N" SIZE="1" FLAGS="1" DEFAULT="1" PROJECTION="0" ORDER="3" LOOKUP="list:'0','Data de Entrega';'1','Data de Emiss&#227;o';'2','Data de Entrega Final';'3','Data de Expedi&#231;&#227;o';" FIELDLABEL="Tipo da Data" CTAB="0"/>
+        <PARAM NAME="TABELA" FORMAT="N" SIZE="8" PROJECTION="0" ORDER="15" LOOKUP="MILLENIUM.TABELAS_PRECO.Lista_TabelasNaoCusto" LOOKUPKEY="TABELA" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="COD_TPRECO" FIELDLABEL="Tabela" CTAB="0"/>
+        <PARAM NAME="SCRIPTREPRESENTANTE" SIZE="1000" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="11" LOOKUP="MILLENIUM.REPRESENTANTES.Lista_Simples" LOOKUPKEY="REPRESENTANTE" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_REPRESENTANTE" FIELDLABEL="Representante" CTAB="0"/>
+        <PARAM NAME="PEDIDOV" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Pedidov" CTAB="0"/>
+        <PARAM NAME="PRODUTO" FORMAT="N" SIZE="8" FLAGS="9" STYLE="5" PROJECTION="0" ORDER="17" LOOKUP="MILLENIUM.PRODUTOS.Lista_Popup3" LOOKUPKEY="PRODUTOAC" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Produto" CTAB="0"/>
+        <PARAM NAME="IGNORA_PARAM" FORMAT="B" SIZE="1" DEFAULT="0" PROJECTION="0" FIELDLABEL="Ignora Param" CTAB="0"/>
+        <PARAM NAME="LISTA_CASAMENTO" FORMAT="B" SIZE="1" FLAGS="16" DEFAULT="0" STYLE="5" PROJECTION="0" ORDER="31" LOOKUP="MILLENIUM.NOIVOS.Lista" LOOKUPKEY="GRUPO_LOJA" LOOKUPDISPLAY="NOME_NOIVOS" FIELDLABEL="Noivos" GROUPNAME="Lista de Casamento" CTAB="0"/>
+        <PARAM NAME="GRUPO_LOJA" FORMAT="N" SIZE="8" FLAGS="1" VISIBILITYRULE="(LISTA_CASAMENTO=TRUE)" STYLE="6" PROJECTION="0" ORDER="13" LOOKUP="GRUPO_LOJAS.lista_por_gerador" LOOKUPKEY="GRUPO_LOJA" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_GRUPO" FIELDLABEL="Grupo de Loja" CTAB="0"/>
+        <PARAM NAME="TIPO_PEDIDO" SIZE="1000" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="9" LOOKUP="MILLENIUM.TIPOS_PEDIDO.Lista_Vendas" LOOKUPKEY="TIPO_PEDIDO" LOOKUPDISPLAY="DESCRICAO" FIELDLABEL="Tipos de pedido" CTAB="0"/>
+        <PARAM NAME="BLOQUEIOS" FORMAT="B" SIZE="1" PROJECTION="0" ORDER="9" LOOKUP="MILLENIUM.produtos.listacores" LOOKUPKEY="COR" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="COD_COR" FIELDLABEL="Cor" CTAB="0"/>
+        <PARAM NAME="COR" FORMAT="N" SIZE="8" FLAGS="1" STYLE="4" PROJECTION="0" ORDER="18" LOOKUP="MILLENIUM.PRODUTOS.ListaCores" LOOKUPKEY="COR" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="COD_COR" FIELDLABEL="Cor" CTAB="0"/>
+        <PARAM NAME="ESTAMPA" FORMAT="N" SIZE="8" PROJECTION="0" ORDER="10" LOOKUP="MILLENIUM.produtos.listatamanhos" LOOKUPKEY="TAMANHO" LOOKUPDISPLAY="TAMANHO" FIELDLABEL="Tamanho" CTAB="0"/>
+        <PARAM NAME="TAMANHO" SIZE="5" FLAGS="1" STYLE="4" PROJECTION="0" ORDER="19" LOOKUP="MILLENIUM.PRODUTOS.ListaTAMANHOS" LOOKUPKEY="TAMANHO" LOOKUPDISPLAY="TAMANHO" FIELDLABEL="Tamanho" CTAB="0"/>
+        <PARAM NAME="COLECAO_PRODUTO" SIZE="1000" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="15" LOOKUP="MILLENIUM.COLECOES.LISTA" LOOKUPKEY="COLECAO" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Cole&#231;&#245;es" CTAB="0"/>
+        <PARAM NAME="ENTREGA_IMEDIATA" FORMAT="B" SIZE="1" PROJECTION="0" ORDER="26" FIELDLABEL="Entrega Imediata" GROUPNAME="Status" CTAB="0"/>
+        <PARAM NAME="PRESENTE" FORMAT="B" SIZE="1" PROJECTION="0" ORDER="29" LOOKUP="MILLENIUM.STATUS_WORKFLOW.Lista" LOOKUPKEY="STATUS_WORKFLOW" LOOKUPDISPLAY="DESCRICAO" FIELDLABEL="Presente" GROUPNAME="Status" CTAB="0"/>
+        <PARAM NAME="STATUS_WORKFLOW" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="10" LOOKUP="MILLENIUM.STATUS_WORKFLOW.Lista" LOOKUPKEY="STATUS_WORKFLOW" LOOKUPDISPLAY="DESCRICAO" FIELDLABEL="Status Workflow" CTAB="0"/>
+        <PARAM NAME="CONSIGNACAO" FORMAT="B" SIZE="1" PROJECTION="0" ORDER="25" LOOKUP="MILLENIUM.TRANSPORTADORAS.LISTA" LOOKUPKEY="TRANSPORTADORA" LOOKUPDISPLAY="FANTASIA" LOOKUPCODE="COD" FIELDLABEL="Consigna&#231;&#227;o" GROUPNAME="Status" CTAB="0"/>
+        <PARAM NAME="TRANSPORTADORA" FORMAT="N" SIZE="8" PROJECTION="0" ORDER="13" LOOKUP="MILLENIUM.MUNICIPIOS.ListaEstados" LOOKUPKEY="UF" LOOKUPDISPLAY="UF" FIELDLABEL="Transportadora" CTAB="0"/>
+        <PARAM NAME="ESTADO" SIZE="2" PROJECTION="0" ORDER="23" LOOKUP="MILLENIUM.MUNICIPIOS.ListaPorEstado" LOOKUPKEY="CIDADE" LOOKUPDISPLAY="CIDADE" FIELDLABEL="Estado" GROUPNAME="Endere&#231;o" CTAB="0"/>
+        <PARAM NAME="CIDADE" SIZE="60" PROJECTION="0" ORDER="22" FIELDLABEL="Cidade" GROUPNAME="Endere&#231;o" CTAB="0"/>
+        <PARAM NAME="FILTROPRO" FORMAT="B" SIZE="1" DEFAULT="1" PROJECTION="0" FIELDLABEL="Comanda" CTAB="0"/>
+        <PARAM NAME="COMANDA" FORMAT="N" SIZE="8" STYLE="6" PROJECTION="0" ORDER="21" LOOKUP="MILLENIUM.MARCAS.LISTAR" LOOKUPKEY="MARCA" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="COD_MARCA" FIELDLABEL="Marca" CTAB="0"/>
+        <PARAM NAME="MARCA_PRODUTO" SIZE="1000" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="16" LOOKUP="MILLENIUM.MARCAS.LISTAR" LOOKUPKEY="MARCA" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="COD_MARCA" FIELDLABEL="Marcas" CTAB="0"/>
+        <PARAM NAME="TIPO_COMISSAO_R" SIZE="1000" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="12" LOOKUP="MILLENIUM.TIPOS_COMISSAO.Listar" LOOKUPKEY="TIPO_COMISSAO" LOOKUPDISPLAY="DESC_COMISSAO" FIELDLABEL="Tipos de Comiss&#227;o" CTAB="0"/>
+        <PARAM NAME="SITUACAO" SIZE="1" FLAGS="1" DEFAULT="1" PROJECTION="0" HINT="&lt;b>1 - Pedidos com qtde a entregar&lt;/b>&lt;br>&#xA;  Exibe somente os pedidos com quantidade pendente de faturamento&lt;br>&lt;br>&#xA;&lt;b>2 - Pedidos com qtde pra-faturada em aberto&lt;/b>&lt;br>&#xA;  Exibe somente os pedidos com reserva gerada na log&#237;stica, que ainda n&#227;o foram faturado&lt;br>&lt;br>&#xA;&lt;b>3 - Pedidos com qtde cancelada, total ou parcial&lt;/b>&lt;br>&#xA;  Exibe somente os pedidos em que houve o cancelamento de produtos nos pedidos, seja parcial ou o total do pedido&lt;br>&lt;br>&#xA;&lt;b>4 - Pedidos com qtde faturada, total ou parcial&lt;/b>&lt;br>&#xA;  Exibe somente os pedidos em que j&#225; houve e emiss&#227;o de NF para o cliente&lt;br>&lt;br>&#xA;&lt;b>5 - Pedidos finalizados (despachado, entregue ou cancelado)&lt;/b>&lt;br>&#xA;  Exibe somente os pedidos em n&#227;o h&#225; mais pend&#234;ncia de entrega junto ao cliente, seja por faturamento do pedido ou cancelamento&lt;br>&lt;br>&#xA;&lt;b>6 - Ambos&lt;/b>&lt;br>&#xA;  Exibe os pedidos em qualquer da circunst&#226;ncia listada nas op&#231;&#245;es anteriores&lt;br>&lt;br>" ORDER="2" LOOKUP="list:'1','1 - Pedidos com qtde a entregar';'2','2 - Pedidos com qtde prefaturada em aberto';'3','3 - Pedidos com qtde cancelada total ou parcial';'4','4 - Pedidos com qtde faturada total ou parcial';'5','5 - Pedidos finalizados (despachado, entregue ou cancelado)';'6','6 - Ambos';" FIELDLABEL="Situa&#231;&#227;o" CTAB="0"/>
+        <PARAM NAME="N_PEDIDO_CLIENTE" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Pedido Cliente" CTAB="0"/>
+        <PARAM NAME="ORCAMENTO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="20" FIELDLABEL="Or&#231;amento" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="COD_PEDIDOV" SIZE="20" FLAGS="9" PROJECTION="0" ORDER="22" FIELDLABEL="Pedido" CTAB="0"/>
+        <FIELD NAME="DESC_FILIAL" SIZE="68" PROJECTION="0" ORDER="66" FIELDLABEL="Empresa" CTAB="0"/>
+        <FIELD NAME="DESC_CLIENTE" SIZE="71" FLAGS="17" PROJECTION="0" ORDER="29" FIELDLABEL="Cliente" CTAB="0"/>
+        <FIELD NAME="CLIENTE" FORMAT="N" SIZE="8" FLAGS="26" PROJECTION="0" ORDER="5" FIELDLABEL="Cliente" CTAB="0"/>
+        <FIELD NAME="ACERTO" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" ORDER="36" FIELDLABEL="% Acerto" CTAB="0"/>
+        <FIELD NAME="QUANTIDADE" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" ORDER="42" FIELDLABEL="Qtde Pedido" CTAB="0"/>
+        <FIELD NAME="TOTAL" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="44" FIELDLABEL="Total Pedido" CTAB="0"/>
+        <FIELD NAME="FILIAL" FORMAT="N" SIZE="8" FLAGS="8" PROJECTION="0" ORDER="10" FIELDLABEL="Filial" CTAB="0"/>
+        <FIELD NAME="DATA_ENTREGA" FORMAT="D" SIZE="14" FLAGS="9" PROJECTION="0" ORDER="27" FIELDLABEL="Data de Entrega" CTAB="0"/>
+        <FIELD NAME="PEDIDOV" FORMAT="N" SIZE="8" FLAGS="8" PROJECTION="0" ORDER="78" FIELDLABEL="Pedido interno" CTAB="0"/>
+        <FIELD NAME="DATA_EMISSAO" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="26" FIELDLABEL="Data de Emiss&#227;o" CTAB="0"/>
+        <FIELD NAME="ENDERECO" SIZE="250" PROJECTION="0" ORDER="40" FIELDLABEL="Endere&#231;o" CTAB="0"/>
+        <FIELD NAME="CIDADE" SIZE="60" FLAGS="1" PROJECTION="0" ORDER="34" FIELDLABEL="Cidade" CTAB="0"/>
+        <FIELD NAME="ESTADO" SIZE="2" FLAGS="1" PROJECTION="0" ORDER="33" FIELDLABEL="Estado" CTAB="0"/>
+        <FIELD NAME="NOME_REPRESENTANTE" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="30" FIELDLABEL="Representante" CTAB="0"/>
+        <FIELD NAME="LIQUIDO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="47" FIELDLABEL="Valor Final" CTAB="0"/>
+        <FIELD NAME="FINALIZADO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="40" FIELDLABEL="Finalizado" CTAB="0"/>
+        <FIELD NAME="VENDEDOR" FORMAT="N" SIZE="8" FLAGS="8" PROJECTION="0" FIELDLABEL="Vendedor" CTAB="0"/>
+        <FIELD NAME="DESCONTO" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" ORDER="43" FIELDLABEL="% Desconto" CTAB="0"/>
+        <FIELD NAME="COD_ENDERECO" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Cod Endereco" CTAB="0"/>
+        <FIELD NAME="CONDICOES_PGTO" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Condicoes Pgto" CTAB="0"/>
+        <FIELD NAME="TRANSPORTADORA" FORMAT="N" SIZE="8" FLAGS="8" PROJECTION="0" FIELDLABEL="Transportadora" CTAB="0"/>
+        <FIELD NAME="REPRESENTANTE" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Representante" CTAB="0"/>
+        <FIELD NAME="ORCAMENTO" FORMAT="B" SIZE="1" FLAGS="9" PROJECTION="0" ORDER="46" FIELDLABEL="Or&#231;amento" CTAB="0"/>
+        <FIELD NAME="DESC_COLECAO" SIZE="100" PROJECTION="0" ORDER="66" FIELDLABEL="Cole&#231;&#227;o" CTAB="0"/>
+        <FIELD NAME="APROVADO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="37" FIELDLABEL="Aprovado" CTAB="0"/>
+        <FIELD NAME="DESC_TRANSP" SIZE="78" PROJECTION="0" ORDER="67" FIELDLABEL="Transportadora Pedido" CTAB="0"/>
+        <FIELD NAME="GRUPO_PV" FORMAT="N" SIZE="8" FLAGS="8" PROJECTION="0" FIELDLABEL="Grupo Pv" CTAB="0"/>
+        <FIELD NAME="TAB_PRECO" SIZE="35" FLAGS="1" PROJECTION="0" ORDER="35" FIELDLABEL="Tabela" CTAB="0"/>
+        <FIELD NAME="COND_PGTO" SIZE="30" FLAGS="9" PROJECTION="0" ORDER="31" FIELDLABEL="Cond Pgto" CTAB="0"/>
+        <FIELD NAME="N_PEDIDO_CLIENTE" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="32" FIELDLABEL="Pedido Cliente" CTAB="0"/>
+        <FIELD NAME="NF" SIZE="255" FLAGS="1" PROJECTION="0" ORDER="23" FIELDLABEL="Nf" CTAB="0"/>
+        <FIELD NAME="NOME_NOIVOS" SIZE="100" PROJECTION="0" ORDER="69" FIELDLABEL="Nome Noivos" CTAB="0"/>
+        <FIELD NAME="DESC_TIPO_PEDIDO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="24" FIELDLABEL="Tipo Pedido" CTAB="0"/>
+        <FIELD NAME="VPEDIDO" FORMAT="N" SIZE="8" FLAGS="8" PROJECTION="0" ORDER="85" FIELDLABEL="Vpedido" CTAB="0"/>
+        <FIELD NAME="MARCA" FORMAT="B" SIZE="1" PROJECTION="0" FIELDLABEL="Marca" CTAB="0"/>
+        <FIELD NAME="STATUS" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Status" CTAB="0"/>
+        <FIELD NAME="PRESENTE" FORMAT="B" SIZE="1" PROJECTION="0" FIELDLABEL="Presente" CTAB="0"/>
+        <FIELD NAME="SUPERPOINTVALUE" FORMAT="N" SIZE="15" DECIMALS="7" PROJECTION="0" ORDER="61" FIELDLABEL="Super Point" CTAB="0"/>
+        <FIELD NAME="SUPERPOINTVALUEINREAIS" FORMAT="N" SIZE="15" DECIMALS="7" PROJECTION="0" ORDER="62" FIELDLABEL="Super Point em reais" CTAB="0"/>
+        <FIELD NAME="CONCILIADO_SITE" FORMAT="B" SIZE="1" PROJECTION="0" ORDER="43" FIELDLABEL="Conciliado com o Site" CTAB="0"/>
+        <FIELD NAME="OBS" SIZE="1000" FLAGS="9" PROJECTION="0" ORDER="58" FIELDLABEL="Obs" CTAB="0"/>
+        <FIELD NAME="OBS2" SIZE="1000" PROJECTION="0" ORDER="74" FIELDLABEL="Obs2" CTAB="0"/>
+        <FIELD NAME="STATUS_WORKFLOW" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="25" FIELDLABEL="Status" CTAB="0"/>
+        <FIELD NAME="NUM_DIAS" FORMAT="N" SIZE="8" PROJECTION="0" ORDER="67" FIELDLABEL="N&#250;mero de Dias desde o cadastro" CTAB="0"/>
+        <FIELD NAME="NF_DATA" SIZE="255" FLAGS="1" PROJECTION="0" ORDER="28" FIELDLABEL="Data NF" CTAB="0"/>
+        <FIELD NAME="NUMERO_OBJETO" SIZE="500" PROJECTION="0" ORDER="65" FIELDLABEL="Rastreamento" CTAB="0"/>
+        <FIELD NAME="DESC_TRANSP_FAT" SIZE="1000" PROJECTION="0" ORDER="69" FIELDLABEL="Transportadora Faturamento" CTAB="0"/>
+        <FIELD NAME="V_FRETE" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="45" FIELDLABEL="Total Frete" CTAB="0"/>
+        <FIELD NAME="NOME_VENDEDOR" SIZE="60" PROJECTION="0" ORDER="64" FIELDLABEL="Vendedor" CTAB="0"/>
+        <FIELD NAME="STATUS_ANALISE_RISCO" SIZE="10" PROJECTION="0" ORDER="82" FIELDLABEL="Status Clear Sale" CTAB="0"/>
+        <FIELD NAME="NUM_DIAS_WF" FORMAT="N" SIZE="8" PROJECTION="0" ORDER="78" FIELDLABEL="Dias Workflow" CTAB="0"/>
+        <FIELD NAME="CORTESIA" FORMAT="M" SIZE="17" DECIMALS="4" PROJECTION="0" ORDER="60" FIELDLABEL="Cortesia\Acr&#233;scimo" CTAB="0"/>
+        <FIELD NAME="DESCRICAO_STATUS_ANALISE_RISCO" SIZE="255" PROJECTION="0" ORDER="78" FIELDLABEL="Descri&#231;&#227;o Status Clear Sale" CTAB="0"/>
+        <FIELD NAME="DATA_ENTREGA_FINAL" FORMAT="D" SIZE="10" PROJECTION="0" ORDER="34" FIELDLABEL="Data de Entrega Final" CTAB="0"/>
+        <FIELD NAME="CANCELADO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="41" FIELDLABEL="Cancelado" CTAB="0"/>
+        <FIELD NAME="QUANTIDADE_ENTREGUE" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" ORDER="50" FIELDLABEL="Qtde Entregue" CTAB="0"/>
+        <FIELD NAME="TOTAL_ENTREGUE" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="51" FIELDLABEL="Total Entregue" CTAB="0"/>
+        <FIELD NAME="QUANTIDADE_AENTREGAR" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" ORDER="52" FIELDLABEL="Qtde A Entregar" CTAB="0"/>
+        <FIELD NAME="TOTAL_AENTREGAR" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="53" FIELDLABEL="Total A Entregar" CTAB="0"/>
+        <FIELD NAME="QUANTIDADE_PREFATURADO" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" ORDER="54" FIELDLABEL="Qtde Pr&#233;-Faturado" CTAB="0"/>
+        <FIELD NAME="TOTAL_PREFATURADO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="55" FIELDLABEL="Total Pr&#233;-Faturado" CTAB="0"/>
+        <FIELD NAME="QUANTIDADE_QUITADO" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" ORDER="48" FIELDLABEL="Qtde Quitado" CTAB="0"/>
+        <FIELD NAME="TOTAL_QUITADO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="49" FIELDLABEL="Total Quitado" CTAB="0"/>
+        <FIELD NAME="DATA_DIGITACAO" FORMAT="H" SIZE="18" PROJECTION="0" ORDER="81" FIELDLABEL="Data Digita&#231;&#227;o" CTAB="0"/>
+        <FIELD NAME="TIPO_FRETE" SIZE="30" PROJECTION="0" ORDER="65" FIELDLABEL="Tipo Frete" CTAB="0"/>
+        <FIELD NAME="SUSPENSO" FORMAT="B" SIZE="1" PROJECTION="0" ORDER="46" FIELDLABEL="Suspenso" CTAB="0"/>
+        <FIELD NAME="DATAHORA_EXPEDICAO" FORMAT="H" SIZE="18" PROJECTION="0" ORDER="35" FIELDLABEL="Data de Expedi&#231;&#227;o" CTAB="0"/>
+        <FIELD NAME="DESC_TIPO_COMISSAO_R" SIZE="60" PROJECTION="0" ORDER="44" FIELDLABEL="Tipo Comiss&#227;o" CTAB="0"/>
+        <FIELD NAME="GERADOR" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Gerador" CTAB="0"/>
+        <FIELD NAME="PV_STATUS" SIZE="30" PROJECTION="0" ORDER="32" FIELDLABEL="Situa&#231;&#227;o Financeiro" CTAB="0"/>
+        <FIELD NAME="TIPO_PEDIDO" FORMAT="N" SIZE="8" PROJECTION="0" ORDER="29" FIELDLABEL="Tipo Pedido" CTAB="0"/>
+        <FIELD NAME="TIPO_COMISSAO_R" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Tipo Comissao R" CTAB="0"/>
+        <FIELD NAME="PREFATURADO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="38" FIELDLABEL="Pr&#233;-Faturado" CTAB="0"/>
+        <FIELD NAME="FATURADO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="39" FIELDLABEL="Faturado" CTAB="0"/>
+        <FIELD NAME="ID_STATUS_WORKFLOW" FORMAT="N" SIZE="8" FLAGS="8" PROJECTION="0" FIELDLABEL="Id Status Workflow" CTAB="0"/>
+        <FIELD NAME="QUANTIDADE_PENDENTE" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="56" FIELDLABEL="Qtde Pendente" CTAB="0"/>
+        <FIELD NAME="TOTAL_PENDENTE" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="57" FIELDLABEL="Total Pendente" CTAB="0"/>
+        <FIELD NAME="QUANTIDADE_ESTOQUE" FORMAT="N" SIZE="15" DECIMALS="4" PROJECTION="0" ORDER="54" FIELDLABEL="Qtde Estoque" CTAB="0"/>
+        <FIELD NAME="QUANTIDADE_SALDO" FORMAT="N" SIZE="15" DECIMALS="4" PROJECTION="0" ORDER="55" FIELDLABEL="Qtde Saldo" CTAB="0"/>
+        <FIELD NAME="TOTAL_SALDO" FORMAT="M" SIZE="17" DECIMALS="4" PROJECTION="0" ORDER="56" FIELDLABEL="Total Saldo" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>#PRIVATE()
+#call:cfg millenium.configuracoes.consulta();
+
+#SET(where_pv,{
+
+
+  #select(efetuado, 0:{ pv.efetuado = true},
+                    1:{ pv.efetuado = False},
+                 else:{((pv.efetuado = True) or (pv.efetuado = False))  })
+                
+ [and pv.pedidov     = :pedidov]
+ [AND PV.COD_PEDIDOV =:COD_PEDIDOV]
+ [and n_pedido_cliente =:n_pedido_cliente]
+
+ #SELECT(PEDIDOV,
+                 NULL:{#SELECT(COD_PEDIDOV,
+                                           NULL:{#SELECT(N_PEDIDO_CLIENTE,
+                                                                          NULL:{[AND #SELECT(OPCAO_DATA,
+                                                                                                        0:{PV.DATA_ENTREGA}
+                                                                                                       ,1:{PV.DATA_EMISSAO}
+                                                                                                       ,2:{PV.DATA_ENTREGA_FINAL}
+                                                                                                    ,ELSE:{#EXTRACTDATE(PV.DATAHORA_EXPEDICAO)}) BETWEEN :DATAI AND :DATAF]}
+                                                                         ,ELSE:{})}
+                                          ,ELSE:{})
+                      }
+                 ,ELSE:{}
+        )
+[and pv.cliente     = :cliente]
+[and pv.representante in #replace(:scriptrepresentante)]
+[and pv.entrega_imediata =:entrega_imediata]
+[and pv.tipo_pedido in #replace(:tipo_pedido)]
+[and pv.status_workflow in #replace(:status_workflow) ]
+[and pv.transportadora = :transportadora]
+[and pv.tipo_comissao_r in #replace(:tipo_comissao_r)]
+[and pv.orcamento =:orcamento]
+
+#select(consignacao,true:{and ((pv.consignacao="1") or (pv.consignacao="T")) },
+                     else:{[and pv.consignacao  = :consignacao ]
+                          }
+       )
+
+});
+
+#SET(where_ppv,{
+ [and ppk.produto =:produto]
+ [and ppk.cor     =:cor]
+ [and ppk.estampa =:estampa]
+ [and ppk.tamanho =:tamanho]
+});
+
+#SET(where_prod,{
+ [and p.marca   in #replace(marca_produto)]
+ [and p.colecao in #replace(colecao_produto)]
+});
+
+#SET(where_div,{
+ [and nv.grupo_loja  = :grupo_loja]
+ [and fi.filial  in #replace(:scriptfilial)]
+ #SELECT(BLOQUEIOS,TRUE:{
+  [ AND EXISTS ( SELECT * FROM PEDIDOV_BLOQS WHERE
+   PEDIDOV_BLOQS.PEDIDOV = PEDIDO_VENDA.PEDIDOV AND
+   PEDIDOV_BLOQS.DATA_LIB IS NULL)  ]
+ },ELSE:{})
+});
+
+#SET(where_ec,{
+ [and ec.cidade=:cidade]
+ [and ec.estado=:estado]
+});
+
+#PRIVATE()
+#SET( TBP, ${#CREATETABLE(pedidov int, qtd_prefat double precision, tot_prefat double precision)});
+
+#PRIVATE()
+CREATE INDEX #REPLACE(TBP)_1 ON #REPLACE(TBP) (pedidov);
+
+#PRIVATE()
+INSERT INTO #replace(TBP)
+    select v.pedidov,
+    sum(v.qtd_prefat),
+    sum(v.tot_prefat)
+    from
+    (select pf.pedidov,
+    #null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue) as qtd_prefat,
+    ((#null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue))*
+                   (select #if(#null_to_s(min(ppv2.brindesite),'F')=true,0,#if(min(ppv2.brinde) is not null,0,#null_to_z(avg(ppv2.preco))))
+                    from produto_pedidov ppv2
+                    where ppv2.pedidov = pf.pedidov
+                      and ppv2.produto = ppk.produto
+                      and ppv2.cor = ppk.cor
+                      and ppv2.estampa = ppk.estampa
+                      and ppv2.tamanho = ppk.tamanho
+                      and ppv2.item = ppk.item
+                      and #null_to_s(ppv2.quita_item,'F')='F'
+                      and ppv2.quantidade > 0)
+            ) as tot_prefat
+      from prefaturamentos pf
+      inner join pedido_venda pv on pv.pedidov =pf.pedidov
+      inner join produto_prefat ppk on (ppk.prefaturamento = pf.prefaturamento)
+      inner join produtos p on p.produto =ppk.produto
+      where #replace(where_pv)
+            #replace(where_ppv)
+            #replace(where_prod)
+        and #null_to_s(ppk.saida,'') = ''
+        and pf.excluido = 'F'
+        and pf.entregue = 'F'
+       ) v
+     group by v.pedidov
+     ;
+
+#PRIVATE()
+#SET( TBQ, ${#CREATETABLE(pedidov int, quantidade_cancelada double precision)});
+
+#PRIVATE()
+CREATE INDEX #REPLACE(TBQ)_1 ON #REPLACE(TBQ) (pedidov);
+
+#PRIVATE()
+INSERT INTO #replace(TBQ)
+     select ppk.pedidov, sum(quantidade) * -1 as quantidade_cancelada
+       from pedido_venda pv
+      inner join produto_pedidov ppk on ppk.pedidov =pv.pedidov
+      inner join produtos p on p.produto =ppk.produto
+      where #replace(where_pv)
+            #replace(where_ppv)
+            #replace(where_prod)
+        and ppk.quita_item = "T"
+     group by ppk.pedidov;
+
+
+//#PRIVATE()
+//#SET( TBK, ${#CREATETABLE(pedidov int, quantidade_estoque double precision)});
+
+//#PRIVATE()
+//CREATE INDEX #REPLACE(TBK)_1 ON #REPLACE(TBK) (pedidov);
+
+//#PRIVATE()
+//INSERT INTO #replace(TBK)
+//     select ppk.pedidov,
+//     (select e.saldo from estoques e
+//       where e.saldo > 0
+//         and e.filial  = pv.filial
+//         and e.produto = ppk.produto
+//         and e.cor     = ppk.cor
+//         and e.estampa = ppk.estampa
+//         and e.tamanho = ppk.tamanho
+//     ) as quantidade_estoque
+//     from pedido_venda pv
+//       inner join produto_pedidov ppk on ppk.pedidov = pv.pedidov
+//       inner join produtos        p   on p.produto   = ppk.produto
+//     where #replace(where_pv)
+//            #replace(where_ppv)
+//            #replace(where_prod)
+//     group by ppk.pedidov
+//     ;
+//
+
+#SELECT(IGNORA_PARAM,TRUE:{#nofilter()},
+   ELSE:{})
+select:MAIN
+       min(pv.vendedor)                  as vendedor,
+       round(avg(ppk.desconto),2)        as desconto,
+       min(pv.cod_endereco)              as cod_endereco,
+       min(pv.condicoes_pgto)            as condicoes_pgto,
+       min(pv.transportadora)            as transportadora,
+       min(pv.representante)             as representante,
+       min(ppk.pedidov)                  as pedidov,
+       min(pv.grupo_pv)                  as grupo_pv,
+       min(pv.data_entrega)              as data_entrega,
+       min(pv.data_entrega_final)        as data_entrega_final,
+       min(pv.data_emissao)              as data_emissao,
+       min(pv.cod_pedidov)               as cod_pedidov,
+       min(pv.superpointvalue)           as superpointvalue,
+       min(pv.superpointvalueinreais)    as superpointvalueinreais,
+       min(pv.conciliado_site)           as conciliado_site,
+       min(pv.n_pedido_cliente)          as n_pedido_cliente,
+       min(clientes.cliente)             as cliente,
+       min(clientes.gerador)             as gerador,
+       min(clientes.cod_cliente ||" - " || clientes.nome) as desc_cliente,
+       min(fi.filial)                    as filial,
+       min(fi.cod_filial        ||" - " || fi.nome)  as desc_filial,
+       min(pv.acerto)                    as acerto,
+       min(pv.efetuado)                  as finalizado,
+       #if((sum(tmp.qtd_prefat)>0),true,false) as prefaturado,
+       #if(
+           #null_to_z((select count(*) from produto_pedidov ppv
+                          left join nf on nf.cod_operacao=ppv.saida
+                                         and nf.tipo_operacao="S"
+                                         and #null_to_s(cancelada,false)=false
+                                         and #null_to_s(nf.estornado,false)=False
+ 		                   where ppv.pedidov=pv.pedidov
+                           and ppv.saida is not null
+                           and nf.id is not null))
+                           >0,true,false
+
+
+                              ) as faturado,
+       min(#null_to_s(pv.orcamento,"F")) as orcamento, 	
+       sum(#null_to_z(tmQ.quantidade_cancelada)) as quantidade_cancelada,
+	   				
+	   // PEDIDO				
+       sum(#null_to_z(ppk.quantidade)+#null_to_z(ppk.quantidaderef)) as quantidade,
+       sum(#if((ppk.quantidade>0) and (#null_to_s(quita_item,'F')=false) and (#null_to_s(brindesite,'F')=false),((#null_to_z(ppk.quantidade)+#null_to_z(ppk.quantidaderef)) *
+           #if(#null_to_s(ppk.brindesite,'F')=true,0,#if(ppk.brinde is not null,0,ppk.preco))),0)) as total, 	
+       sum( #if((ppk.quantidade>0) and (#null_to_s(quita_item,'F')=false) and (#null_to_s(brindesite,'F')=false),
+                  (((#null_to_z(ppk.quantidade)+#null_to_z(ppk.quantidaderef)) *
+                     #if(#null_to_s(ppk.brindesite,'F')=true,0,#if(ppk.brinde is not null,0,ppk.preco)))
+            +
+            #round(((#null_to_z(ppk.quantidade)+#null_to_z(ppk.quantidaderef)) *
+            #if(#null_to_s(ppk.brindesite,'F')=true,0,#if(ppk.brinde is not null,0,ppk.preco))) * (#null_to_z(pv.acerto)/100),2)),
+            0)
+          )
+       +#if(min(pv.CIF_FOB)='F',#null_to_z(min(v_frete)),0) + #null_to_z(min(pv.cortesia)) as Liquido,
+	
+	   // ENTREGUE
+       sum(#null_to_z(ppk.entregue)) as quantidade_entregue,
+       sum(#null_to_z(ppk.entregue) * #if(#null_to_s(ppk.brindesite,'F')=true,0,#if(ppk.brinde is not null,0,ppk.preco))) as total_entregue, 	
+	
+	   // AENTREGAR
+       sum(#null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue)) as quantidade_aentregar,
+       
+       //#if(
+       //(sum(#null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue)))>0,
+       //    (sum((#null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue)) * #if(#null_to_s(ppk.brindesite,'F')=true,0,#if(ppk.brinde is not null,0,ppk.preco))))
+       //    ,0
+       //  )as total_aentregar,
+          	
+       sum((#null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue)) * #if(#null_to_s(ppk.brindesite,'F')=true,0,#if(ppk.brinde is not null,0,ppk.preco))) as total_aentregar, 	
+	
+	   // PREFATURADO
+       min(tmp.qtd_prefat) as quantidade_prefaturado,
+       min(tmp.tot_prefat) as total_prefaturado,
+
+	   // QUITADO	
+       sum(#if((ppk.quantidade&lt;0), (ppk.quantidade)*-1,0)) as quantidade_quitado,
+       sum(#if((ppk.quantidade&lt;0), (ppk.quantidade * ppk.preco)*-1 ,0)) as total_quitado,
+       
+       // PENDENTE
+       sum(#null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue))-#null_to_z(min(tmp.qtd_prefat)) as quantidade_pendente,
+       (sum((#null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue)) * #if(#null_to_s(ppk.brindesite,'F')=true,0,#if(ppk.brinde is not null,0,ppk.preco)))-min(tmp.tot_prefat) ) as total_pendente, 	
+					
+       min(cidade)               as cidade,
+       min(estado)               as estado,
+       min(logradouro)           as endereco,
+       min(representantes.NOME)  as nome_representante,
+       min(colecoes.descricao)   as desc_colecao,
+       min(#null_to_s(pv.aprovado,"F"))   as aprovado,
+       min(cast(transportadoras.fantasia as varchar(78))) as desc_transp,
+       min(Cast(tab.cod_tpreco || "-" || tab.descricao as varchar(35))) as tab_preco,
+       min(Cast(cpg.codigo||"-"||cpg.descricao as varchar(30))) as cond_pgto,
+       min(Cast(tp.descricao as varchar(100))) as desc_tipo_pedido,
+       min(Cast(tc.desc_comissao as varchar(100))) as DESC_TIPO_COMISSAO_R,
+       min(pv.vpedido) as vpedido,
+       min(pv.status) as status,
+       min(pv.v_frete) as v_frete,
+       min(pv.cif_fob) as cif_fob,
+       min(funcionarios.nome) as nome_vendedor,
+       #select(lista_casamento,true:{ Min(na.NOME || " e " || nv.NOME) as NOME_NOIVOS, },
+	                           else:{"" as NOME_NOIVOS,}) Min(pv.lista_casamento) as lista_casamento
+       ,min(#TRANSLATE(pv.ENDERECO_PRESENTE, NULL:"F", ELSE:"T")) as PRESENTE
+
+   	   ,(select list(distinct nota)
+	     from produto_pedidov ppv
+		 left join nf on nf.cod_operacao=ppv.saida and nf.tipo_operacao="S" and
+	                     #null_to_s(cancelada,false)=false and #null_to_s(nf.estornado,false)=False
+		 where ppv.pedidov=pv.pedidov and ppv.saida is not null and nf.id is not null) as nf
+
+	   ,(select list(distinct data)
+		 from produto_pedidov ppv
+		 left join nf on nf.cod_operacao=ppv.saida and nf.tipo_operacao="S" and
+                         #null_to_s(cancelada,false)=false and #null_to_s(nf.estornado,false)=False
+ 		 where ppv.pedidov=pv.pedidov and ppv.saida is not null and nf.id is not null) as nf_data
+
+       ,(select list(distinct t.fantasia)
+	     from produto_pedidov ppv
+		 left join saidas s on s.saida=ppv.saida
+         inner join transportadoras t on t.transportadora=s.transportadora
+         where ppv.pedidov=pv.pedidov and #null_to_s(s.cancelada,false)=false and ppv.saida is not null) as DESC_TRANSP_FAT
+
+	   ,(select list(distinct ve.numero_objeto)
+	     from produto_pedidov ppv
+		 left join volumes_evento ve on ppv.saida=ve.cod_operacao and ve.tipo_operacao="S"
+         where ppv.pedidov=pv.pedidov and ppv.saida is not null and ve.numero_objeto is not null) as numero_objeto,
+
+	   min(pv.obs) as obs,
+	   min(pv.obs2) as obs2,
+	   min(sw.descricao) as status_workflow,
+	   min(datediff(day,pv.status_workflow_date,#date())) as num_dias_wf,
+	   min(tf.descricao) as tipo_frete,
+	   min(datediff(day,pv.data_emissao,#date())) as num_dias,
+	   min(sar.codigo) as  status_analise_risco,
+	   min(#if(pv.status_analise_risco is null, #translate(pv.status_envio_analise_risco,"0":"N&#227;o Enviar","1":"Aguardando Envio","3":"Aguardando Corre&#231;&#227;o","4":"Aguardando Reenvio") ,sar.descricao))as  descricao_status_analise_risco,
+	   min(pv.cortesia) as cortesia,
+       min(pv.data_digitacao)   as data_digitacao,
+	   #if((min(pv.efetuado)=true),
+	           #if((sum(#null_to_z(tmQ.quantidade_cancelada))>0),
+			       #if((sum(#null_to_z(tmQ.quantidade_cancelada))=sum(#null_to_z(pv.quantidade))),
+				       "Cancelado Total",
+					   "Cancelado Parcial"),
+			       "N&#227;o Cancelado"),
+		       "") as cancelado,
+      min(pv.suspenso) as suspenso,
+      min(pv.datahora_expedicao) as datahora_expedicao,
+      min(pv.tipo_pedido)        as tipo_pedido,
+      min(tipo_comissao_r)       as tipo_comissao_r,
+      min(pv.STATUS_WORKFLOW)    AS ID_STATUS_WORKFLOW
+from pedido_venda pv
+  inner join produto_pedidov ppk on ppk.pedidov=pv.pedidov
+  inner join produtos p on p.produto = ppk.produto
+  left  join saidas s on s.saida = ppk.saida
+  left  join filiais fi on pv.filial = fi.filial
+  left  join clientes on pv.cliente = clientes.cliente
+  left  join transportadoras on transportadoras.transportadora = pv.transportadora
+  left  join funcionarios on funcionarios.funcionario = pv.vendedor
+  left  join enderecos_cadastro ec on  ec.gerador = clientes.gerador and ec.cod_endereco = pv.cod_endereco
+  left  join tipos_comissao tc on tc.tipo_comissao = pv.tipo_comissao_r
+  left  join representantes on representantes.representante=pv.representante
+  left  join colecoes on pv.colecao=colecoes.colecao
+  left  join tabelas_preco tab on pv.tabela = tab.tabela
+  left  join condicoes_pgto cpg on pv.condicoes_pgto = cpg.condicoes_pgto
+  left  join tipos_pedido tp on tp.tipo_pedido = pv.tipo_pedido
+  left  join status_workflow sw on sw.status_workflow = pv.status_workflow
+  left  join tipos_frete tf on tf.tipo_frete = pv.tipo_frete
+  left  join status_analise_risco sar on sar.status_analise_risco = pv.status_analise_risco
+  left  join #REPLACE(TBP) tmp on tmp.pedidov = pv.pedidov
+  left  join #REPLACE(TBQ) tmQ on tmQ.pedidov = pv.pedidov
+  //left  join #REPLACE(TBK) tmK on tmK.pedidov = pv.pedidov
+
+where
+ #replace(where_pv)
+ #replace(where_ppv)
+ #replace(where_prod)
+ #replace(where_div)
+ #replace(where_ec)
+
+  #select(SITUACAO,1:{and pv.efetuado = false},
+                   2:{and tmp.qtd_prefat>0},
+                   3:{and ppk.quantidade&lt;0},
+                   4:{and exists
+                          (select * from produto_pedidov ppv
+		                     left join nf on nf.cod_operacao=ppv.saida
+                                         and nf.tipo_operacao="S"
+                                         and #null_to_s(cancelada,false)=false
+                                         and #null_to_s(nf.estornado,false)=False
+ 		                   where ppv.pedidov=pv.pedidov
+                           and ppv.saida is not null
+                           and nf.id is not null)},
+                   5:{and pv.efetuado = true},
+                   6:{and ((pv.efetuado = true) or (pv.efetuado = false))},
+               else :{}
+                 )
+
+group by ppk.pedidov, pv.pedidov
+order by #select(ordem, 0:{11},
+                        1:{15},
+                        2:{10},
+                        3:{9},
+                        4:{13});
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

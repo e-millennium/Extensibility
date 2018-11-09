@@ -1,0 +1,247 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="B2B">
+    <METHOD NAME="ListaPrecoDeTabela" DESCRIPTION="Consulta pre&#231;os de um produto ou de v&#225;rios produtos baseados em data de atualiza&#231;&#227;o. Se for informado um c&#243;digo de vitrine (recomendado), este m&#233;todo retornar&#225; nos campos PRECO1 e PRECO2 os pre&#231;o B2C &#34;POR&#34; e &#34;DE&#34; respectivamente." VERSION="30432" INTFTYPE="5" CATEGORY="inculada uma tabela B2B, ser&#225; retornado nos campos PRECO3 e PRECO4 os pre&#231;os &#34;POR&#34; e &#34;DE&#34; para B2B associados &#224; vitrine. Este m&#233;todo pode ser usado para atualizar os pre&#231;os regularmente j&#225; que retorna apenas as mudan&#231;as desde a &#250;ltima chamada." THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PRODUTO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Id do produto" ORDER="11" FIELDLABEL="Produto" CTAB="0"/>
+        <PARAM NAME="COR" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Id da cor" ORDER="12" FIELDLABEL="Cor" CTAB="0"/>
+        <PARAM NAME="ESTAMPA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Id da estampa" ORDER="13" FIELDLABEL="Estampa" CTAB="0"/>
+        <PARAM NAME="TAMANHO" SIZE="5" FLAGS="1" PROJECTION="0" HINT="!Tamanho" ORDER="14" FIELDLABEL="Tamanho" CTAB="0"/>
+        <PARAM NAME="DATA_ATUALIZACAO_INICIAL" FORMAT="H" SIZE="18" FLAGS="1" PROJECTION="0" HINT="!Data e hora da &#250;ltima leitura dos pre&#231;os. A captura desta data deve ser relacionada ao &#250;ltimo registro lido e n&#227;o a hora da esta&#231;&#227;o. Como os registros s&#227;o retornados ordenados pelo campo DATA_ATUALIZACAO, basta guardar o valor do &#250;ltimo registro e repass&#225;-lo na pr&#243;xima consulta. Esse campo ser&#225; desconsiderado caso utilize trans_id, &#233; aconselhav&#233;l utilizar o trans_id" ORDER="15" FIELDLABEL="Data Atualizacao Inicial" CTAB="0"/>
+        <PARAM NAME="DIVISAO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Somente produtos dessa divis&#227;o" ORDER="16" FIELDLABEL="Divisao" CTAB="0"/>
+        <PARAM NAME="MARCA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Somente produtos dessa marca" ORDER="4" FIELDLABEL="Marca" CTAB="0"/>
+        <PARAM NAME="VITRINE" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="Id da vitrine" ORDER="9" FIELDLABEL="Vitrine" CTAB="0"/>
+        <PARAM NAME="TABELA1" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Tabela de venda 1(Pre&#231;o por)" ORDER="5" FIELDLABEL="Tabela1" CTAB="0"/>
+        <PARAM NAME="TABELA2" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Tabela de venda 2(Pre&#231;o de)" ORDER="6" FIELDLABEL="Tabela2" CTAB="0"/>
+        <PARAM NAME="TABELA3" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Tabela de venda 3(Pre&#231;o por)" ORDER="7" FIELDLABEL="Tabela3" CTAB="0"/>
+        <PARAM NAME="TABELA4" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Tabela de venda 4(Pre&#231;o de)" ORDER="8" FIELDLABEL="Tabela4" CTAB="0"/>
+        <PARAM NAME="WEB" SIZE="1" FLAGS="1" PROJECTION="0" HINT="!Status do produto na web(F = Indispon&#237;vel na WEB, T = Dispon&#237;vel na WEB, E = Excluir da WEB)" ORDER="10" FIELDLABEL="Web" CTAB="0"/>
+        <PARAM NAME="INATIVOS" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" HINT="Listar tamb&#233;m os produtos inativos" ORDER="17" FIELDLABEL="Inativos" CTAB="0"/>
+        <PARAM NAME="PRODUTOS" SIZE="255" FLAGS="1" PROJECTION="0" HINT="!Lista de produtos" ORDER="1" FIELDLABEL="Produto" CTAB="0"/>
+        <PARAM NAME="TRANS_ID" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="Trans_id para a listagem dos pre&#231;os, os pre&#231;os ser&#227;o listados a partir desse trans_id. Trans_id &#233; um campo num&#233;rico que indica quando um item foi alterado" ORDER="2" FIELDLABEL="Trans Id" CTAB="0"/>
+        <PARAM NAME="VALIDADE" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" HINT="Listar pre&#231;os por validade" ORDER="3" FIELDLABEL="Validade" CTAB="0"/>
+        <PARAM NAME="LISTAR_BLOQUEADOS" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" HINT="Adiciona a listagem produtos que est&#227;o com a flag &#34;preco_bloqueado&#34; " FIELDLABEL="Listar Bloqueados" CTAB="0"/>
+        <PARAM NAME="LISTAR_MENOR_PRECO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" HINT="Campo for&#231;a a listagem do menor pre&#231;o do produto entre as tabelas de pre&#231;os relacionadas" FIELDLABEL="Listar Menor Preco" CTAB="0"/>
+        <PARAM NAME="SOMENTE_INTEGRADO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" HINT="Lista somente produtos integrados no ecommerce" ORDER="18" FIELDLABEL="Somente Integrados" CTAB="0"/>
+        <PARAM NAME="LISTAR_MAIOR_PRECO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" FIELDLABEL="Listar Maior Preco" CTAB="0"/>
+        <PARAM NAME="TOP" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" FIELDLABEL="Top" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="SKU" SIZE="255" FLAGS="1" PROJECTION="0" HINT="SKU no formato produto_cor_estampa_tamanho" ORDER="37" FIELDLABEL="Sku" CTAB="0"/>
+        <FIELD NAME="PRODUTO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Id do produto" ORDER="42" FIELDLABEL="Produto" CTAB="0"/>
+        <FIELD NAME="COR" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Id da cor" ORDER="39" FIELDLABEL="Cor" CTAB="0"/>
+        <FIELD NAME="ESTAMPA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Id da estampa" ORDER="41" FIELDLABEL="Estampa" CTAB="0"/>
+        <FIELD NAME="TAMANHO" SIZE="5" FLAGS="1" PROJECTION="0" HINT="!C&#243;digo do tamanho" ORDER="43" FIELDLABEL="Tamanho" CTAB="0"/>
+        <FIELD NAME="DATA_ATUALIZACAO" FORMAT="H" SIZE="18" FLAGS="1" PROJECTION="0" HINT="!Data de atualiza&#231;&#227;o do pre&#231;o. Como os resultados s&#227;o ordenados por este campo, basta guardar o &#250;ltimo processado para informar como par&#226;metro DATA_ATUALIZACAO_INICIAL na pr&#243;xima chamada. Esse campo ser&#225; desconsiderado caso utilize trans_id, &#233; aconselhav&#233;l utilizar o trans_id" ORDER="40" FIELDLABEL="Data Atualizacao" CTAB="0"/>
+        <FIELD NAME="PRECO1" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" HINT="Pre&#231;o por " ORDER="32" FIELDLABEL="Preco1" CTAB="0"/>
+        <FIELD NAME="PRECO2" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" HINT="Pre&#231;o de " ORDER="33" FIELDLABEL="Preco2" CTAB="0"/>
+        <FIELD NAME="PRECO3" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" HINT="!Pre&#231;o da tabela 3" ORDER="34" FIELDLABEL="Preco3" CTAB="0"/>
+        <FIELD NAME="PRECO4" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" HINT="!Pre&#231;o da tabela 4" ORDER="35" FIELDLABEL="Preco4" CTAB="0"/>
+        <FIELD NAME="VITRINE_PRODUTO_SKU" SIZE="20" FLAGS="1" PROJECTION="0" HINT="!Id do SKU" ORDER="38" FIELDLABEL="Vitrine Produto Sku" CTAB="0"/>
+        <FIELD NAME="BLOQUEADO_PRECO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" HINT="!Pre&#231;o do sku n&#227;o foi publicado com sucesso" ORDER="31" FIELDLABEL="Preco Nao Publicado" CTAB="0"/>
+        <FIELD NAME="BARRA" SIZE="40" FLAGS="1" PROJECTION="0" HINT="C&#243;digo de Barrras do sku" ORDER="30" FIELDLABEL="Barra" CTAB="0"/>
+        <FIELD NAME="VALIDADE_FINAL" FORMAT="H" SIZE="18" FLAGS="1" PROJECTION="0" HINT="!Validade final do sku" ORDER="29" FIELDLABEL="Validade Final" CTAB="0"/>
+        <FIELD NAME="DATA_ENVIO" FORMAT="H" SIZE="18" FLAGS="1" PROJECTION="0" HINT="!Data de envio do sku" ORDER="27" FIELDLABEL="Data Envio" CTAB="0"/>
+        <FIELD NAME="ID_EXTERNO" SIZE="255" FLAGS="1" PROJECTION="0" HINT="!Id Externo" ORDER="25" FIELDLABEL="Id Externo" CTAB="0"/>
+        <FIELD NAME="ID" SIZE="255" FLAGS="1" PROJECTION="0" HINT="!Id do sku(Ser&#225; o Id_externo se possuir valor, sen&#227;o ser&#225; o vitrine_produto_sku)" ORDER="24" FIELDLABEL="Id" CTAB="0"/>
+        <FIELD NAME="LOJAS" SIZE="255" FLAGS="1" PROJECTION="0" HINT="!Lojas" ORDER="23" FIELDLABEL="Loja" CTAB="0"/>
+        <FIELD NAME="DESC_PRODUTO" SIZE="255" FLAGS="1" PROJECTION="0" HINT="!Descri&#231;&#227;o do produto" ORDER="44" FIELDLABEL="Desc Produto" CTAB="0"/>
+        <FIELD NAME="ATIVO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" HINT="!Sku Ativo" ORDER="45" FIELDLABEL="Ativo" CTAB="0"/>
+        <FIELD NAME="TRANS_ID" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="Trans_id" ORDER="22" FIELDLABEL="Trans Id" CTAB="0"/>
+        <FIELD NAME="ID_EXTERNO_PRODUTO" SIZE="255" FLAGS="1" PROJECTION="0" HINT="!Id externo do produto" ORDER="26" FIELDLABEL="Id Externo Produto" CTAB="0"/>
+        <FIELD NAME="MENOR_PRECO" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" HINT="!Menor pre&#231;o entre todos os sku's do produto" ORDER="36" FIELDLABEL="Menor Preco" CTAB="0"/>
+        <FIELD NAME="KIT" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" HINT="!Indica se o sku &#233; um kit" ORDER="21" FIELDLABEL="Kit" CTAB="0"/>
+        <FIELD NAME="VALIDADE_INICIAL" FORMAT="H" SIZE="18" FLAGS="1" PROJECTION="0" HINT="!Validade inicial do sku" ORDER="28" FIELDLABEL="Validade Inicial" CTAB="0"/>
+        <FIELD NAME="PRECO_CUSTO" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" HINT="Preco de custo do sku" ORDER="20" FIELDLABEL="Preco Custo" CTAB="0"/>
+        <FIELD NAME="PRECOS_LOJAS" SIZE="255" FLAGS="1" PROJECTION="0" HINT="Precos configurados por lojas" ORDER="19" FIELDLABEL="Precos Lojas" CTAB="0"/>
+        <FIELD NAME="VITRINE" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="Id da vitrine" FIELDLABEL="Vitrine" CTAB="0"/>
+        <FIELD NAME="PRECO2_ORI" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" HINT="Pre&#231;o de original, sem altera&#231;&#227;o de compatibilidade com o pre&#231;o por" FIELDLABEL="Preco2 Ori" CTAB="0"/>
+        <FIELD NAME="MAIOR_PRECO" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" FIELDLABEL="Maior Preco" CTAB="0"/>
+        <FIELD NAME="COD_PRODUTO" SIZE="60" FLAGS="1" PROJECTION="0" FIELDLABEL="Cod Produto" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>#PRIVATE()
+SELECT:VITRINE #SELECT(TABELA2,NULL:{TABELA},ELSE:{#REPLACET(:TABELA2)}) AS TABELA,
+               #SELECT(TABELA1,NULL:{TABELA_PROMOCAO},ELSE:{#REPLACET(:TABELA1)}) AS TABELA_PROMOCAO,TABELA_CUSTO
+FROM VITRINE WHERE VITRINE=:VITRINE
+UNION
+SELECT:VITRINE #REPLACET(:TABELA2) AS TABELA,
+               #REPLACET(:TABELA1) AS TABELA_PROMOCAO, NULL AS TABELA_CUSTO
+FROM DUAL WHERE #NULL_TO_S(:VITRINE,"") = "";
+                      
+#PRIVATE()
+SELECT:TAB_P LIST(VV.TABELA_PRECO) AS TABELA_PRECO FROM VITRINE_LOJAS VV WHERE VV.VITRINE =:VITRINE
+
+#SELECT(VITRINE._EOF,TRUE:{#CHECK("SELECT 1 AS N FROM DUAL", N=1, "N&#195;O FOI POSS&#205;VEL ACESSAR OS PRE&#199;OS."); },
+                 ELSE:{});
+
+SELECT:PD
+
+       #SELECT(TOP,
+               NULL:{},
+               ELSE:{#TOP(:TOP)})
+               
+       PRODUTO,
+       COD_PRODUTO,
+       COR,
+       ESTAMPA,
+       TAMANHO,
+       CAST(#MONTH(DATA_ATUALIZACAO)||'/'||#DAY(DATA_ATUALIZACAO)||'/'||#YEAR(DATA_ATUALIZACAO)||' '||#HOUR(DATA_ATUALIZACAO)||':'||
+         #MINUTE(DATA_ATUALIZACAO)||':'||CAST(#MIN_NUM(#CEIL(#SECOND(DATA_ATUALIZACAO)),59) AS INT) AS DATE) AS DATA_ATUALIZACAO,
+       PRODUTO||"_"||COR||"_"||ESTAMPA||"_"||TAMANHO  AS SKU,
+       PRECO1,
+       #IF(PRECO2>PRECO1,PRECO2,PRECO1) AS PRECO2,
+       PRECO3,
+       #IF(PRECO4>PRECO3,PRECO4,PRECO3) AS PRECO4,
+       PRECO_C AS PRECO_CUSTO,
+       VITRINE_PRODUTO_SKU,
+       BLOQUEADO_PRECO,
+       BARRA,
+       VALIDADE_INICIAL,
+       VALIDADE_FINAL,
+       DATA_ENVIO,
+       ID_EXTERNO,
+       ID,
+       LOJAS,
+       DESC_PRODUTO,
+       ATIVO,
+       TRANS_ID,
+       ID_EXTERNO_PRODUTO,
+       MENOR_PRECO,
+       MAIOR_PRECO,
+       KIT,
+       PRECOS_LOJAS,
+       PRECO2 AS PRECO2_ORI,
+       #REPLACET(:VITRINE) AS VITRINE
+FROM #VIEW(SELECT VIP.PRODUTO,
+                  VIP.COD_PRODUTO,
+                  VIP.COR,
+                  VIP.ESTAMPA,
+                  VIP.TAMANHO,
+                  MIN(CB.BARRA) AS BARRA,
+                  SKU.ID_EXTERNO,
+                  SKU.DATA_ENVIO,
+                  VID.LOJAS,
+                  P.DESCRICAO1 AS DESC_PRODUTO,
+                  SKU.INCLUIR AS ATIVO,
+                  SKU.VITRINE_PRODUTO_SKU,
+                  #NULL_TO_S(SKU.ID_EXTERNO,SKU.VITRINE_PRODUTO_SKU) AS ID,
+                  #NULL_TO_S(P1.VALIDADE_INICIAL,MAX(P2.VALIDADE_INICIAL)) AS VALIDADE_INICIAL,
+                  #NULL_TO_S(P1.VALIDADE_FINAL,MAX(P2.VALIDADE_FINAL)) AS VALIDADE_FINAL,
+                  #SELECT(VITRINE.TABELA_PROMOCAO,NULL:{MAX(P1.PRECO)},ELSE:{#IF(#NULL_TO_Z(MAX(P1.PRECO)) = 0, MAX(P2.PRECO), MAX(P1.PRECO))}) AS PRECO1,
+                  #SELECT(VITRINE.TABELA_PROMOCAO,NULL:{#IF(#NULL_TO_Z(MAX(P1.PRECO_DIGITADO)) = 0, MAX(P1.PRECO_OLD), MAX(P1.PRECO_DIGITADO))},ELSE:{MAX(P2.PRECO)})  AS PRECO2,
+                  MAX(P3.PRECO) AS PRECO3,
+                  MAX(P4.PRECO) AS PRECO4,
+                  MAX(PC.PRECO) AS PRECO_C,
+                  #MAX_NUM(
+                           #MAX_NUM(
+                                    #MAX_NUM(
+                                             #MAX_NUM(
+                                                      #MAX_NUM(
+                                                               #MAX_NUM(
+                                                                        MAX(#NULL_TO_S(SKU.DATA_ALTERACAO,CAST("1899-12-31" AS TIMESTAMP))),MAX(#NULL_TO_S(PC.DATA_ULT,CAST("1899-12-31" AS TIMESTAMP)))
+                                                                       ),MAX(#NULL_TO_S(PL.DATA_ULT,CAST("1899-12-31" AS TIMESTAMP)))
+                                                              ),MAX(#NULL_TO_S(P2.DATA_ULT,CAST("1899-12-31" AS TIMESTAMP)))
+                                                     ),MAX(#NULL_TO_S(P3.DATA_ULT,CAST("1899-12-31" AS TIMESTAMP)))
+                                            ),MAX(#NULL_TO_S(P4.DATA_ULT,CAST("1899-12-31" AS TIMESTAMP)))
+                                   ),MAX(#NULL_TO_S(P1.DATA_ULT,CAST("1899-12-31" AS TIMESTAMP)))
+                  ) AS DATA_ATUALIZACAO,
+                  #NULL_TO_S(SKU.BLOQUEADO_PRECO,FALSE) AS BLOQUEADO_PRECO,
+                  #MAX_NUM(#MAX_NUM(#MAX_NUM(#MAX_NUM(#MAX_NUM(MAX(#NULL_TO_Z(P1.TRANS_ID)),MAX(#NULL_TO_Z(PC.TRANS_ID))),MAX(#NULL_TO_Z(PL.TRANS_ID))),MAX(#NULL_TO_Z(P2.TRANS_ID))),MAX(#NULL_TO_Z(P3.TRANS_ID))),MAX(#NULL_TO_Z(P4.TRANS_ID))) AS TRANS_ID,
+                  MAX(SKU.ID_EXTERNO_PRODUTO) AS ID_EXTERNO_PRODUTO,
+                  #SELECT(LISTAR_MENOR_PRECO,TRUE:{(SELECT MIN(PRECO) AS MENOR_PRECO
+                                                    FROM PRECOS
+                                                    WHERE TABELA IN (#SELECT(VITRINE.TABELA_PROMOCAO,NULL:{:VITRINE.TABELA},
+														                                             ELSE:{:VITRINE.TABELA_PROMOCAO})
+                                                                     #SELECT(TABELA3,NULL:{},ELSE:{,:TABELA3})
+                                                                     #SELECT(TABELA4,NULL:{},ELSE:{,:TABELA4})) AND
+                                                          PRODUTO=VIP.PRODUTO
+                                                    GROUP BY PRODUTO)},ELSE:{NULL}) AS MENOR_PRECO,
+                  #SELECT(LISTAR_MAIOR_PRECO,TRUE:{(SELECT MAX(PRECO) AS MAIOR_PRECO
+                                                    FROM PRECOS
+                                                    WHERE TABELA IN (#SELECT(VITRINE.TABELA_PROMOCAO,NULL:{:VITRINE.TABELA},
+													                                                 ELSE:{:VITRINE.TABELA_PROMOCAO})
+                                                                     #SELECT(TABELA3,NULL:{},ELSE:{,:TABELA3})
+                                                                     #SELECT(TABELA4,NULL:{},ELSE:{,:TABELA4})) AND
+                                                          PRODUTO=VIP.PRODUTO
+                                                    GROUP BY PRODUTO)},ELSE:{NULL}) AS MAIOR_PRECO,
+                  MAX(#IF((#NULL_TO_S(P.KIT,FALSE) = TRUE) AND (#NULL_TO_S(P.BAIXA_ESTOQUE_FICH,"")="T"),TRUE,FALSE)) AS KIT,
+                  LIST(VL.LOJA||"-"||CAST(PL.PRECO AS VARCHAR(20))) AS PRECOS_LOJAS
+           FROM  (SELECT DISTINCT IP.PRODUTO,IP.COR,IP.ESTAMPA,IP.TAMANHO,PRO.COD_PRODUTO
+                  FROM IPRECOS IP
+                  INNER JOIN PRODUTOS PRO ON PRO.PRODUTO = IP.PRODUTO
+                  INNER JOIN TABELAS_PRECO TP ON (IP.TABELA = TP.TABELA AND TP.TIPO_TABELA = 0) OR (IP.TABELA = TP.BASE and TP.TIPO_TABELA = 1)
+                  #SELECT(VITRINE,NULL:{LEFT JOIN PRODUTOS P ON P.PRODUTO=IP.PRODUTO},ELSE:{LEFT JOIN VITRINE_PRODUTOS_SKU SKU ON IP.PRODUTO = SKU.PRODUTO AND IP.COR = SKU.COR AND IP.ESTAMPA = SKU.ESTAMPA AND IP.TAMANHO = SKU.TAMANHO AND SKU.VITRINE=:VITRINE})
+                  WHERE TP.TABELA IN (:VITRINE.TABELA
+                               #SELECT(VITRINE.TABELA_CUSTO,   NULL:{},ELSE:{,:VITRINE.TABELA_CUSTO})
+                               #SELECT(VITRINE.TABELA_PROMOCAO,NULL:{},ELSE:{,:VITRINE.TABELA_PROMOCAO})
+                               #SELECT(TABELA3,                NULL:{},ELSE:{,:TABELA3})
+                               #SELECT(TABELA4,                NULL:{},ELSE:{,:TABELA4})
+                               #SELECT(TAB_P.TABELA_PRECO,     NULL:{},ELSE:{,#REPLACE(:TAB_P.TABELA_PRECO)})
+                                  )
+                        [AND (#SELECT(TRANS_ID,NULL:{(IP.DATA_ULT>:DATA_ATUALIZACAO_INICIAL) OR (#SELECT(VITRINE,NULL:{P.DATA_ATUALIZACAO},ELSE:{SKU.DATA_ALTERACAO}) >:DATA_ATUALIZACAO_INICIAL)},
+                                               ELSE:{IP.TRANS_ID>:TRANS_ID AND ((CAST(#DATE() AS DATE) BETWEEN IP.VALIDADE_INICIAL AND IP.VALIDADE_FINAL) OR (IP.VALIDADE_INICIAL IS NULL AND IP.VALIDADE_FINAL IS NULL))})
+                        #SELECT(VITRINE,NULL:{},ELSE:{#SELECT(LISTAR_BLOQUEADOS,TRUE:{ OR ( #NULL_TO_S(SKU.BLOQUEADO_PRECO,FALSE) = TRUE)},ELSE:{})}))]
+                        [AND IP.PRODUTO=:PRODUTO]
+                        [AND IP.PRODUTO IN (#REPLACE(PRODUTOS))]
+                        [AND IP.COR=:COR]
+                        [AND IP.ESTAMPA=:ESTAMPA]
+                        [AND IP.TAMANHO=:TAMANHO]) VIP
+           INNER JOIN(SELECT SKU.VITRINE_PRODUTO_SKU, SKU.PRODUTO, SKU.COR, SKU.ESTAMPA, SKU.TAMANHO, SKU.ID_EXTERNO, SKU.DATA_ENVIO, SKU.DATA_ALTERACAO, SKU.BLOQUEADO_PRECO,
+                             SKU.INCLUIR, VP.ID_EXTERNO AS ID_EXTERNO_PRODUTO, SKU.VITRINE FROM VITRINE_PRODUTOS_SKU SKU
+                      INNER JOIN VITRINE_PRODUTOS VP ON VP.EXCLUIDO="F" AND VP.PRODUTO=SKU.PRODUTO AND VP.VITRINE=:VITRINE
+                      WHERE SKU.VITRINE=:VITRINE AND SKU.PRODUTO_AGRUPADOR IS NULL [AND SKU.PRODUTO =:PRODUTO] [AND SKU.COR=:COR]
+                            [AND SKU.ESTAMPA=:ESTAMPA] [AND SKU.TAMANHO=:TAMANHO] [AND SKU.PRODUTO IN (#REPLACE(PRODUTOS))]
+                            #SELECT(INATIVOS,TRUE:{},ELSE:{AND #NULL_TO_S(SKU.INCLUIR,FALSE)=TRUE})
+                            #SELECT(SOMENTE_INTEGRADO,TRUE:{AND #NULL_TO_S(SKU.ID_EXTERNO,'')&lt;>''},ELSE:{})
+                      UNION
+                      SELECT SKU.VITRINE_PRODUTO_SKU, SKU.PRODUTO, SKU.COR, SKU.ESTAMPA, SKU.TAMANHO, SKU.ID_EXTERNO, SKU.DATA_ENVIO, SKU.DATA_ALTERACAO, SKU.BLOQUEADO_PRECO,
+                             SKU.INCLUIR, VP.ID_EXTERNO AS ID_EXTERNO_PRODUTO, SKU.VITRINE FROM VITRINE_PRODUTOS_SKU SKU
+                      INNER JOIN VITRINE_PRODUTOS_COMPOSICAO VPC ON VPC.PRODUTO_SKU = SKU.PRODUTO AND VPC.VITRINE = SKU.VITRINE
+                      INNER JOIN VITRINE_PRODUTOS VP ON VP.EXCLUIDO="F" AND VP.PRODUTO=VPC.PRODUTO_COMPOSICAO AND VP.VITRINE=:VITRINE
+                      WHERE SKU.VITRINE=:VITRINE [AND SKU.PRODUTO =:PRODUTO] [AND SKU.COR=:COR]
+                            [AND SKU.ESTAMPA=:ESTAMPA] [AND SKU.TAMANHO=:TAMANHO] [AND VPC.PRODUTO_COMPOSICAO IN (#REPLACE(PRODUTOS))]
+                            #SELECT(INATIVOS,TRUE:{},ELSE:{AND #NULL_TO_S(SKU.INCLUIR,FALSE)=TRUE})
+                            #SELECT(SOMENTE_INTEGRADO,TRUE:{AND #NULL_TO_S(SKU.ID_EXTERNO,'')&lt;>''},ELSE:{})
+                      UNION
+                      SELECT SKU.VITRINE_PRODUTO_SKU, SKU.PRODUTO, SKU.COR, SKU.ESTAMPA, SKU.TAMANHO, SKU.ID_EXTERNO, SKU.DATA_ENVIO, SKU.DATA_ALTERACAO, SKU.BLOQUEADO_PRECO,
+                             SKU.INCLUIR, VP.ID_EXTERNO AS ID_EXTERNO_PRODUTO, SKU.VITRINE FROM VITRINE_PRODUTOS_SKU SKU
+                      INNER JOIN VITRINE_PRODUTOS VP ON VP.EXCLUIDO="F" AND VP.PRODUTO=SKU.PRODUTO_AGRUPADOR AND VP.VITRINE=:VITRINE
+                      WHERE SKU.VITRINE=:VITRINE AND SKU.PRODUTO_AGRUPADOR IS NOT NULL [AND SKU.PRODUTO =:PRODUTO] [AND SKU.COR=:COR]
+                            [AND SKU.ESTAMPA=:ESTAMPA] [AND SKU.TAMANHO=:TAMANHO] [AND SKU.PRODUTO_AGRUPADOR IN (#REPLACE(PRODUTOS))]
+                            #SELECT(INATIVOS,TRUE:{},ELSE:{AND #NULL_TO_S(SKU.INCLUIR,FALSE)=TRUE})
+                            #SELECT(SOMENTE_INTEGRADO,TRUE:{AND #NULL_TO_S(SKU.ID_EXTERNO,'')&lt;>''},ELSE:{})
+                      UNION
+                      SELECT NULL AS VITRINE_PRODUTO_SKU, P.PRODUTO, CP.COR, EP.ESTAMPA, TP.TAMANHO, NULL AS ID_EXTERNO, NULL AS DATA_ENVIO, P.DATA_ATUALIZACAO AS DATA_ALTERACAO, NULL AS BLOQUEADO_PRECO,
+                             NULL AS INCLUIR, NULL AS ID_EXTERNO_PRODUTO, NULL AS VITRINE FROM PRODUTOS P
+                      INNER JOIN COR_PROD CP ON CP.PRODUTO = P.PRODUTO
+                      INNER JOIN ESTAMPA_PROD EP ON EP.PRODUTO = P.PRODUTO
+                      INNER JOIN TAM_PROD TP ON TP.PRODUTO = P.PRODUTO
+                      WHERE #NULL_TO_S(:VITRINE,"") = "" [AND P.PRODUTO =:PRODUTO] [AND CP.COR=:COR]
+                            [AND EP.ESTAMPA=:ESTAMPA] [AND TP.TAMANHO=:TAMANHO] [AND P.PRODUTO IN (#REPLACE(PRODUTOS))])SKU ON SKU.PRODUTO = VIP.PRODUTO AND SKU.COR = VIP.COR AND SKU.ESTAMPA = VIP.ESTAMPA AND SKU.TAMANHO = VIP.TAMANHO
+           INNER JOIN PRODUTOS P ON VIP.PRODUTO=P.PRODUTO
+           INNER JOIN GRUPOS GP ON GP.GRUPO = P.GRUPO
+           LEFT JOIN  PRECOS PL ON VIP.PRODUTO = PL.PRODUTO AND VIP.COR = PL.COR AND VIP.ESTAMPA = PL.ESTAMPA AND VIP.TAMANHO = PL.TAMANHO AND PL.TABELA IN (#SELECT(TAB_P.TABELA_PRECO,NULL:{NULL},ELSE:{#REPLACE(:TAB_P.TABELA_PRECO)}))
+           LEFT JOIN  PRECOS PC ON VIP.PRODUTO = PC.PRODUTO AND VIP.COR = PC.COR AND VIP.ESTAMPA = PC.ESTAMPA AND VIP.TAMANHO = PC.TAMANHO AND PC.TABELA = :VITRINE.TABELA_CUSTO
+           LEFT JOIN  #SELECT(VALIDADE,TRUE:{PRECOS_VALIDADE},ELSE:{PRECOS}) P1 ON VIP.PRODUTO = P1.PRODUTO AND VIP.COR = P1.COR AND VIP.ESTAMPA = P1.ESTAMPA AND VIP.TAMANHO = P1.TAMANHO AND P1.TABELA = #SELECT(VITRINE.TABELA_PROMOCAO,NULL:{:VITRINE.TABELA},ELSE:{:VITRINE.TABELA_PROMOCAO})
+           LEFT JOIN  PRECOS P2 ON VIP.PRODUTO = P2.PRODUTO AND VIP.COR = P2.COR AND VIP.ESTAMPA = P2.ESTAMPA AND VIP.TAMANHO = P2.TAMANHO AND P2.TABELA = #SELECT(VITRINE.TABELA_PROMOCAO,NULL:{NULL},ELSE:{:VITRINE.TABELA})
+           LEFT JOIN  PRECOS P3 ON VIP.PRODUTO = P3.PRODUTO AND VIP.COR = P3.COR AND VIP.ESTAMPA = P3.ESTAMPA AND VIP.TAMANHO = P3.TAMANHO AND P3.TABELA = :TABELA3
+           LEFT JOIN  PRECOS P4 ON VIP.PRODUTO = P4.PRODUTO AND VIP.COR = P4.COR AND VIP.ESTAMPA = P4.ESTAMPA AND VIP.TAMANHO = P4.TAMANHO AND P4.TABELA = :TABELA4
+           LEFT JOIN VITRINE_LOJAS VL ON VL.TABELA_PRECO = PL.TABELA AND VL.VITRINE = :VITRINE
+           LEFT JOIN CODIGO_BARRAS CB ON CB.PRODUTO=VIP.PRODUTO AND CB.COR = VIP.COR AND CB.ESTAMPA = VIP.ESTAMPA AND CB.TAMANHO = VIP.TAMANHO AND CB.CLIENTE IS NULL AND CB.FORNECEDOR IS NULL AND CB.TIPO_BARRA IS NULL
+           LEFT JOIN VITRINE_DADOS_PRODUTOS VID ON VID.VITRINE=:VITRINE AND VID.PRODUTO = VIP.PRODUTO
+           WHERE [AND P.DIVISAO=:DIVISAO]
+                 [AND P.WEB=:WEB]
+                 [AND P.MARCA=:MARCA]
+                 AND GP.COD_GRUPO IN ('001','002','003','004','005','006','007','008','009','010','011','012')
+           GROUP BY VIP.PRODUTO, VIP.COD_PRODUTO, VIP.COR, VIP.ESTAMPA, VIP.TAMANHO,SKU.VITRINE_PRODUTO_SKU,SKU.BLOQUEADO_PRECO,SKU.DATA_ENVIO,SKU.ID_EXTERNO,VID.LOJAS,P.DESCRICAO1,SKU.INCLUIR,P1.VALIDADE_INICIAL,P1.VALIDADE_FINAL)
+ORDER BY #SELECT(TRANS_ID,NULL:{DATA_ATUALIZACAO},ELSE:{TRANS_ID}), VALIDADE_FINAL
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

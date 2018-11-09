@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PRODUCAO">
+    <METHOD NAME="ListaProducao" DESCRIPTION="Listar Ordens de Produ&#231;&#227;o - PRODUCAO.ListaProducao" VERSION="58" INTFTYPE="5" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP NAME="An&#225;lise de saldo e empenho"/>
+        </GROUPS>
+        <PARAM NAME="EMPENHO_PENDENTE" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Empenho Pendente" GROUPNAME="An&#225;lise de saldo e empenho" CTAB="0"/>
+        <PARAM NAME="QTD_EM_PRODUCAO" FORMAT="N" SIZE="8" FLAGS="17" DEFAULT="1" PROJECTION="0" ORDER="1" FIELDLABEL="Qtd em produ&#231;&#227;o maior ou igual a" GROUPNAME="An&#225;lise de saldo e empenho" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="SALDO_EMPENHO" FORMAT="N" SIZE="17" DECIMALS="4" PROJECTION="0" ORDER="4" FIELDLABEL="Saldo Empenho" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT C.*
+FROM #REPLACE(PARENT_RESULT) C
+  INNER JOIN PRODUCAO PD ON (PD.PRODUCAO = C.PRODUCAO)
+WHERE PD.PRODUCAO = PD.PRODUCAO
+[AND C.QTDEPECAS >=:QTD_EM_PRODUCAO]
+
+#SELECT(EMPENHO_PENDENTE,
+  TRUE:{AND EXISTS
+         (SELECT ME.ORIGEM
+            FROM MOV_ESTOQUE ME
+          WHERE ME.TIPO_ORIGEM = 'D'
+            AND ME.ORIGEM = C.PRODUCAO
+          GROUP BY 1
+          HAVING SUM(ME.EMPENHO)>0
+          )
+          },
+  ELSE :{}
+  )
+;
+
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

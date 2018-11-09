@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="INVENTARIOS">
+    <METHOD NAME="Lista_Simples" DESCRIPTION="" VERSION="0" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="TIPO" SIZE="1" FLAGS="3" DEFAULT="0" PROJECTION="0" LOOKUP="list:'0','N&#227;o Ajustados';'1','Ajustados';" FIELDLABEL="Tipo" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="INVENTARIO" FORMAT="+" SIZE="8" FLAGS="1032" PROJECTION="0" FIELDLABEL="Inventario" CTAB="0"/>
+        <FIELD NAME="DATA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" FIELDLABEL="Data" CTAB="0"/>
+        <FIELD NAME="DESCRICAO" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Descricao" CTAB="0"/>
+        <FIELD NAME="TIPO" SIZE="2" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Tipo" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>
+#SET( TBL, ${#CREATETABLE(inventario INT, data DATE, descricao VARCHAR(50), tipo VARCHAR(2))});
+
+  #NOFILTER()
+  INSERT INTO #replace(TBL)
+    SELECT INVENTARIO,
+           DATA,
+           DESCRICAO,
+           TIPO
+
+    FROM INVENTARIOS I
+
+    WHERE I.INVENTARIO #SELECT(TIPO,'1':{},ELSE:{NOT})
+                       IN (SELECT ORIGEM
+                               FROM MOV_ESTOQUE
+                               WHERE (I.INVENTARIO = MOV_ESTOQUE.ORIGEM)
+                               AND   (MOV_ESTOQUE.TIPO_ORIGEM = "I"))
+
+    ORDER BY DATA DESC;
+
+select T.INVENTARIO,
+       T.DATA,
+       T.DESCRICAO,
+       T.TIPO
+  from #replace(tbl) T
+ inner join INVENTARIOS INV
+    on T.inventario = INV.inventario;
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

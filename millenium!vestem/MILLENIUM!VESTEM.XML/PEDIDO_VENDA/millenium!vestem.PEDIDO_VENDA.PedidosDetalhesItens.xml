@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PEDIDO_VENDA">
+    <METHOD NAME="PedidosDetalhesItens" DESCRIPTION="Consulta Detalhe do Pedido" VERSION="107" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PEDIDOV" FORMAT="N" SIZE="8" FLAGS="18" DEFAULT="102498476" PROJECTION="0" ORDER="1" FIELDLABEL="C&#243;digo de Opera&#231;&#227;o" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="PRODUTO" FORMAT="N" SIZE="8" PROJECTION="0" ORDER="1" FIELDLABEL="idProduto" CTAB="0"/>
+        <FIELD NAME="DESC_PRODUTO" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Produto" CTAB="0"/>
+        <FIELD NAME="TAM_PROD" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Tam Prod" CTAB="0"/>
+        <FIELD NAME="TAMANHO" SIZE="30" FLAGS="1" PROJECTION="0" ORDER="3" FIELDLABEL="Tamanho" CTAB="0"/>
+        <FIELD NAME="COR" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Cor" CTAB="0"/>
+        <FIELD NAME="DESC_COR" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Cor" CTAB="0"/>
+        <FIELD NAME="PRECO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="4" FIELDLABEL="Pre&#231;o" CTAB="0"/>
+        <FIELD NAME="QTD_PEDIDA" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="7" FIELDLABEL="Qtd Pedida" CTAB="0"/>
+        <FIELD NAME="QTD_ENTREGUE" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="8" FIELDLABEL="Qtd Entregue" CTAB="0"/>
+        <FIELD NAME="QTD_ENTREGAR" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="10" FIELDLABEL="Qtd Entregar" CTAB="0"/>
+        <FIELD NAME="QTD_PREFATURADA" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="11" FIELDLABEL="Qtd Pr&#233;-faturada" CTAB="0"/>
+        <FIELD NAME="QTD_CANCELADA" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="9" FIELDLABEL="Qtd Cancelada" CTAB="0"/>
+        <FIELD NAME="QTD_PENDENTE" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="12" FIELDLABEL="Qtd Pendente" CTAB="0"/>
+        <FIELD NAME="DESCONTO" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="5" FIELDLABEL="Desconto" CTAB="0"/>
+        <FIELD NAME="PRECO_UNITARIO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="6" FIELDLABEL="Pre&#231;o com desconto" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>
+#PRIVATE()
+#SET( TBP, ${#CREATETABLE(pedidov int,produto int, cor int, estampa int, tamanho VARCHAR(5), qtd_prefat double precision, tot_prefat double precision)});
+//#SET( TBP, ${#CREATETABLE(pedidov int, qtd_prefat double precision, tot_prefat double precision)});
+
+#PRIVATE()
+//CREATE INDEX #REPLACE(TBP)_1 ON #REPLACE(TBP) (pedidov,produto,cor,estampa,tamanho);
+CREATE INDEX #REPLACE(TBP)_1 ON #REPLACE(TBP) (pedidov);
+
+#PRIVATE()
+INSERT INTO #replace(TBP)
+    select
+      v.pedidov,
+      v.produto,
+      v.cor,
+      v.estampa,
+      v.tamanho,
+      sum(v.qtd_prefat),
+      sum(v.tot_prefat)
+    from
+      (select
+        pf.pedidov,
+        ppk.produto,
+        ppk.cor,
+        ppk.estampa,
+        ppk.tamanho,
+        #null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue) as qtd_prefat,
+        ((#null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue))*
+                   (select #if(#null_to_s(min(ppv2.brindesite),'F')=true,0,#if(min(ppv2.brinde) is not null,0,#null_to_z(avg(ppv2.preco))))
+                    from produto_pedidov ppv2
+                    where ppv2.pedidov = pf.pedidov
+                      and ppv2.produto = ppk.produto
+                      and ppv2.cor = ppk.cor
+                      and ppv2.estampa = ppk.estampa
+                      and ppv2.tamanho = ppk.tamanho
+                      and ppv2.item = ppk.item
+                      and #null_to_s(ppv2.quita_item,'F')='F'
+                      and ppv2.quantidade > 0)
+        ) as tot_prefat
+       from prefaturamentos pf
+         inner join pedido_venda pv on pv.pedidov =pf.pedidov
+         inner join produto_prefat ppk on (ppk.prefaturamento = pf.prefaturamento)
+         inner join produtos p on p.produto =ppk.produto
+       where pf.pedidov=:pedidov
+         and #null_to_s(ppk.saida,'') = ''
+         and pf.excluido = 'F'
+         and pf.entregue = 'F'
+      )v
+     group by v.pedidov,v.produto,v.cor,v.estampa,v.tamanho
+     ;
+
+#PRIVATE()
+#SET( TBQ, ${#CREATETABLE(pedidov int,produto int, cor int, estampa int, tamanho VARCHAR(5), quantidade_cancelada double precision)});
+
+#PRIVATE()
+CREATE INDEX #REPLACE(TBQ)_1 ON #REPLACE(TBQ) (pedidov);
+
+#PRIVATE()
+INSERT INTO #replace(TBQ)
+     select
+       ppk.pedidov,
+       ppk.produto,
+       ppk.cor,
+       ppk.estampa,
+       ppk.tamanho,
+       sum(quantidade) * -1 as quantidade_cancelada
+     from pedido_venda pv
+      inner join produto_pedidov ppk on ppk.pedidov =pv.pedidov
+      inner join produtos p on p.produto =ppk.produto
+      where pv.pedidov=:pedidov
+        and ppk.quita_item = "T"
+     group by ppk.pedidov, ppk.produto, ppk.cor, ppk.estampa, ppk.tamanho;
+     
+select:MAIN
+  ppk.produto,
+  ppk.cor,
+  ppk.estampa,
+  ppk.tamanho,
+  
+  //AVG(PPK.PRECO) as preco,
+  AVG(PPK.PRECO/(1-(#NULL_TO_Z(PPK.DESCONTO)/100)))    AS PRECO,
+  AVG(#NULL_TO_Z(PPK.DESCONTO))                        AS DESCONTO,
+  AVG(PPK.PRECO/(1-(#NULL_TO_Z(PPK.DESCONTO)/100)))
+  -AVG(#NULL_TO_Z(PPK.DESCONTO))                       AS PRECO_UNITARIO,
+  
+  MIN(P.COD_PRODUTO) AS DESC_PRODUTO,
+  MIN(CR.COD_COR)||' - '||MIN(CR.DESCRICAO) AS DESC_COR,
+  //#if((sum(tmp.qtd_prefat)>0),true,false) as prefaturado,
+  //#if(#null_to_z((select count(*) from produto_pedidov ppv
+  //                        left join nf on nf.cod_operacao=ppv.saida
+  //                                       and nf.tipo_operacao="S"
+  //                                       and #null_to_s(cancelada,false)=false
+  //                                       and #null_to_s(nf.estornado,false)=False
+  //		                   where ppv.pedidov=pv.pedidov
+  //                         and ppv.saida is not null
+  //                         and nf.id is not null))
+  //                         >0,true,false
+  //
+  //
+  //                            ) as faturado,
+  sum(#null_to_z(tmQ.quantidade_cancelada)) as quantidade_cancelada,
+	   				
+  // PEDIDO				
+  sum(#null_to_z(ppk.quantidade)+#null_to_z(ppk.quantidaderef)) as QTD_PEDIDA,
+  //sum(#if((ppk.quantidade>0) and (#null_to_s(quita_item,'F')=false) and (#null_to_s(brindesite,'F')=false),((#null_to_z(ppk.quantidade)+#null_to_z(ppk.quantidaderef)) *
+  //      #if(#null_to_s(ppk.brindesite,'F')=true,0,#if(ppk.brinde is not null,0,ppk.preco))),0)) as total, 	
+
+   // ENTREGUE
+   sum(#null_to_z(ppk.entregue)) as QTD_ENTREGUE,
+   //sum(#null_to_z(ppk.entregue) * #if(#null_to_s(ppk.brindesite,'F')=true,0,#if(ppk.brinde is not null,0,ppk.preco))) as total_entregue, 	
+	
+   // AENTREGAR
+   sum(#null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue)) as QTD_ENTREGAR,
+
+   //sum((#null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue)) * #if(#null_to_s(ppk.brindesite,'F')=true,0,#if(ppk.brinde is not null,0,ppk.preco))) as total_aentregar, 	
+	
+   // PREFATURADO
+
+   min(tmp.qtd_prefat) as QTD_PREFATURADA,
+   //min(tmp.tot_prefat) as total_prefaturado,
+
+   // QUITADO	
+   sum(#if((ppk.quantidade&lt;0), (ppk.quantidade)*-1,0)) as QTD_CANCELADA,
+   sum(#if((ppk.quantidade&lt;0), (ppk.quantidade * ppk.preco)*-1 ,0)) as total_quitado,
+
+    // PENDENTE
+   sum(#null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue)- #null_to_z(tmp.qtd_prefat))  as QTD_PENDENTE
+   //(sum((#null_to_z(ppk.quantidade)-#null_to_z(ppk.entregue)) * #if(#null_to_s(ppk.brindesite,'F')=true,0,#if(ppk.brinde is not null,0,ppk.preco)))-min(tmp.tot_prefat) ) as total_pendente	
+
+	
+from pedido_venda pv
+  inner join produto_pedidov ppk on ppk.pedidov=pv.pedidov
+  inner join produtos p on p.produto = ppk.produto
+  INNER JOIN CORES CR ON CR.COR = PPK.COR
+  left  join #REPLACE(TBP) tmp on tmp.pedidov = pv.pedidov
+                              and tmp.produto = ppk.produto
+                              and tmp.cor     = ppk.cor
+                              and tmp.estampa = ppk.estampa
+                              and tmp.tamanho = ppk.tamanho
+  left  join #REPLACE(TBQ) tmQ on tmQ.pedidov = pv.pedidov
+                              and tmQ.produto = ppk.produto
+                              and tmQ.cor     = ppk.cor
+                              and tmQ.estampa = ppk.estampa
+                              and tmQ.tamanho = ppk.tamanho
+
+where pv.pedidov=:pedidov
+
+group by 1,2,3,4
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

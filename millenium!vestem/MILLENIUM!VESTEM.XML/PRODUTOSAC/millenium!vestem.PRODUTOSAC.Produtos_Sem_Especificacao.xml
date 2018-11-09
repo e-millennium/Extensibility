@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PRODUTOSAC">
+    <METHOD NAME="Produtos_Sem_Especificacao" DESCRIPTION="Produtos sem Especifica&#231;&#227;o" VERSION="31" INTFTYPE="5" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="Especificacao" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="1" LOOKUP="especificacao.Listar" LOOKUPKEY="F_225274430" LOOKUPDISPLAY="F_1802195444" LOOKUPCODE="F_225274430" FIELDLABEL="Especificacao" CTAB="0"/>
+        <PARAM NAME="DEPARTAMENTO" SIZE="20" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="2" LOOKUP="DEPARTAMENTOS.Lista" LOOKUPKEY="DEPARTAMENTO" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Departamento" CTAB="0"/>
+        <PARAM NAME="STATUS" SIZE="20" STYLE="6" PROJECTION="0" ORDER="3" LOOKUP="STATUS_PRODUTO.LISTA" LOOKUPKEY="STATUS_PRODUTO" LOOKUPDISPLAY="DESCRICAO" FIELDLABEL="Status" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="cod_produto" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Cod Produto" CTAB="0"/>
+        <FIELD NAME="descricao1" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Descricao1" CTAB="0"/>
+        <FIELD NAME="produto" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Produto" CTAB="0"/>
+        <FIELD NAME="produtoac" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Produtoac" CTAB="0"/>
+        <FIELD NAME="MARCA" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Marca" CTAB="0"/>
+        <FIELD NAME="DEPARTAMENTO" SIZE="30" FLAGS="1" PROJECTION="0" FIELDLABEL="Departamento" CTAB="0"/>
+        <FIELD NAME="TIPO" SIZE="30" FLAGS="1" PROJECTION="0" FIELDLABEL="Tipo" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select p.produto,p.produto as produtoac,
+    p.cod_produto,p.descricao1,m.descricao as Marca,D.DESCRICAO AS DEPARTAMENTO, T.DESCRICAO AS TIPO
+    from produtos p
+         LEFT join marcas m
+             on m.marca=p.marca
+         LEFT JOIN DEPARTAMENTOS D
+            ON D.DEPARTAMENTO=P.DEPARTAMENTO
+         LEFT JOIN TIPOS T
+            ON T.TIPO=P.TIPO
+         
+         LEFT JOIN STATUS_PRODUTO
+             ON PRODUTOS.STATUS = STATUS_PRODUTO.STATUS_PRODUTO
+         
+    where p.tipo_prod='AC'
+    and not exists(select * from espec_produtos ep where ep.produto=p.produto and ep.especificacao=:especificacao)
+    [AND P.DEPARTAMENTO IN #REPLACE(:DEPARTAMENTO)]
+    [AND P.STATUS IN #REPLACE(:STATUS)]
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

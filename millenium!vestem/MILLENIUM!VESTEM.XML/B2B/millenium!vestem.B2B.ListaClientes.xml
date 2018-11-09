@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="B2B">
+    <METHOD NAME="ListaClientes" DESCRIPTION="Lista de Clientes" VERSION="91" INTFTYPE="5" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="TRANS_ID" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="Campo correspondente ao trans_id do cliente." ORDER="3" FIELDLABEL="Trans Id" CTAB="0"/>
+        <PARAM NAME="ORIGEM_CLIENTE" SIZE="10" FLAGS="1" PROJECTION="0" HINT="Campo correspondente a origem do cliente." ORDER="2" FIELDLABEL="Origem Cliente" CTAB="0"/>
+        <PARAM NAME="CLIENTE" FORMAT="N" SIZE="8" PROJECTION="0" HINT="Campo correspondente ao cliente." FIELDLABEL="Cliente" CTAB="0"/>
+        <PARAM NAME="TOP" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Limite" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="COD_CLIENTE" SIZE="12" FLAGS="1" PROJECTION="0" HINT="C&#243;digo identificando o cliente. Se este c&#243;digo n&#227;o for informado, o sistema ir&#225; automaticamente localizar o registro pelo RG, CNPJ ou EMail. Se for informado, o sistema ir&#225; atualizar o cliente com o c&#243;digo especificado." ORDER="20" FIELDLABEL="Cod Cliente" CTAB="0"/>
+        <FIELD NAME="NOME" SIZE="120" FLAGS="1" PROJECTION="0" HINT="Nome do cliente" ORDER="29" FIELDLABEL="Nome" CTAB="0"/>
+        <FIELD NAME="CEL" SIZE="20" FLAGS="1" PROJECTION="0" HINT="Celular do cliente" ORDER="18" FIELDLABEL="Cel" CTAB="0"/>
+        <FIELD NAME="RG" SIZE="12" FLAGS="1" PROJECTION="0" HINT="Rg do cliente" ORDER="34" FIELDLABEL="Rg" CTAB="0"/>
+        <FIELD NAME="DATA_ANIVERSARIO" FORMAT="H" SIZE="18" FLAGS="1" PROJECTION="0" HINT="Data de anivers&#225;rio do cliente" ORDER="22" FIELDLABEL="Data Aniversario" CTAB="0"/>
+        <FIELD NAME="OBS" FLAGS="1" PROJECTION="0" HINT="Observa&#231;&#227;o referente ao Cliente" ORDER="30" FIELDLABEL="Obs" CTAB="0"/>
+        <FIELD NAME="E_MAIL" SIZE="40" FLAGS="1" PROJECTION="0" HINT="Email do cliente" ORDER="23" FIELDLABEL="E Mail" CTAB="0"/>
+        <FIELD NAME="TIPO_SEXO" SIZE="1" FLAGS="1" PROJECTION="0" HINT="Sexo do cliente(M = Masculino, F = Feminino, U = N&#227;o Aplic&#225;vel)" ORDER="35" FIELDLABEL="Tipo Sexo" CTAB="0"/>
+        <FIELD NAME="TRATAMENTO" SIZE="20" FLAGS="1" PROJECTION="0" HINT="Tratamento dado ao cliente(0 = Sr., 1 = Sra, 2 = Dr., 3 = Dra, 4 = Srta)" ORDER="37" FIELDLABEL="Tratamento" CTAB="0"/>
+        <FIELD NAME="MALADIRETA" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" HINT="Indica que o cliente deseja receber Mala Direta" ORDER="28" FIELDLABEL="Maladireta" CTAB="0"/>
+        <FIELD NAME="CATEGORIAS" FORMAT="R" FLAGS="1" PROJECTION="0" HINT="Registro de ids(campo categoria) de categorias obtidos atrav&#233;s do m&#233;todo &#34;categorias.lista&#34;" ORDER="38" FIELDLABEL="Categorias" NESTEDNAME="WTSSYSTEM.INTERNALTYPES.INTEGERARRAY" CTAB="0"/>
+        <FIELD NAME="CNPJ" SIZE="20" FLAGS="1" PROJECTION="0" HINT="CNPJ do cliente" ORDER="17" FIELDLABEL="Cnpj" CTAB="0"/>
+        <FIELD NAME="PF_PJ" SIZE="2" FLAGS="1" PROJECTION="0" HINT="Tipo da pessoa do cliente(PF = Pessoa F&#237;sica, PJ = Pessoa Jur&#237;dica)" ORDER="19" FIELDLABEL="Pf Pj" CTAB="0"/>
+        <FIELD NAME="IE" SIZE="15" FLAGS="1" PROJECTION="0" HINT="Inscri&#231;&#227;o Estadual do cliente" ORDER="27" FIELDLABEL="Ie" CTAB="0"/>
+        <FIELD NAME="FANTASIA" SIZE="120" FLAGS="1" PROJECTION="0" HINT="Nome fantasia do cliente" ORDER="25" FIELDLABEL="Fantasia" CTAB="0"/>
+        <FIELD NAME="GRUPO_LOJA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="!Id(campo grupo_loja) do Grupo Loja/Fam&#237;lia obtido atrav&#233;s do m&#233;todo &#34;grupo_lojas.lista&#34;" ORDER="26" FIELDLABEL="Grupo Loja" CTAB="0"/>
+        <FIELD NAME="PARENTESCO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="Tipo de Parentesco do cliente(0 = Marido/Noivo/Pai, 1 = Esposa/Noiva/M&#227;e, 2 = Filho, 3 = Agregado, 4 = Tio/Tia, 5 = Av&#244;/Av&#243;)" ORDER="32" FIELDLABEL="Parentesco" CTAB="0"/>
+        <FIELD NAME="ENDERECOS" FORMAT="R" FLAGS="1" PROJECTION="0" HINT="Endere&#231;o do cliente" ORDER="24" FIELDLABEL="Endereco" NESTEDNAME="millenium_eco.CLIENTES.ENDERECO_CONSULTA" CTAB="0"/>
+        <FIELD NAME="CPF" SIZE="14" FLAGS="1" PROJECTION="0" HINT="Cpf do cliente" ORDER="21" FIELDLABEL="Cpf" CTAB="0"/>
+        <FIELD NAME="UFIE" SIZE="3" FLAGS="1" PROJECTION="0" HINT="Estado da Inscri&#231;&#227;o Estadual do cliente" ORDER="33" FIELDLABEL="UF IE" CTAB="0"/>
+        <FIELD NAME="TRANS_ID" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="Trans_id obtido atrav&#233;s do m&#233;todo clientes.lista" ORDER="36" FIELDLABEL="Trans Id" CTAB="0"/>
+        <FIELD NAME="ORIGEM_CLIENTE" SIZE="10" FLAGS="1" PROJECTION="0" HINT="Origem de Cadastro do Cliente" ORDER="31" FIELDLABEL="Origem Cliente" CTAB="0"/>
+        <FIELD NAME="DATA_CADASTRO" FORMAT="H" SIZE="18" FLAGS="1" PROJECTION="0" HINT="Data de cadastro do Cliente" ORDER="16" FIELDLABEL="Data Cadastro" CTAB="0"/>
+        <FIELD NAME="DATA_ATUALIZACAO" FORMAT="H" SIZE="18" FLAGS="1" PROJECTION="0" HINT="Data da &#218;ltima Atualiza&#231;&#227;o do cadastro do Cliente" ORDER="15" FIELDLABEL="Data Atualizacao" CTAB="0"/>
+        <FIELD NAME="PERMITE_ENVIAR_SMS" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Permite Enviar Sms" CTAB="0"/>
+        <FIELD NAME="PERMITE_ENVIAR_NEWSLETTER" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Permite Enviar Newsletter" CTAB="0"/>
+        <FIELD NAME="TABELA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="Id da tabela default do cliente" ORDER="14" FIELDLABEL="Tabela" CTAB="0"/>
+        <FIELD NAME="REPRESENTANTE" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="Id do representante do cliente" ORDER="13" FIELDLABEL="Representante" CTAB="0"/>
+        <FIELD NAME="CLIENTE" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="Id do cliente" ORDER="9" FIELDLABEL="Cliente" CTAB="0"/>
+        <FIELD NAME="DESATIVADO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" HINT="Ativado ou desativado na empresa" ORDER="10" FIELDLABEL="Desativado" CTAB="0"/>
+        <FIELD NAME="KEY" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Key" CTAB="0"/>
+        <FIELD NAME="DESCONTO" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" ORDER="6" FIELDLABEL="Desconto" CTAB="0"/>
+        <FIELD NAME="TIPO_EMPRESA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Tipo Empresa" CTAB="0"/>
+        <FIELD NAME="TIPO_PEDIDO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Tipo Pedido" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT:MAIN
+
+       #SELECT(TOP,
+               NULL:{},
+               ELSE:{#TOP(:TOP)}
+              )
+               CLIENTE,
+               GERADOR,
+               COD_CLIENTE,
+               NOME,
+               CEL,
+               RG,
+               CAST(DATA_ANIVERSARIO AS TIMESTAMP) AS DATA_ANIVERSARIO,
+               CAST(DATA_CADASTRO    AS TIMESTAMP) AS DATA_CADASTRO,
+               CAST(DATA_ATUALIZACAO AS TIMESTAMP) AS DATA_ATUALIZACAO,
+               OBS,
+               E_MAIL,
+               TIPO_SEXO,
+               TRATAMENTO,
+               MALADIRETA,
+               CNPJ,
+               PF_PJ,
+               IE,
+               FANTASIA,
+               GRUPO_LOJA,
+               PARENTESCO,
+               CPF,
+               UFIE,
+               TRANS_ID,
+               ORIGEM_CLIENTE,
+               PERMITE_ENVIAR_SMS,
+               PERMITE_ENVIAR_NEWSLETTER,
+               TABELA,
+               REPRESENTANTE,
+               DESATIVADO,
+               '123456' AS KEY,
+               COALESCE(DESCONTO,0),
+               TIPO_EMPRESA,
+               EVL_TIPO_PEDIDO AS TIPO_PEDIDO
+
+#ROWSET({SELECT:CATEGORIAS C.CATEGORIA AS ITEM FROM CATEGORIAS C INNER JOIN CATEGORIAS_CLIENTE CC ON C.CATEGORIA=CC.CATEGORIA WHERE CC.CLIENTE=:MAIN.CLIENTE}),
+
+#ROWSET({SELECT:ENDERECOS MI.MUNCODDV AS COD_MUN_IBGE, EC.LOGRADOURO2 AS LOGRADOURO, P.NOME AS NOME_PAIS, E.DESCRICAO AS DESC_TIPO_ENDERECO ,   EC.* FROM ENDERECOS_CADASTRO EC
+         LEFT JOIN UF_IBGE UF ON UF.UFSIGLA=EC.ESTADO
+         LEFT JOIN MUNICIPIOS_IBGE MI ON MI.MUNNOMEX = EC.CIDADE AND MI.UFCOD=UF.UFCOD
+         LEFT JOIN PAISES P ON P.PAIS = EC.PAIS
+         LEFT JOIN ENDERECOS E ON E.ENDERECO = EC.ENDERECO
+         WHERE EC.GERADOR=:MAIN.GERADOR
+           AND EC.ENDERECO_ENTREGA = 'T'
+         ORDER BY EC.ENDERECO_CADASTRO})
+FROM CLIENTES C
+INNER JOIN ICLIENTES IC ON IC.CLIENTE = C.CLIENTE
+
+WHERE [TRANS_ID>:TRANS_ID]
+      [AND ORIGEM_CLIENTE=:ORIGEM_CLIENTE]
+      [AND CLIENTE=:CLIENTE]
+      AND C.TIPO IN (0,3)
+      AND C.NOME NOT LIKE '%INATIVO%'
+      AND C.TABELA IS NOT NULL
+      AND C.REPRESENTANTE IS NOT NULL
+      AND IC.EVL_TIPO_PEDIDO IS NOT NULL
+      AND C.E_MAIL IS NOT NULL
+      AND C.E_MAIL LIKE '%@%'
+      AND C.E_MAIL NOT LIKE '%;%'
+      AND C.E_MAIL NOT LIKE '%,%'
+      AND NOT EXISTS(SELECT * FROM REPRESENTANTES R WHERE R.GERADOR = C.GERADOR)
+
+      
+      
+      
+      
+ORDER BY TRANS_ID
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

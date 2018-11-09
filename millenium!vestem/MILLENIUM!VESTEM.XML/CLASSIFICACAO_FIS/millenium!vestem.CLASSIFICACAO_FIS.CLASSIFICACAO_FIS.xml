@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="CLASSIFICACAO_FIS">
+    <METHOD NAME="CLASSIFICACAO_FIS" DESCRIPTION="Classifica&#231;&#245;es Fiscais" VERSION="16" INTFTYPE="10" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="CLASSIFICACAO_FIS" FORMAT="+" SIZE="8" FLAGS="1024" PROJECTION="0" FIELDLABEL="Classificacao Fis" CTAB="0"/>
+        <PARAM NAME="CODIGO" SIZE="3" FLAGS="17" PROJECTION="0" ORDER="1" FIELDLABEL="C&#243;digo" CTAB="0"/>
+        <PARAM NAME="DESCRICAO" SIZE="10" FLAGS="17" PROJECTION="0" ORDER="2" FIELDLABEL="Descri&#231;&#227;o" CTAB="0"/>
+        <PARAM NAME="OBS" SIZE="255" FLAGS="1" PROJECTION="0" ORDER="3" FIELDLABEL="Obs" CTAB="0"/>
+        <PARAM NAME="CEST" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" HINT="C&#243;digo Especificador da Substitui&#231;&#227;o Tribut&#225;ria &#8211; CEST, que identifica a mercadoria pass&#237;vel de sujei&#231;&#227;o aos regimes de substitui&#231;&#227;o tribut&#225;ria e de antecipa&#231;&#227;o do recolhimento do imposto" ORDER="4" LOOKUP="CEST.Lista" LOOKUPKEY="CEST" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODCEST" FIELDLABEL="C&#243;digo CEST&#160;" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

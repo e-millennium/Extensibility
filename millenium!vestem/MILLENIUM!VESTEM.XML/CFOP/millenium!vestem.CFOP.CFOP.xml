@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="CFOP">
+    <METHOD NAME="CFOP" DESCRIPTION="CFOP" VERSION="260" INTFTYPE="10" TRIGGEROF="CFOP.CFOP" TRIGGERTYPE="0" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP NAME="CFOP Correspondente"/>
+        </GROUPS>
+        <PARAM NAME="EVL_CFOP_DEV" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="1" LOOKUP="millenium.cfop.listasimples" LOOKUPKEY="cfop" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="NAT_OPERACAO" FIELDLABEL="Cfop Devolu&#231;&#227;o" GROUPNAME="CFOP Correspondente" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

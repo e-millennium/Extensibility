@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="MOVIMENTO_FRANQUIAS">
+    <METHOD NAME="AtualizarEntrada" DESCRIPTION="" VERSION="10" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="COD_OPERACAO" FORMAT="N" SIZE="8" FLAGS="3" PROJECTION="0" FIELDLABEL="Cod Operacao" CTAB="0"/>
+        <PARAM NAME="PEDIDOV" FORMAT="N" SIZE="8" FLAGS="3" PROJECTION="0" FIELDLABEL="Pedidov" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>//Atualiza entrada
+UPDATE ENTRADAS
+SET
+  V_FRETE=0,
+  EVL_PEDIDOV=:PEDIDOV
+WHERE ENTRADA = :COD_OPERACAO ;
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

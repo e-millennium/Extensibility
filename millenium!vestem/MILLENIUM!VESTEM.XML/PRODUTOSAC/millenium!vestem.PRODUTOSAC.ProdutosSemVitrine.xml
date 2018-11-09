@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PRODUTOSAC">
+    <METHOD NAME="ProdutosSemVitrine" DESCRIPTION="Produtos sem Vitrine" VERSION="45" INTFTYPE="5" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="VITRINE" SIZE="100" FLAGS="17" PROJECTION="0" ORDER="1" LOOKUP="PRODUTOSAC.ListaVitrine" LOOKUPKEY="VITRINE" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="VITRINE" FIELDLABEL="Vitrine" CTAB="0"/>
+        <PARAM NAME="DEPARTAMENTO" SIZE="20" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="2" LOOKUP="DEPARTAMENTOS.Lista" LOOKUPKEY="DEPARTAMENTO" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Departamento" CTAB="0"/>
+        <PARAM NAME="ESTOQUE" SIZE="20" FLAGS="17" DEFAULT="0" PROJECTION="0" ORDER="4" LOOKUP="list:'0','Todos';'1','Com Estoque';" FIELDLABEL="Estoque" CTAB="0"/>
+        <PARAM NAME="COLECAO" SIZE="100" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="3" LOOKUP="colecoes.lista" LOOKUPKEY="COLECAO" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Colecao" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="COD_PRODUTO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Cod Produto" CTAB="0"/>
+        <FIELD NAME="DESCRICAO" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Descricao" CTAB="0"/>
+        <FIELD NAME="MARCA" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Marca" CTAB="0"/>
+        <FIELD NAME="produto" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Produto" CTAB="0"/>
+        <FIELD NAME="produtoac" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Produtoac" CTAB="0"/>
+        <FIELD NAME="DEPARTAMENTO" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Departamento" CTAB="0"/>
+        <FIELD NAME="TIPO" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Tipo" CTAB="0"/>
+        <FIELD NAME="DATA_CADASTRO" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Data Cadastro" CTAB="0"/>
+        <FIELD NAME="ESTOQUE" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="13" FIELDLABEL="Estoque" CTAB="0"/>
+        <FIELD NAME="COLECAO" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Colecao" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select p.produto,p.produto as produtoac,
+    p.cod_produto,p.descricao1 AS descricao,m.descricao as Marca, d.descricao as departamento,tp.descricao as tipo,
+    cl.descricao as COLECAO,
+    P.DATA_CADASTRO,(SELECT SUM(E.SALDO) FROM ESTOQUES E
+                                      INNER JOIN VITRINE V ON V.FILIAL=E.FILIAL AND V.VITRINE=:VITRINE
+                                    WHERE E.PRODUTO=P.PRODUTO)AS ESTOQUE
+    from produtos p
+        left join departamentos d on d.departamento=p.departamento
+        left join tipos tp on tp.tipo=p.tipo
+         LEFT join marcas m on m.marca=p.marca
+         left join colecoes cl on cl.colecao=p.colecao
+
+    where p.tipo_prod='AC'
+    and not exists(select * from vitrine_produtos_sku Vp where Vp.produto=p.produto and Vp.VITRINE=:VITRINE)
+    [AND P.DEPARTAMENTO IN #REPLACE(:DEPARTAMENTO)]
+    [AND P.COLECAO IN #REPLACE(:COLECAO)]
+    
+    #SELECT(ESTOQUE,0:{},1:{
+    [and (SELECT SUM(E.SALDO) FROM ESTOQUES E
+                                      INNER JOIN VITRINE V ON V.FILIAL=E.FILIAL AND V.VITRINE=:VITRINE
+                                    WHERE E.PRODUTO=P.PRODUTO)>=1]});
+
+    
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="CONTA_CONTABIL">
+    <METHOD NAME="CONTA_CONTABIL" DESCRIPTION="Conta Cont&#225;bil" VERSION="18" INTFTYPE="10" TRIGGEROF="CONTA_CONTABIL.CONTA_CONTABIL" TRIGGERTYPE="0" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PLANO_FINANCEIRO_INTEGRADO" FORMAT="B" SIZE="1" FLAGS="17" DEFAULT="1" PROJECTION="0" HINT="Esta op&#231;&#227;o ativa a sincronia entre o plano de contas cont&#225;bil com o financeiro" ORDER="1" FIELDLABEL="Plano Financeiro Integrado" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

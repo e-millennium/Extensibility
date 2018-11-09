@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="TIPOS_PEDIDO">
+    <METHOD NAME="Consulta" DESCRIPTION="" VERSION="28" INTFTYPE="6" THREADSAFE="1">
+      <PARAMS/>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="EXPLICACAO" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Explica&#231;&#227;o do tipo de pedido" CTAB="0"/>
+        <FIELD NAME="VOID" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Void" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT
+  EXPLICACAO
+FROM TIPOS_PEDIDO
+WHERE (TIPO_PEDIDO=:WTSSYS_OBJECT);
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

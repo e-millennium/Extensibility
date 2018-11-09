@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="CRM_VESTEM">
+    <METHOD NAME="Consulta" DESCRIPTION="Consultar - Protocolo" VERSION="17" INTFTYPE="6" TRIGGEROF="XRM.CHAMADOS.Consulta" TRIGGERTYPE="1" THREADSAFE="1">
+      <PARAMS/>
+      <FIELDS>
+        <GROUPS>
+          <GROUP NAME="Notas Fiscais de Origem" STYLE="1"/>
+          <GROUP NAME="Origem"/>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="NOTA" FORMAT="N" SIZE="8" SOURCEEXPRESSION="CRM_VESTEM.CRM_VESTEM.NOTA" PROJECTION="0" ORDER="1" FIELDLABEL="Nota" GROUPNAME="Origem" CTAB="0"/>
+        <FIELD NAME="ITENS_MOVIMENTO" FORMAT="R" FLAGS="1" STYLE="3" PROJECTION="0" ORDER="1" LOOKUP="CRM_VESTEM.MovimentoDetalhesItens" FIELDLABEL="Produtos" NESTEDNAME="millenium!vestem.CRM_VESTEM.ITENS_MOVIMENTO" GROUPNAME="Notas Fiscais de Origem" CTAB="0"/>
+        <FIELD NAME="TROCA_DEVOLUCAO" FORMAT="N" SIZE="8" DEFAULT="0" PROJECTION="0" FIELDLABEL="Troca Devolucao" CTAB="0"/>
+        <FIELD NAME="PEDIDOV" FORMAT="N" SIZE="8" DEFAULT="0" PROJECTION="0" FIELDLABEL="Pedidov" CTAB="0"/>
+        <FIELD NAME="NOTA_PRESENTE" FORMAT="B" SIZE="1" PROJECTION="0" FIELDLABEL="Nota Presente" CTAB="0"/>
+        <FIELD NAME="COD_OPERACAO_NF" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Cod Operacao Nf" CTAB="0"/>
+        <FIELD NAME="TIPO_OPERACAO_NF" SIZE="1" PROJECTION="0" FIELDLABEL="Tipo Operacao Nf" CTAB="0"/>
+        <FIELD NAME="CLIENTE_CONTATADO" FORMAT="B" SIZE="1" FLAGS="17" DEFAULT="0" PROJECTION="0" FIELDLABEL="Cliente Contatado" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT:CHAMADO
+      CC.CHAMADO,
+      CC.PROTOCOLO_RASTREIO,
+      C.TIPO,
+      CC.PEDIDOV,
+      CC.NOTA,
+      CC.NOTA_PRESENTE,
+      NULL AS DADOS_PV_ATUAL,
+      CC.DADOS_PV_CHAMADO,
+      CC.PEDIDO_NAO_REGISTRADO,
+      CC.PEDIDOV_EXTERNO,
+      TC.RELACIONAR,
+      TC.TROCA_DEVOLUCAO,
+      CC.COD_OPERACAO_NF,
+      CC.TIPO_OPERACAO_NF,
+      CC.NOTA AS NF_PRESENTE,
+      CL.CLIENTE,
+      CC.PREFATURAMENTO,
+      CC.REQUISICAO_COMPRA,
+      CC.VOLUME_EVENTO,
+      CC.TRANSPORTADORA_LOG_REVERSA as TRANSPORTADORA_LOG_REVERSA,
+      CC.TIPO_FRETE_LOG_REVERSA as TIPO_FRETE_LOG_REVERSA,
+      CC.VALOR_LOG_REVERSA as VALOR_LOG_REVERSA,
+      #NULL_TO_S(PV.SUSPENSO,'F') AS PV_SUSPENSO,
+      CC.CLIENTE_CONTATADO as CLIENTE_CONTATADO,
+      CC.ACAO_DIVERGENCIA,
+      CC.TOTAL_DEVOLUCAO_SELECIONADO,
+      CC.TOTAL_DEVOLUCAO_PREENCHIDO,
+      CC.TRANSPORTADORA,
+      CC.TIPO_FRETE,
+      CC.PROTOCOLO_FRETE,
+      CC.V_FRETE,
+      CC.V_FRETE_CALC,
+      CC.DATA_ENTREGA,
+      CC.PRAZOENTREGADIAS,
+      CC.COD_ENDERECO,
+      PVG.CLIENTE AS CLIENTE_PEDIDO
+
+
+      #ROWSET ({SELECT:CATEGORIAS_CLIENTE CG.CATEGORIA as ITEM
+                                             FROM CATEGORIAS_CLIENTE CC
+                                             inner join CLIENTES CL on CL.CLIENTE = CC.CLIENTE
+                                             inner join CATEGORIAS CG on CC.CATEGORIA = CG.CATEGORIA
+                                             where CL.CLIENTE = :CHAMADO.CLIENTE    }),
+
+
+
+      PVG.COD_PEDIDOV AS COD_PEDIDOV_GERADO
+      #ROWSET({
+      SELECT:ITENS_MOVIMENTO
+                      (TMP.PRODUTO||TMP.COR||TMP.ESTAMPA||TMP.TAMANHO) AS PRODUTO_SKU,
+                      TMP.SELECIONADO,
+                      TMP.PRODUTO,
+                      TMP.COR,
+                      TMP.ESTAMPA,
+                      TMP.TAMANHO,
+                      TMP.LOTE,
+                      TMP.DEFEITO,
+                      TMP.OBSERVACAO,
+                      TMP.PRECO,
+                      TMP.QUANTIDADE,
+                      TMP.CORTESIA_UNITARIO,
+                      TMP.ACERTO_UNITARIO,
+                      TMP.FRETE_UNITARIO,
+                      (select LIST(C.PROTOCOLO)
+                       from CHAMADO_PRODUTOS_CRM CPC
+                       inner join CHAMADOS_CRM CCC on (CCC.CHAMADO = CPC.CHAMADO)
+                       inner join CHAMADOS C on C.CHAMADO = CCC.CHAMADO
+                       where CPC.PRODUTO = TMP.PRODUTO and
+                             C.SITUACAO = 0 and
+                             ((CCC.PEDIDOV = :CHAMADO.PEDIDOV) OR (CCC.NOTA = :CHAMADO.NOTA)) and
+                             C.CHAMADO &lt;> :CHAMADO.CHAMADO) CHAMADO
+
+
+
+               FROM (SELECT
+                       TRUE AS SELECIONADO,
+                       CPC.PRODUTO,
+                       CPC.COR,
+                       CPC.ESTAMPA,
+                       CPC.TAMANHO,
+                       CPC.LOTE,
+                       CPC.DEFEITO,
+                       CPC.OBSERVACAO,
+                       CPC.PRECO,
+                       CPC.QUANTIDADE,
+                      (CPC.VALOR_CORTESIA / CPC.QUANTIDADE) AS CORTESIA_UNITARIO,
+                      (CPC.VALOR_ACERTO / CPC.QUANTIDADE) AS ACERTO_UNITARIO,
+                      (CPC.VALOR_FRETE / CPC.QUANTIDADE) AS FRETE_UNITARIO
+                FROM CHAMADO_PRODUTOS_CRM CPC
+                WHERE CHAMADO =:WTSSYS_OBJECT
+                UNION ALL
+                SELECT FALSE AS SELECIONADO,
+                       PPV.PRODUTO,
+                       PPV.COR,
+                       PPV.ESTAMPA,
+                       PPV.TAMANHO,
+                       PPV.LOTE,
+                       NULL AS DEFEITO,
+                       NULL AS OBSERVACAO,
+                       PPV.PRECO,
+                       PPV.QUANTIDADE,
+                       PV.CORTESIA * (PPV.PRECO / PV.TOTAL) AS CORTESIA_UNITARIO,
+                       PV.V_ACERTO * (PPV.PRECO / PV.TOTAL) AS ACERTO_UNITARIO,
+                       PV.V_FRETE * (PPV.PRECO / PV.TOTAL) AS FRETE_UNITARIO
+                FROM PRODUTO_PEDIDOV PPV
+                INNER JOIN PEDIDO_VENDA PV ON PV.PEDIDOV = PPV.PEDIDOV
+                WHERE PPV.PEDIDOV =:CHAMADO.PEDIDOV AND
+                      #NULL_TO_S(:CHAMADO.NOTA,"") = "" AND
+                      PPV.QUANTIDADE > 0 AND
+                      NOT EXISTS(SELECT *
+                                 FROM CHAMADO_PRODUTOS_CRM C
+                                 WHERE C.CHAMADO = :WTSSYS_OBJECT AND
+                                       C.PRODUTO = PPV.PRODUTO AND
+                                       C.COR = PPV.COR AND
+                                       C.ESTAMPA = PPV.ESTAMPA AND
+                                       C.TAMANHO = PPV.TAMANHO)
+                UNION ALL
+                SELECT FALSE AS SELECIONADO,
+                       PE.PRODUTO,
+                       PE.COR,
+                       PE.ESTAMPA,
+                       PE.TAMANHO,
+                       PE.LOTE,
+                       NULL AS DEFEITO,
+                       NULL AS OBSERVACAO,
+                       PE.PRECO,
+                       PE.QUANTIDADE,
+                       M.CORTESIA * (PE.PRECO / M.TOTAL) AS CORTESIA_UNITARIO,
+                       M.V_ACERTO * (PE.PRECO / M.TOTAL) AS ACERTO_UNITARIO,
+                       M.V_FRETE * (PE.PRECO / M.TOTAL) AS FRETE_UNITARIO
+                FROM PRODUTOS_EVENTOS PE
+                INNER JOIN MOVIMENTO M ON M.COD_OPERACAO = PE.COD_OPERACAO AND M.TIPO_OPERACAO = PE.TIPO_OPERACAO
+                WHERE PE.COD_OPERACAO =:CHAMADO.COD_OPERACAO_NF AND
+                      PE.TIPO_OPERACAO =:CHAMADO.TIPO_OPERACAO_NF AND
+                      PE.QUANTIDADE > 0 AND
+                      NOT EXISTS(SELECT 1
+                                 FROM CHAMADO_PRODUTOS_CRM C
+                                 WHERE C.CHAMADO = :WTSSYS_OBJECT AND
+                                       C.PRODUTO = PE.PRODUTO AND
+                                       C.COR = PE.COR AND
+                                       C.ESTAMPA = PE.ESTAMPA AND
+                                       C.TAMANHO = PE.TAMANHO)) TMP
+
+                                       })
+FROM CHAMADOS C
+INNER JOIN CHAMADOS_CRM CC ON (CC.CHAMADO = C.CHAMADO)
+INNER JOIN TIPOS_CHAMADO_CRM TC ON (TC.TIPO_CHAMADO = C.TIPO)
+INNER JOIN CLIENTES CL ON (CL.GERADOR = C.GERADOR)
+LEFT JOIN PEDIDO_VENDA PV ON (PV.PEDIDOV = CC.PEDIDOV)
+LEFT JOIN PEDIDO_VENDA PVG ON (PVG.PEDIDOV = CC.PEDIDOV_GERADO)
+WHERE C.CHAMADO=:WTSSYS_OBJECT;
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

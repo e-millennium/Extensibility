@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="CRM_VESTEM">
+    <METHOD NAME="GeraPreEntrada" DESCRIPTION="" VERSION="157" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="CHAMADO" FORMAT="N" SIZE="8" FLAGS="1" DEFAULT="667" PROJECTION="0" ORDER="1" FIELDLABEL="Cod Operacao" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>
+/*
+Criar paramentro para
+  evento - fixo
+  CFOP - busca do evento
+  conta - busca da filial
+  plano de contas busca do evento
+*/
+
+#PRIVATE()
+SELECT:ORIGEM
+   F.filial
+   ,1000001 AS CONTA
+  //,F.conta
+  ,F.IE
+  ,F.centro_custos
+  ,0 AS MODALIDADE_FRETE
+  ,C.CLIENTE
+  ,(SELECT SUM(PC.quantidade) FROM CHAMADO_PRODUTOS_CRM PC WHERE PC.chamado = X.chamado) AS QTDE
+  ,(SELECT SUM(PC2.quantidade*PC2.PRECO) FROM CHAMADO_PRODUTOS_CRM PC2 WHERE PC2.chamado = X.chamado) AS TOTAL
+FROM chamados X
+  INNER JOIN CLIENTES C ON C.gerador = X.gerador
+  INNER JOIN FILIAIS F ON F.filial = X.filial
+WHERE X.CHAMADO = :CHAMADO;
+
+
+//Consulta os produtos
+#PRIVATE()
+SELECT:PRODUTOS
+   PRODUTO           AS PRODUTO
+  ,COR               AS COR
+  ,ESTAMPA           AS ESTAMPA
+  ,TAMANHO           AS TAMANHO
+  ,PRECO             AS PRECO
+  ,PRECO             AS PRECO_BRUTO
+  ,PRECO             AS PRECO_TOTAL
+  ,QUANTIDADE        AS QUANTIDADE
+  ,EVL_DATA          AS NOTA_REF
+  ,EVL_SIT_TRIB      AS SIT_TRIB
+  ,EVL_COD_OPERACAO  AS COD_OPERACAO_REF
+  ,EVL_TIPO_OPERACAO AS TIPO_OPERACAO_REF
+  ,EVL_BASE_ICMS     AS BICM
+  ,EVL_ICMS          AS ICMS
+  ,EVL_V_ICMS        AS V_ICMS
+FROM CHAMADO_PRODUTOS_CRM
+WHERE CHAMADO = :CHAMADO;
+
+#CALL:EVL_ROMANEIO MILLENIUM.UTILS.DEFAULT(NOME="ROMANEIO", TAMANHO=6);
+
+#CALL:MOVIMENTACAO_ENTRADA MILLENIUM.MOVIMENTACAO.EXECUTA(
+  TROCA_DEVOLUCAO         =214700007
+ ,EVENTO                  = 21  //DEFINIR NOVO EVENTO
+ ,CONDICOES_PGTO          = 9
+//,N_OPERACAO              =#REPLACE(:FILIAL_FRANQUIA.CFOP)
+//,N_OPERACAO              =1000121
+  ,FILIAL                   =:ORIGEM.FILIAL
+  ,CONTA                    =:ORIGEM.CONTA
+//  ,PCONTA                  =:FILIAL_FRANQUIA.PCONTA
+  ,ROMANEIO                =:EVL_ROMANEIO.RESULT
+  ,DATA                    =#DATE()
+  ,DATA_ATUALIZACAO        =#NOW()
+//  ,OBS                     =:MOVIMENTACAO_SAIDA.OBS
+//  ,TRANSPORTADORA          =:MOVIMENTACAO_SAIDA.TRANSPORTADORA
+  ,TOTAL                   =:ORIGEM.TOTAL
+//  ,V_FRETE                 =:MOVIMENTACAO_SAIDA.V_FRETE
+//  ,V_SEGURO                =:MOVIMENTACAO_SAIDA.V_SEGURO
+//  ,ACERTO                  =:MOVIMENTACAO_SAIDA.ACERTO
+//  ,V_ACERTO                =:MOVIMENTACAO_SAIDA.V_ACERTO
+//  ,PESO_L                  =:MOVIMENTACAO_SAIDA.PESO_L
+//  ,PESO_B                  =:MOVIMENTACAO_SAIDA.PESO_B
+//  ,VOLUME                  =:MOVIMENTACAO_SAIDA.VOLUME
+//  ,ESPECIE_VOLUME          =:MOVIMENTACAO_SAIDA.ESPECIE_VOLUME
+  ,QTDE                    =:ORIGEM.QTDE
+  ,VALOR_FINAL             =:ORIGEM.TOTAL
+//  ,CORTESIA                =:MOVIMENTACAO_SAIDA.CORTESIA
+//  ,DESPESAS_ACES           =:MOVIMENTACAO_SAIDA.DESPESAS_ACES
+//  ,CIF_FOB                 =:MOVIMENTACAO_SAIDA.CIF_FOB
+//  ,USUARIO                 =:MOVIMENTACAO_SAIDA.USUARIO
+//  ,DATA_BASE               =:MOVIMENTACAO_SAIDA.DATA_BASE
+//  ,DATA_ATUALIZACAO        =:MOVIMENTACAO_SAIDA.DATA_ATUALIZACAO
+//  ,SAIDA_REF               =:MOVIMENTACAO_SAIDA.SAIDA_REF
+//  ,N_DOCEXTERNO            =:MOVIMENTACAO_SAIDA.N_DOCEXTERNO
+
+  ,CLIENTE                 =:ORIGEM.CLIENTE
+  ,PRODUTOS                =:PRODUTOS
+//  ,LANCAMENTOS             =:LANCAMENTOS_FRANQUIA
+//  ,NOTAS                   =:NOTA_FRANQUIA
+  ,MODALIDADE_FRETE        =0
+//  ,NUMERACAO_NOTA_AUTO     =FALSE
+);
+
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

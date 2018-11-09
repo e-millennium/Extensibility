@@ -77,7 +77,7 @@ begin
       Faturamento.Clear;
       Faturamento.New;
       Faturamento.SetFieldByName('COD_PEDIDOV',C.GetFieldByName('COD_PEDIDOV'));
-      Faturamento.SetFieldByName('NUMERO',C.GetFieldByName('NUMERO'));
+      //Faturamento.SetFieldByName('NUMERO',C.GetFieldByName('NUMERO'));
       Faturamento.SetFieldByName('DATA_EMISSAO_NF',C.GetFieldByName('DATA_EMISSAO_NF'));
       Faturamento.SetFieldByName('NOTA',C.GetFieldByName('NOTA'));
       Faturamento.SetFieldByName('SERIE_NF',C.GetFieldByName('SERIE_NF'));

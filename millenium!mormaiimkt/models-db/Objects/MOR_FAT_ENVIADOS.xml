@@ -1,0 +1,14 @@
+<dbdic.objects.objects>
+  <ROW NAME="MOR_FAT_ENVIADOS" CREATE_BLANK="FALSE" ORDER="0">
+    <FIELDS NAME="MOR_FAT_ENVIADO" DATATYPE="3"/>
+    <FIELDS NAME="SAIDA" DATATYPE="3"/>
+    <INDEXES>
+      <FIELDS>MOR_FAT_ENVIADO</FIELDS>
+      <FLAGS> AQ==
+</FLAGS>
+    </INDEXES>
+    <INDEXES>
+      <FIELDS>SAIDA</FIELDS>
+    </INDEXES>
+  </ROW>
+</dbdic.objects.objects>

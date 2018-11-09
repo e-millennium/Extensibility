@@ -36,6 +36,8 @@ procedure SeparaNomes(ANomeCompleto: string; var APrimeiro, AUltimo: string);
 begin
   APrimeiro := Trim(Copy(ANomeCompleto,1,Pos(' ',ANomeCompleto)));
   AUltimo := Trim(Copy(ANomeCompleto,Pos(' ',ANomeCompleto),MaxInt));
+  if APrimeiro='' then
+    APrimeiro := AUltimo;
 end;
 
 function SoNumeros(AValue: string): string;
@@ -80,9 +82,11 @@ end;
 
 function GetSexo(AValue: string): string;
 begin
+  Result := 'female';
   if AValue='F' then
     Result := 'female'
   else
+  if AValue='M' then
     Result := 'male';
 end;
 

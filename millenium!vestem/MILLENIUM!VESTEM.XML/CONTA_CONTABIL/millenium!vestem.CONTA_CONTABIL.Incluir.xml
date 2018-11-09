@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="CONTA_CONTABIL">
+    <METHOD NAME="Incluir" DESCRIPTION="Incluir Conta" VERSION="31" INTFTYPE="1" TRIGGEROF="CONTA_CONTABIL.Incluir" TRIGGERTYPE="0" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PLANO_FINANCEIRO_INTEGRADO" FORMAT="B" SIZE="1" FLAGS="17" DEFAULT="1" PROJECTION="0" HINT="Esta op&#231;&#227;o ativa a sincronia entre o plano de contas cont&#225;bil com o financeiro" ORDER="1" FIELDLABEL="Plano Financeiro Integrado" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>#select(PLANO_FINANCEIRO_INTEGRADO,TRUE:{
+
+UPDATE CONTA_CONTABIL CC SET CC.PLANO_FINANCEIRO_INTEGRADO = TRUE WHERE CC.CONTA_CONTABIL = :WTSSYS_OBJECT;
+
+SELECT:R * FROM CONTA_CONTABIL CC WHERE CC.CONTA_CONTABIL = :WTSSYS_OBJECT;
+#CHECK("SELECT COUNT(CLASSIFICACAO) AS N FROM PLANO_CONTAS WHERE CLASSIFICACAO=:R.CODIGO", N>0, CONST.COD_DUPL);
+#CALL:PC MILLENIUM.UTILS.VERNIVEL(:R.CODIGO);
+
+INSERT INTO PLANO_CONTAS(
+                            PCONTA,
+                            TIPO_CONTA,
+                            DESCRICAO,
+                            CODIGO,
+                            PAI,
+                            CLASSIFICACAO,
+                            NIVEL,
+                            EHPAI,
+                            TIPO_OCONTABIL
+                           )
+
+                     VALUES (
+                             :WTSSYS_OBJECT,
+                             #select(R.tipo_conta,'C':{'CREDORA'},'D':{'DEVEDORA'},else:{'NATURAL'}),
+                             :R.DESCRICAO,
+                             :R.CODIGO_RED,
+                             :PC.CPAI,
+                             :R.CODIGO,
+                             :PC.NIVEL,
+                             :R.SINTETICA,
+                             0
+                            );
+
+INSERT INTO CONTAF_OCONTABIL(CONTA_CONTABIL,
+                             PCONTA,
+                             PERCENTUAL
+                             )
+                      VALUES(:WTSSYS_OBJECT ,
+                             :WTSSYS_OBJECT ,
+                             100
+                             )
+#RETURN(CONTAF_OCONTABIL);
+
+},ELSE:{UPDATE CONTA_CONTABIL CC SET CC.PLANO_FINANCEIRO_INTEGRADO = FALSE WHERE CC.CONTA_CONTABIL = :WTSSYS_OBJECT;});
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

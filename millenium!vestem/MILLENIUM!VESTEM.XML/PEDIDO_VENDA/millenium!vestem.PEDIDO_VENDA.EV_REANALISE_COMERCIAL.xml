@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PEDIDO_VENDA">
+    <METHOD NAME="EV_REANALISE_COMERCIAL" DESCRIPTION="" VERSION="3" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PEDIDOV" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Pedidov" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>SELECT * FROM DUAL;
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

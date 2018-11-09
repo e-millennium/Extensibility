@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="DESENVOLVIMENTO_DE_PRODUTO">
+    <METHOD NAME="lixo" DESCRIPTION="" VERSION="5" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="CHAMADO" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Chamado" CTAB="0"/>
+        <PARAM NAME="STATUS" SIZE="30" PROJECTION="0" FIELDLABEL="Status" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>update chamados set status_workflow=(select status_workflow from status_workflow where descricao=:status) where chamado=:chamado;
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

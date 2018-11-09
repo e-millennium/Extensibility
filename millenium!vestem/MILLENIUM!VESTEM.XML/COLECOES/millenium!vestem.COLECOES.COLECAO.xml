@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="COLECOES">
+    <METHOD NAME="COLECAO" DESCRIPTION="Cole&#231;&#245;es" VERSION="45" INTFTYPE="10" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+          <GROUP NAME="Limites de Data para Emiss&#227;o de Pedido"/>
+          <GROUP NAME="Limites de Data para Entrega de Pedido "/>
+          <GROUP NAME="Limite de Desconto a ser concedido"/>
+        </GROUPS>
+        <PARAM NAME="COLECAO" FORMAT="+" SIZE="8" FLAGS="1032" SOURCEEXPRESSION="colecao.colecao.COLECAO" PROJECTION="0" FIELDLABEL="Colecao" CTAB="0"/>
+        <PARAM NAME="COD_COLECAO" SIZE="5" FLAGS="17" DEFAULT="millenium.utils.default(['COD_COLECAO',3],'Result',True)" SOURCEEXPRESSION="colecao.colecao.COD_COLECAO" PROJECTION="0" ORDER="1" FIELDLABEL="C&#243;digo" CTAB="0"/>
+        <PARAM NAME="DESCRICAO" SIZE="50" FLAGS="17" SOURCEEXPRESSION="colecao.colecao.DESCRICAO" PROJECTION="0" ORDER="2" FIELDLABEL="Descri&#231;&#227;o" CTAB="0"/>
+        <PARAM NAME="INATIVO" FORMAT="B" SIZE="1" FLAGS="17" DEFAULT="0" PROJECTION="0" ORDER="3" FIELDLABEL="Inativo" CTAB="0"/>
+        <PARAM NAME="IMAGEM" FORMAT="I" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Imagem" CTAB="0"/>
+        <PARAM NAME="OBSERVACAO" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Observa&#231;&#227;o" CTAB="0"/>
+        <PARAM NAME="DATAI_EMISSAO" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Inicial" GROUPNAME="Limites de Data para Emiss&#227;o de Pedido" CTAB="0"/>
+        <PARAM NAME="DATAF_EMISSAO" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Final" GROUPNAME="Limites de Data para Emiss&#227;o de Pedido" CTAB="0"/>
+        <PARAM NAME="DATAI_ENTREGA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Inicial" GROUPNAME="Limites de Data para Entrega de Pedido " CTAB="0"/>
+        <PARAM NAME="DATAF_ENTREGA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Final" GROUPNAME="Limites de Data para Entrega de Pedido " CTAB="0"/>
+        <PARAM NAME="DESCONTO_LIMITE" FORMAT="N" SIZE="15" FLAGS="1" DECIMALS="7" PROJECTION="0" HINT="Limite permitido para Desconto.  Utilizado em Crit&#233;rios de Aprova&#231;&#227;o" ORDER="13" FIELDLABEL="Valor de Desconto (%)" GROUPNAME="Limite de Desconto a ser concedido" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

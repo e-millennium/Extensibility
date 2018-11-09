@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="TITULOS_RECEBER">
+    <METHOD NAME="Z_Muda_Desc_Financeiro_pontualidade" DESCRIPTION="Atualiza Desconto Financeiro p/Pontualidade" VERSION="14" INTFTYPE="5" CATEGORY="FINANCEIRO" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+          <GROUP NAME="Sele&#231;&#227;o de Titulos" STYLE="1"/>
+        </GROUPS>
+        <PARAM NAME="TIPO_DATA" FORMAT="N" SIZE="8" FLAGS="1" DEFAULT="1" PROJECTION="0" ORDER="1" LOOKUP="list:'0','Digita&#231;&#227;o';'1','Emiss&#227;o';'2','Vencimento';" FIELDLABEL="Tipo Data" CTAB="0"/>
+        <PARAM NAME="DATAI" FORMAT="D" SIZE="10" FLAGS="1" DEFAULT="today-2" PROJECTION="0" ORDER="2" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="DATAF" FORMAT="D" SIZE="10" FLAGS="1" DEFAULT="today" PROJECTION="0" ORDER="3" FIELDLABEL="Data Final" CTAB="0"/>
+        <PARAM NAME="TITULOS" FORMAT="R" FLAGS="1" STYLE="3" PROJECTION="0" ORDER="5" LOOKUP="Titulos_receber.Z_SelTitDescontoFinan" FIELDLABEL="Titulos" NESTEDNAME="millenium.TITULOS_RECEBER.Titulos_Conferencia" GROUPNAME="Sele&#231;&#227;o de Titulos" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>#each() titulos;
+     #select( titulos.seleciona, true:
+     { update desc_lancamento set dias = 0 where lancamento=:titulos.lancamento },else:{})
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

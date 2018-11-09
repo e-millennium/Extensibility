@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PRODUTOS">
+    <METHOD NAME="ListaProdutosParaAlterarPrecos" DESCRIPTION="" VERSION="225" INTFTYPE="5" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PERC_DESCONTO" FORMAT="N" SIZE="17" FLAGS="2" DECIMALS="4" PROJECTION="0" FIELDLABEL="Filial" CTAB="0"/>
+        <PARAM NAME="MARCA" SIZE="1000" FLAGS="2" PROJECTION="0" FIELDLABEL="Tipo" CTAB="0"/>
+        <PARAM NAME="PRODUTO" SIZE="1000" FLAGS="2" PROJECTION="0" FIELDLABEL="Produto" CTAB="0"/>
+        <PARAM NAME="TIPO" SIZE="1000" FLAGS="2" PROJECTION="0" FIELDLABEL="Tipo" CTAB="0"/>
+        <PARAM NAME="TABELA_VENDA" FORMAT="N" SIZE="8" FLAGS="2" PROJECTION="0" FIELDLABEL="Tabela Venda" CTAB="0"/>
+        <PARAM NAME="DATA_VALIDADE_INICIAL" FORMAT="D" SIZE="10" FLAGS="2" PROJECTION="0" FIELDLABEL="Data Validade Inicial" CTAB="0"/>
+        <PARAM NAME="DATA_VALIDADE_FINAL" FORMAT="D" SIZE="10" FLAGS="2" PROJECTION="0" FIELDLABEL="Data Validade Final" CTAB="0"/>
+        <PARAM NAME="STATUS" SIZE="1000" FLAGS="2" PROJECTION="0" FIELDLABEL="Status" CTAB="0"/>
+        <PARAM NAME="COLECAO" SIZE="1000" FLAGS="2" PROJECTION="0" FIELDLABEL="Colecao" CTAB="0"/>
+        <PARAM NAME="SUBCOLECAO" SIZE="1000" FLAGS="2" PROJECTION="0" FIELDLABEL="Subcolecao" CTAB="0"/>
+        <PARAM NAME="DEPARTAMENTO" SIZE="1000" FLAGS="2" PROJECTION="0" FIELDLABEL="Departamento" CTAB="0"/>
+        <PARAM NAME="DIVISAO" SIZE="1000" FLAGS="2" PROJECTION="0" FIELDLABEL="Departamento" CTAB="0"/>
+        <PARAM NAME="CATEGORIA" FLAGS="2" PROJECTION="0" FIELDLABEL="Categoria" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="PRODUTO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Produto" CTAB="0"/>
+        <FIELD NAME="COR" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="3" FIELDLABEL="Cor" CTAB="0"/>
+        <FIELD NAME="ESTAMPA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Estampa" CTAB="0"/>
+        <FIELD NAME="TAMANHO" SIZE="5" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Tamanho" CTAB="0"/>
+        <FIELD NAME="TABELA_VENDA" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Tabela Venda" CTAB="0"/>
+        <FIELD NAME="CODIGO_PRODUTO" SIZE="15" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="C&#243;digo" CTAB="0"/>
+        <FIELD NAME="DESCRICAO" SIZE="50" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Descri&#231;&#227;o" CTAB="0"/>
+        <FIELD NAME="PRECO_VENDA_ATUAL" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="9" FIELDLABEL="Altera&#231;&#227;o Custo" CTAB="0"/>
+        <FIELD NAME="DESCONTO" FORMAT="N" SIZE="17" FLAGS="1" DECIMALS="4" MASK="##.##%" PROJECTION="0" ORDER="11" FIELDLABEL="Pre&#231;o Venda Atual" CTAB="0"/>
+        <FIELD NAME="PRECO_VENDA_PROJETADO" FORMAT="M" SIZE="17" FLAGS="1" DECIMALS="4" PROJECTION="0" ORDER="1" FIELDLABEL="Selecao" CTAB="0"/>
+        <FIELD NAME="VALIDADE_INICIAL" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Altera&#231;&#227;o Venda" CTAB="0"/>
+        <FIELD NAME="VALIDADE_FINAL" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="13" FIELDLABEL="Novo Pre&#231;o Venda" CTAB="0"/>
+        <FIELD NAME="SELECAO" FORMAT="B" SIZE="1" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Markup" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT
+   1                                                                             AS SELECAO
+  ,SKU.PRODUTO                                                                   AS PRODUTO
+  ,SKU.COR                                                                       AS COR
+  ,SKU.ESTAMPA                                                                   AS ESTAMPA
+  ,SKU.TAMANHO                                                                   AS TAMANHO
+  ,min(PV.TABELA)                                                                AS TABELA_VENDA
+  ,min(P.COD_PRODUTO)                                                            AS CODIGO_PRODUTO
+  ,min(P.DESCRICAO1)                                                             AS DESCRICAO
+  ,avg(PV.PRECO)                                                                 AS PRECO_VENDA_ATUAL
+  ,#REPLACE(PERC_DESCONTO)                                                       AS DESCONTO
+  ,avg(PV.PRECO)-(avg(PV.PRECO)*(#REPLACE(PERC_DESCONTO)/100))                   AS PRECO_VENDA_PROJETADO
+  ,#REPLACET(DATA_VALIDADE_INICIAL)                                              AS VALIDADE_INICIAL
+  ,#REPLACET(DATA_VALIDADE_FINAL)                                                AS VALIDADE_FINAL
+
+
+FROM PRODUTO_SKU SKU
+  INNER JOIN PRODUTOS       P  ON P.PRODUTO        = SKU.PRODUTO
+  INNER JOIN MARCAS         M  ON M.MARCA          = COALESCE(P.MARCA,-2000000000)
+  INNER JOIN TIPOS          T  ON T.TIPO           = COALESCE(P.TIPO,-2000000000)
+  INNER JOIN STATUS_PRODUTO S  ON S.STATUS_PRODUTO = COALESCE(P.STATUS,-2000000000)
+  INNER JOIN COLECOES       L  ON L.COLECAO        = COALESCE(P.COLECAO,-2000000000)
+  INNER JOIN SUBCOLECOES    U  ON U.SUBCOLECAO     = COALESCE(P.SUBCOLECAO,-2000000000)
+  INNER JOIN DEPARTAMENTOS  D  ON D.DEPARTAMENTO   = COALESCE(P.DEPARTAMENTO,-2000000000)
+  INNER JOIN DIVISOES       V  ON V.DIVISAO        = COALESCE(P.DIVISAO,-2000000000)
+  INNER JOIN CATEGORIASP    C  ON C.CATEGORIA      = COALESCE(P.CATEGORIA,-2000000000)
+
+  INNER JOIN PRECOS   PV ON PV.PRODUTO   = SKU.PRODUTO
+                          AND PV.COR     = SKU.COR
+                          AND PV.ESTAMPA = SKU.ESTAMPA
+                          AND PV.TAMANHO = SKU.TAMANHO
+                          AND PV.TABELA  = :TABELA_VENDA
+
+  [AND P.MARCA        IN #REPLACE(:MARCA)]
+  [AND P.TIPO         IN #REPLACE(:TIPO)]
+  [AND P.COLECAO      IN #REPLACE(:COLECAO)]
+  [AND P.SUBCOLECAO   IN #REPLACE(:SUBCOLECAO)]
+  [AND P.DEPARTAMENTO IN #REPLACE(:DEPARTAMENTO)]
+  [AND P.DIVISAO      IN #REPLACE(:DIVISAO)]
+  [AND P.CATEGORIA    IN #REPLACE(:CATEGORIA)]
+  [AND P.STATUS       IN #REPLACE(:STATUS)]
+  [AND P.PRODUTO      IN #REPLACE(:PRODUTO)]
+
+  //#SELECT( ESTOQUE_DISPONIVEL
+  //        ,TRUE:{[
+  //
+  //           AND EXISTS
+  //                   (SELECT * FROM ESTOQUES E
+  //                    WHERE E.PRODUTO = SKU.PRODUTO
+  //                      AND E.COR     = SKU.COR
+  //                      AND E.ESTAMPA = SKU.ESTAMPA
+  //                      AND E.TAMANHO = SKU.TAMANHO
+ //                       AND E.SALDO>0)
+//                   ]
+//                 }
+//          ,ELSE:{})
+
+  
+
+
+group by 1,2,3,4,5
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

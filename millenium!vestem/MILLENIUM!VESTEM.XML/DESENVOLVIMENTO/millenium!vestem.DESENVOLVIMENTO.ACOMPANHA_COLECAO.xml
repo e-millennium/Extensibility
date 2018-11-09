@@ -1,0 +1,285 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="DESENVOLVIMENTO">
+    <METHOD NAME="ACOMPANHA_COLECAO" DESCRIPTION="Acompanhamento de Desempenho de Cole&#231;&#227;o" VERSION="76" THREADSAFE="0">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="DATAI" FORMAT="D" SIZE="10" FLAGS="17" DEFAULT="TODAY" PROJECTION="0" ORDER="1" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="DATAF" FORMAT="D" SIZE="10" FLAGS="17" DEFAULT="TODAY" PROJECTION="0" ORDER="2" FIELDLABEL="Data Final" CTAB="0"/>
+        <PARAM NAME="COLECAO" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="4" LOOKUP="MILLENIUM.COLECOES.LISTA" LOOKUPKEY="COLECAO" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Colecao" CTAB="0"/>
+        <PARAM NAME="PRODUTO" FORMAT="N" SIZE="8" FLAGS="1" STYLE="5" PROJECTION="0" ORDER="3" LOOKUP="MILLENIUM.PRODUTOS.Lista_FiltroPopup" LOOKUPKEY="PRODUTOAC" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Produto" CTAB="0"/>
+        <PARAM NAME="DEPARTAMENTO" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="5" LOOKUP="MILLENIUM.DEPARTAMENTOS.LISTA" LOOKUPKEY="DEPARTAMENTO" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Departamento" CTAB="0"/>
+        <PARAM NAME="CATEGORIA" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="6" LOOKUP="MILLENIUM.CATEGORIASP.LISTAR" LOOKUPKEY="CATEGORIASP" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="COD_CATEGORIA" FIELDLABEL="Categoria" CTAB="0"/>
+        <PARAM NAME="TIPO" SIZE="255" FLAGS="1" STYLE="6" PROJECTION="0" ORDER="7" LOOKUP="MILLENIUM.TIPOS.LISTA" LOOKUPKEY="TIPO" LOOKUPDISPLAY="DESCRICAO" LOOKUPCODE="CODIGO" FIELDLABEL="Tipo" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="PRODUTO" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Produto" CTAB="0"/>
+        <FIELD NAME="ESTAMPA" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Estampa" CTAB="0"/>
+        <FIELD NAME="COR" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Cor" CTAB="0"/>
+        <FIELD NAME="TAMANHO" SIZE="5" FLAGS="1" PROJECTION="0" ORDER="17" FIELDLABEL="Tamanho" CTAB="0"/>
+        <FIELD NAME="SKUS" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="18" FIELDLABEL="Skus" CTAB="0"/>
+        <FIELD NAME="TOTAL_PRODUZIDO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="32" FIELDLABEL="Total Produzido" CTAB="0"/>
+        <FIELD NAME="TOTAL_OUTRAS_ENTRADAS" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="33" FIELDLABEL="Total Outras Entradas" CTAB="0"/>
+        <FIELD NAME="VENDAS_TOTAL" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="34" FIELDLABEL="Vendas Total" CTAB="0"/>
+        <FIELD NAME="EST_INICIAL_PERIODO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="19" FIELDLABEL="Estoq. Inicial Per&#237;odo" CTAB="0"/>
+        <FIELD NAME="MOVIMENTO_PERIODO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="20" FIELDLABEL="Movimento Per&#237;odo" CTAB="0"/>
+        <FIELD NAME="SALDO_FINAL_PERIODO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="21" FIELDLABEL="Estoq. Final Per&#237;odo" CTAB="0"/>
+        <FIELD NAME="PRODUZIDO_PERIODO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="22" FIELDLABEL="Produzido Per&#237;odo" CTAB="0"/>
+        <FIELD NAME="OUTRAS_ENTRADAS_PERIODO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="23" FIELDLABEL="Outras Entradas Per&#237;odo" CTAB="0"/>
+        <FIELD NAME="VENDAS_PERIODO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="24" FIELDLABEL="Vendas Per&#237;odo" CTAB="0"/>
+        <FIELD NAME="OUTRAS_SAIDAS_PERIODO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="26" FIELDLABEL="Outras Saidas Per&#237;odo" CTAB="0"/>
+        <FIELD NAME="SALDO_ATUAL_001" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="28" FIELDLABEL="Saldo Atual 001" CTAB="0"/>
+        <FIELD NAME="SALDO_ATUAL_OUTROS" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="29" FIELDLABEL="Saldo Atual Outros" CTAB="0"/>
+        <FIELD NAME="PRIMEIRA_ENTRADA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="30" FIELDLABEL="Primeira Entrada" CTAB="0"/>
+        <FIELD NAME="ULTIMA_ENTRADA" FORMAT="D" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="31" FIELDLABEL="Ultima Entrada" CTAB="0"/>
+        <FIELD NAME="COD_PRODUTO" SIZE="10" FLAGS="1" PROJECTION="0" ORDER="13" FIELDLABEL="C&#243;digo" CTAB="0"/>
+        <FIELD NAME="DESCRICAO" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="14" FIELDLABEL="Descricao" CTAB="0"/>
+        <FIELD NAME="COD_COR" SIZE="5" FLAGS="1" PROJECTION="0" ORDER="15" FIELDLABEL="Cor" CTAB="0"/>
+        <FIELD NAME="DESC_COR" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="16" FIELDLABEL="Desc. Cor" CTAB="0"/>
+        <FIELD NAME="PERC_VENDA_PERIODO" FORMAT="N" SIZE="8" FLAGS="1" DECIMALS="2" PROJECTION="0" ORDER="27" FIELDLABEL="%Venda Periodo" CTAB="0"/>
+        <FIELD NAME="COLECAO" SIZE="30" FLAGS="1" PROJECTION="0" ORDER="12" FIELDLABEL="Colecao" CTAB="0"/>
+        <FIELD NAME="DEVOLUCOES_PERIODO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="25" FIELDLABEL="Devolucoes Periodo" CTAB="0"/>
+        <FIELD NAME="DEVOLUCOES_TOTAL" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="35" FIELDLABEL="Devolucoes Total" CTAB="0"/>
+        <FIELD NAME="CATEGORIA" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Categoria" CTAB="0"/>
+        <FIELD NAME="TIPO" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="11" FIELDLABEL="Tipo" CTAB="0"/>
+        <FIELD NAME="DEPARTAMENTO" SIZE="40" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Departamento" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT
+            #VIEWNAME().PRODUTO                         AS PRODUTO,
+            #VIEWNAME().ESTAMPA                         AS ESTAMPA,
+            #VIEWNAME().COR                             AS COR,
+            PR.COD_PRODUTO                              AS COD_PRODUTO,
+            PR.DESCRICAO1                               AS DESCRICAO,
+            CR.COD_COR                                  AS COD_COR,
+            CR.DESCRICAO                                AS DESC_COR,
+            CT.DESCRICAO                                AS CATEGORIA,
+            DP.DESCRICAO                                AS DEPARTAMENTO,
+            TP.DESCRICAO                                AS TIPO,
+            CL.DESCRICAO                                AS COLECAO,
+            #VIEWNAME().TAMANHO                         AS TAMANHO,
+            #VIEWNAME().SKUS                            AS SKUS,
+            #VIEWNAME().TOTAL_PRODUZIDO                 AS TOTAL_PRODUZIDO,
+            #VIEWNAME().TOTAL_OUTRAS_ENTRADAS           AS TOTAL_OUTRAS_ENTRADAS,
+            #VIEWNAME().VENDAS_TOTAL                    AS VENDAS_TOTAL,
+            #VIEWNAME().DEVOLUCOES_TOTAL                AS DEVOLUCOES_TOTAL,
+            #VIEWNAME().EST_INICIAL_PERIODO             AS EST_INICIAL_PERIODO,
+            #VIEWNAME().MOVIMENTO_PERIODO               AS MOVIMENTO_PERIODO,
+            #VIEWNAME().SALDO_FINAL_PERIODO             AS SALDO_FINAL_PERIODO,
+            #VIEWNAME().PRODUZIDO_PERIODO               AS PRODUZIDO_PERIODO,
+            #VIEWNAME().OUTRAS_ENTRADAS_PERIODO         AS OUTRAS_ENTRADAS_PERIODO,
+            #VIEWNAME().VENDAS_PERIODO                  AS VENDAS_PERIODO,
+            #VIEWNAME().DEVOLUCOES_PERIODO              AS DEVOLUCOES_PERIODO,
+            #VIEWNAME().OUTRAS_SAIDAS_PERIODO           AS OUTRAS_SAIDAS_PERIODO,
+            #VIEWNAME().SALDO_ATUAL_001                 AS SALDO_ATUAL_001,
+            #VIEWNAME().SALDO_ATUAL_OUTROS              AS SALDO_ATUAL_OUTROS,
+            #VIEWNAME().PRIMEIRA_ENTRADA                AS PRIMEIRA_ENTRADA,
+            #VIEWNAME().ULTIMA_ENTRADA                  AS ULTIMA_ENTRADA ,
+            (#VIEWNAME().VENDAS_PERIODO/
+            (#VIEWNAME().EST_INICIAL_PERIODO
+            +#VIEWNAME().OUTRAS_ENTRADAS_PERIODO
+            +#VIEWNAME().PRODUZIDO_PERIODO
+            +0.00001
+            ))*100  AS PERC_VENDA_PERIODO
+            
+            
+
+FROM
+#VIEW(select:MAIN
+
+
+
+            p.produto,
+            ep.estampa,
+            cp.cor,
+            tp.tamanho          as tamanho,
+
+            (select count(*) from produto_sku ps
+                                where ps.produto=p.produto) as skus,
+
+            #null_to_z((select sum((me.quantidade)) from mov_estoque me
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and me.tipo_origem='D'
+                                                                )) as total_produzido,
+                                                                
+            #null_to_z((select sum((me.empenho+me.quantidade)) from mov_estoque me
+                                        inner join movimento m on m.cod_operacao=me.origem and m.tipo_operacao=me.tipo_origem
+                                        inner join eventos e on e.evento=m.evento
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and  e.tipo_evento="E"
+                                               and e.tipo_entrada&lt;>"V"
+                                               and e.influencia_estoque='+'
+                                                    )) as total_outras_entradas,
+            #null_to_z((select sum((me.empenho+me.quantidade)*-1) from mov_estoque me
+                                        inner join movimento m on m.cod_operacao=me.origem and m.tipo_operacao=me.tipo_origem
+                                        inner join eventos e on e.evento=m.evento
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and  e.tipo_saida="V" and e.tipo_evento="S"
+                                                    )) as vendas_total,
+                                                    
+
+            #null_to_z((select sum((me.empenho+me.quantidade)) from mov_estoque me
+                                        inner join movimento m on m.cod_operacao=me.origem and m.tipo_operacao=me.tipo_origem
+                                        inner join eventos e on e.evento=m.evento
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and e.tipo_entrada="V" and e.tipo_evento="E"
+                                                    )) as devolucoes_total,
+
+                                                    
+                                                    
+            #null_to_z((select sum((me.empenho+me.quantidade)) from mov_estoque me
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and me.data&lt;:DATAI
+                                                                )) as est_inicial_periodo,
+            #null_to_z((select sum((me.empenho+me.quantidade)) from mov_estoque me
+
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and me.data>=:DATAI  and me.data&lt;=:DATAF
+                                                    )) as movimento_periodo,
+
+
+        #null_to_z((select sum((me.empenho+me.quantidade)) from mov_estoque me
+
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and me.data&lt;=:DATAF
+                                                    )) as saldo_final_periodo,
+
+            #null_to_z((select sum((me.quantidade)) from mov_estoque me
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and me.tipo_origem='D'
+                                               and me.data>=:DATAI  and me.data&lt;=:DATAF
+
+                                                                )) as produzido_periodo,
+
+            #null_to_z((select sum((me.empenho+me.quantidade)) from mov_estoque me
+                                        inner join movimento m on m.cod_operacao=me.origem and m.tipo_operacao=me.tipo_origem
+                                        inner join eventos e on e.evento=m.evento
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and me.data>=:DATAI and me.data&lt;=:DATAF
+                                               and  e.tipo_evento="E"
+                                               and e.tipo_entrada&lt;>"V"
+                                               and e.influencia_estoque='+'
+                                                    )) as outras_entradas_periodo,
+
+
+            #null_to_z((select sum((me.empenho+me.quantidade)*-1) from mov_estoque me
+                                        inner join movimento m on m.cod_operacao=me.origem and m.tipo_operacao=me.tipo_origem
+                                        inner join eventos e on e.evento=m.evento
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and me.data>=:DATAI and me.data&lt;=:DATAF
+                                               and e.tipo_saida="V" and e.tipo_evento="S"
+                                                    )) as vendas_periodo,
+
+            #null_to_z((select sum((me.empenho+me.quantidade)) from mov_estoque me
+                                        inner join movimento m on m.cod_operacao=me.origem and m.tipo_operacao=me.tipo_origem
+                                        inner join eventos e on e.evento=m.evento
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and me.data>=:DATAI and me.data&lt;=:DATAF
+                                               and e.tipo_entrada="V" and e.tipo_evento="E"
+                                                    )) as devolucoes_periodo,
+
+
+
+
+            #null_to_z((select sum((me.empenho+me.quantidade)*-1) from mov_estoque me
+                                        inner join movimento m on m.cod_operacao=me.origem and m.tipo_operacao=me.tipo_origem
+                                        inner join eventos e on e.evento=m.evento
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and me.data>=:DATAI and me.data&lt;=:DATAF
+                                               and  (e.tipo_saida&lt;>"V" and e.tipo_evento="S")
+                                               and e.influencia_estoque='-'
+                                                    )) as outras_saidas_periodo,
+            #null_to_z((select sum((e.empenho+e.saldo)) from estoques e
+                                        where e.produto=p.produto
+                                               and e.cor=cp.cor
+                                               and e.tamanho=tp.tamanho
+                                               and e.filial=4000001
+                                               )) as saldo_atual_001,
+
+            #null_to_z((select sum((e.empenho+e.saldo)) from estoques e
+                                        where e.produto=p.produto
+                                               and e.cor=cp.cor
+                                               and e.tamanho=tp.tamanho
+                                               and e.filial&lt;>4000001
+                                               )) as saldo_atual_outros,
+
+
+            (select min(me.data) from mov_estoque me
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and me.quantidade>0
+                                                                ) as primeira_entrada ,
+
+            (select max(me.data) from mov_estoque me
+                                        where me.produto=p.produto
+                                               and me.cor=cp.cor
+                                               and me.tamanho=tp.tamanho
+                                               and me.quantidade>0
+                                                                ) as ultima_entrada
+
+from produtos p
+
+inner join cor_prod cp on cp.produto = p.produto
+inner join tam_prod tp on tp.produto = p.produto
+inner join estampa_prod ep on ep.produto=p.produto
+
+where p.tipo_prod='AC'
+//AND P.PRODUTO=1423
+//AND TP.TAMANHO='P'
+[AND P.PRODUTO=:PRODUTO]
+[ AND P.COLECAO IN #REPLACE(COLECAO)]
+[ AND P.TIPO IN #REPLACE(TIPO)]
+[ AND P.CATEGORIA IN #REPLACE(CATEGORIA)]
+[ AND P.DEPARTAMENTO IN #REPLACE(DEPARTAMENTO)]
+
+)
+
+INNER JOIN PRODUTOS PR ON PR.PRODUTO=#VIEWNAME().PRODUTO  AND PR.TIPO_PROD='AC'
+INNER JOIN CORES CR    ON CR.COR=#VIEWNAME().COR
+INNER JOIN ESTAMPAS ES ON ES.ESTAMPA=#VIEWNAME().ESTAMPA
+INNER JOIN COLECOES CL ON CL.COLECAO=PR.COLECAO
+LEFT JOIN TIPOS TP ON TP.TIPO=PR.TIPO
+LEFT JOIN CATEGORIASP CT ON CT.CATEGORIA=PR.CATEGORIA
+LEFT JOIN DEPARTAMENTOS DP ON DP.DEPARTAMENTO=PR.DEPARTAMENTO
+
+
+
+
+
+
+
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

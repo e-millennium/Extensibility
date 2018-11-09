@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PREFATURAMENTOS">
+    <METHOD NAME="ListaVolumes" DESCRIPTION="Lista Volumes" VERSION="12" INTFTYPE="5" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="DATA_INICIAL" FORMAT="D" SIZE="10" FLAGS="17" PROJECTION="0" ORDER="2" FIELDLABEL="Data Inicial" CTAB="0"/>
+        <PARAM NAME="DATA_FINAL" FORMAT="D" SIZE="10" FLAGS="17" PROJECTION="0" ORDER="3" FIELDLABEL="Data Final" CTAB="0"/>
+        <PARAM NAME="NOTA_INICIAL" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Nota Inicial" CTAB="0"/>
+        <PARAM NAME="NOTA_FINAL" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Nota Final" CTAB="0"/>
+        <PARAM NAME="CLIENTE" SIZE="30" FLAGS="1" PROJECTION="0" ORDER="1" LOOKUP="CLIENTES.Lista_FiltroPopup" LOOKUPKEY="CLIENTE" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_CLIENTE" FIELDLABEL="Cliente" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="NOTA" SIZE="12" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Nota" CTAB="0"/>
+        <FIELD NAME="NUMERO_VOLUME" SIZE="30" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Numero Volume" CTAB="0"/>
+        <FIELD NAME="NUMERO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Numero" CTAB="0"/>
+        <FIELD NAME="QTDE" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Qtde" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>select pe.nota,
+       pf.mov_volume,
+       mv.cod_volume_barra as numero_volume,
+       pf.prefaturamento,
+       p.numero,
+(select sum(pf2.quantidade) from produto_prefat pf2
+where pf2.mov_volume=pf.mov_volume and pf2.prefaturamento=pf.prefaturamento)qtde
+from prefaturamentos p
+       inner join produto_prefat pf on pf.prefaturamento=p.prefaturamento
+       inner join mov_volumes mv on mv.mov_volume=pf.mov_volume and mv.tipo_operacao='F'
+       inner join produtos_eventos pe on pe.pre_faturamento=p.prefaturamento
+       inner join saidas s on s.saida=pe.cod_operacao
+ where
+ s.data between  :DATA_INICIAL and :DATA_FINAL
+ and p.excluido='F'
+ and s.cancelada='F'
+[and s.cliente=:cliente]
+[and pe.nota between :NOTA_INICIAL and :NOTA_FINAL]
+
+ group by pe.nota,
+ pf.mov_volume,
+ mv.cod_volume_barra,
+ pf.prefaturamento,
+ p.numero
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

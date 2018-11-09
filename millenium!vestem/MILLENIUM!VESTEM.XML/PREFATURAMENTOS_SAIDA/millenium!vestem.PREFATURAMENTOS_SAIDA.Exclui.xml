@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PREFATURAMENTOS_SAIDA">
+    <METHOD NAME="Exclui" DESCRIPTION="Exclui Pr&#233;-Faturamento" VERSION="4" INTFTYPE="3" CATEGORY="LOGISTICA" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PREFATURAMENTO" FORMAT="+" SIZE="8" FLAGS="1032" SOURCEEXPRESSION="prefatvenda.prefaturamento_venda.Prefaturamento" PROJECTION="0" FIELDLABEL="Prefaturamento" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>#call MILLENIUM.PREFATURAMENTOS.EXCLUI(:PREFATURAMENTO);
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>
