@@ -35,7 +35,7 @@ object FListaProdutos: TFListaProdutos
     GridLineWidth = 0
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
     ParentFont = False
-    ScrollBars = ssNone
+    ScrollBars = ssVertical
     TabOrder = 0
     OnKeyPress = StringGrid1KeyPress
   end

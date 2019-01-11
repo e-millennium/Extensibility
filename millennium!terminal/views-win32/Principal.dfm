@@ -1,6 +1,6 @@
 object FTerminal: TFTerminal
-  Left = 283
-  Top = 159
+  Left = 230
+  Top = 144
   BorderStyle = bsNone
   Caption = 'Terminal Consulta'
   ClientHeight = 543

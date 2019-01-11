@@ -296,6 +296,7 @@ var
   Estoques: TwtsRecordset;
   NomeArquivo: String;
 begin
+  LimparTela;
   wtsCallEx('MILLENIUM_SJ.TERMINAL.CONSULTA',['COD_PRODUTO','FILIAL','TABELA','TABELA_2'],[ACodigoProduto,FFilial,FTabela,FTabela2],Produto);
   try
     if Produto.RecordCount > 1 then
@@ -425,6 +426,9 @@ begin
   FCores.Clear;
   FTamanhos.Clear;
   FEstoques.Clear;
+  FScroll.Visible := False;
+  FScroll.Position := 0;
+  FScroll.Range := 0;
   Invalidate;
 end;
 
@@ -442,8 +446,9 @@ begin
   FScroll.Parent := Self;
   FScroll.Align := alRight;
   FScroll.OnChange := OnChangeScroll;
-  FScroll.Height := 18;
-  FScroll.Width := 18;
+  FScroll.Height := 30;
+  FScroll.Width := 30;
+  FScroll.Range := 0;
   DoubleBuffered := True;
 end;
 
@@ -458,7 +463,6 @@ begin
   FCores.Free;
   FTamanhos.Free;
   FEstoques.Free;
-  FScroll.Free;
 end;
 
 procedure TFTerminal.FormDestroy(Sender: TObject);
@@ -512,7 +516,6 @@ begin
   if FTamanhos.Count = 0 then
     Exit;
 
-  FScroll.Visible := (CHeigthLine*(FCores.Count*11)) > Height;
   SW := 0;
   if FScroll.Visible then
     SW := FScroll.Width + 8;
@@ -589,12 +592,15 @@ begin
       Qtd := Estoques.Estoque(Cor.Desricao,FTamanhos[T]);
       DrawText(Canvas.Handle,PChar(FloatToStr(Qtd)),Length(FloatToStr(Qtd)),R,DT_CENTER or DT_SINGLELINE or DT_NOPREFIX);
     end;
-    if (Y > Height) then
+    if (R.Bottom > Height) then
       Inc(CoresOculta)
   end;
 
-  if FScroll.Visible then
-    FScroll.Range := CoresOculta+1;
+  if FScroll.Range = 0 then
+  begin
+    FScroll.Visible := CoresOculta>0;
+    FScroll.Range := CoresOculta+3;
+  end;
 
 end;
 

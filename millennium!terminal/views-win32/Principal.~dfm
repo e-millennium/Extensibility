@@ -1,6 +1,6 @@
 object FTerminal: TFTerminal
-  Left = 283
-  Top = 159
+  Left = 230
+  Top = 144
   BorderStyle = bsNone
   Caption = 'Terminal Consulta'
   ClientHeight = 543
@@ -282,7 +282,6 @@ object FTerminal: TFTerminal
           Width = 48
           Height = 48
           Anchors = [akLeft]
-          Center = True
           Picture.Data = {
             0A54504E474F626A65637489504E470D0A1A0A0000000D494844520000003000
             00003008060000005702F9870000000473424954080808087C08648800000009
@@ -327,6 +326,7 @@ object FTerminal: TFTerminal
             CEEF57525C24B29EF9E1053D4B7EECB1B5798D313A3EE72707B8182B43CD4D51
             428FF3A7320FADD2802191616FC0DFF0BD12F473334D330000000049454E44AE
             426082}
+          Center = True
           Stretch = True
           Visible = False
           OnClick = ImgMaisInformacoesClick
