@@ -45,11 +45,11 @@ var
   PV,CL,C,L: IwtsCommand;
   PedidoVenda,Cliente,Gerador,Endereco,Produtos,Barras,ProdutosPV,PVIncluir,LancamentosPV,Response,Values:IwtsWriteData;
   ClientePV,EnderecoEntrega,Lancamentos: IwtsData;
-  JsonResponse,CodCliente,Cli,Pedidov,CodigoPedidoVenda,LogMsg,Chave,Barra: string;
+  JsonResponse,CodCliente,Cli,Pedidov,CodigoPedidoVenda,LogMsg,Chave,Barra,Paramentros: string;
   CodEndereco: Integer;
   UpdCli,UpdEnd: Boolean;
   Transportadoras,TiposPagtos: IwtsWriteData;
-  Filial,TipoPedidoVenda,Transportadora,TipoFrete,CodEnderecoEntrega,CondicaoPagamento: Variant;
+  Filial,TipoPedidoVenda,Transportadora,TipoFrete,CodEnderecoEntrega,CondicaoPagamento,StatusPedidoVenda: Variant;
   I,X: Integer;
 const
   Servico: string = '/api/millenium_eco!mmormaii/pedido_venda/listar';
@@ -67,6 +67,7 @@ begin
     Transportadoras :=  GetConfigSrv.CreateRecordSet('MMKT_TRANSPORTADORAS');
     TiposPagtos :=  GetConfigSrv.CreateRecordSet('MMKT_TIPOS_PAGTOS');
     CondicaoPagamento := GetConfigSrv.ReadParamInt('MMKT_CONDICOES_PGTO',0);
+    StatusPedidoVenda := GetConfigSrv.ReadParamInt('MMKT_STATUS_PV',0);//0:Todos 1:Somente Aprovados
 
     Chave := GetConfigSrv.ReadParamStr('MMKT_CHAVE','');
     if not ValidarChaveLicenca(Chave) then
@@ -84,8 +85,13 @@ begin
     if Transportadoras = nil then
       raise Exception.Create('Não há transportadoras configuradas');
 
+    //aqui passar x-http
+    StatusPedidoVenda := '';
+    if (StatusPedidoVenda = 1) then//Somente pedidos de venda aprovados
+      StatusPedidoVenda := '?aprovado=true';
+
     try
-      PostRESTService(Servico,'',True,JsonResponse);
+      PostRESTService(Servico+StatusPedidoVenda,'',True,JsonResponse);
     except on E: Exception do
       raise Exception.Create('Erro solicitando dados '+E.Message);
     end;

@@ -86,7 +86,7 @@ begin
        if JsonIsValid(JsonRequest) then
          PostRESTService(Servico,JsonRequest,False,JsonResponse);
      end;
-     JsonResponse
+     //JsonResponse
 
      L.Dim('MENSAGEM','Estoque enviado com sucesso');
      L.Dim('JSON',JsonRequest);
