@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PRODUCAO">
+    <METHOD NAME="TAMANHO" DESCRIPTION="" VERSION="2" INTFTYPE="9" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="TAMANHO" SIZE="100" PROJECTION="0" FIELDLABEL="Tamanho" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

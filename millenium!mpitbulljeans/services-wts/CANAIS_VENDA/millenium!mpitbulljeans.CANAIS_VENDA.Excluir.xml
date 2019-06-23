@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="CANAIS_VENDA">
+    <METHOD NAME="Excluir" DESCRIPTION="Excluir" VERSION="13" INTFTYPE="3" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="CANAL_VENDA" FORMAT="+" SIZE="8" FLAGS="1024" PROJECTION="0" FIELDLABEL="Canal Venda" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT>DELETE FROM PIT_CANAIS_VENDA
+WHERE CANAL_VENDA=:CANAL_VENDA;
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

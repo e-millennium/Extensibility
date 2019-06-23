@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
-    <DCC_DependencyCheckOutputName>c:\millenium\UploadProfileOracle.exe</DCC_DependencyCheckOutputName>
+    <DCC_DependencyCheckOutputName>c:\wts\UploadProfileOracle.exe</DCC_DependencyCheckOutputName>
     <MainSource>UploadProfileOracle.dpr</MainSource>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -17,7 +17,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Version>7.0</Version>
     <DCC_Define>DEBUG</DCC_Define>
-    <DCC_ExeOutput>c:\millenium</DCC_ExeOutput>
+    <DCC_ExeOutput>c:\wts</DCC_ExeOutput>
     <DCC_UnitSearchPath>Z:\modules\millenium_eco_active_oracle\services-dll</DCC_UnitSearchPath>
     <DCC_ResourcePath>Z:\modules\millenium_eco_active_oracle\services-dll</DCC_ResourcePath>
     <DCC_ObjPath>Z:\modules\millenium_eco_active_oracle\services-dll</DCC_ObjPath>

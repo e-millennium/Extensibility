@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<root>
+	<_currentid>PIT_2</_currentid>
+	<_name>RULES.PIT</_name>
+
+
+	<link category="Produção\Cadastros\Auxiliar\Canal Venda" target="standard.tdataedit" _id="PIT_1">
+		<OBJECT>MILLENIUM!MPITBULLJEANS.CANAIS_VENDA</OBJECT>
+	</link>
+	
+	<link category="Produção\Andamento\Pacotes (PitBull)" target="Pitbull.TFLotes" _id="PIT_2"/>
+
+</root>
+

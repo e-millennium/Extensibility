@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<root>
+  <dimension>
+    <tables>
+      <table name="PIT_CANAIS_VENDA"/>
+    </tables>
+    <relations/>
+    <wtsmappings/>
+    <attributes>
+    <level name="CANAL_VENDA" caption="Canal Venda" keyattribute="CANAL_VENDA" displayattribute="DESCRICAO" codeattribute="COD_CANAL_VENDA">
+      <attribute name="CANAL_VENDA" caption="" cangroup="1"/>
+      <attribute name="COD_CANAL_VENDA" caption="Codigo" cangroup="1"/>
+      <attribute name="DESCRICAO" caption="Descricao" cangroup="1"/>
+    </level>
+    </attributes>
+  </dimension>
+</root>

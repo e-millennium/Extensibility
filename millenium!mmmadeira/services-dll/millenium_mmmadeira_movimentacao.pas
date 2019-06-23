@@ -90,8 +90,8 @@ begin
       OrigemContabil.SetFieldByName('CONTA_CONTABIL',ContaContabil);
       OrigemContabil.SetFieldByName('VALOR',Lancamentos.GetFieldByName('VALOR_INICIAL'));
       OrigemContabil.SetFieldByName('CENTRO_CUSTOS',Unassigned);
-      OrigemContabil.SetFieldByName('HISTORICO',Lancamentos.GetFieldByName('DOCUMENTO'));
-      OrigemContabil.Add;
+      OrigemContabil.SetFieldByName('HISTORICO','LANÇAMENTO AUTOMATICO NOTA '+Lancamentos.GetFieldByName('DOCUMENTO'));
+      OrigemContabil.Add; X
     end;  
 
     C.Dim('CONTA',Movimentacao.GetFieldByName('CONTA'));

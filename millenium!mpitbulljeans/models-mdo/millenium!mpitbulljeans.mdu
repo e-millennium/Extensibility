@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<root>
+  <cube>
+	<objects>
+	  <object fullname="PIT_CANAIS_VENDA"/>	 								
+	</objects>
+	
+    <relations>
+      <relation left="situacao_producao$situacao_producao.canal_venda" right="PIT_CANAIS_VENDA$PIT_CANAIS_VENDA.canal_venda"/>  
+	</relations>  
+	
+	<perspectives>
+      <perspective name="Producao" caption="Produ&#231;&#227;o">
+			<items>
+				<dimension name="PIT_CANAIS_VENDA"/>					
+			</items>
+		 </perspective>
+	</perspectives>
+	
+  </cube>
+</root>

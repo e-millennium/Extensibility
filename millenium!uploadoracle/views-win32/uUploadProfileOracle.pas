@@ -4,21 +4,31 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, oracle_utils, wtsstream, wtsClient, Gauges;
+  Dialogs, StdCtrls, oracle_utils, wtsstream, wtsClient, Gauges, UTF8;
 
 type
   TForm1 = class(TForm)
-    Button1: TButton;
-    GAUGE: TGauge;
-    Edituser: TEdit;
+    GroupBox1: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
+    Edituser: TEdit;
     Editpass: TEdit;
-    Label3: TLabel;
-    EditUrl: TEdit;
+    GroupBox2: TGroupBox;
+    GAUGE: TGauge;
     Label4: TLabel;
     Label5: TLabel;
+    Button1: TButton;
+    GroupBox3: TGroupBox;
+    Label6: TLabel;
+    Button2: TButton;
+    edtIDClie: TEdit;
+    Label3: TLabel;
+    EditUrl: TEdit;
+    lblInicio: TLabel;
+    lblTermino: TLabel;
+    lbltempoEstimado: TLabel;
     procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -76,7 +86,7 @@ end;
 function TranslateBool(AValue: Variant): string;
 begin
   Result := 'false';
-  if VarToStr(AValue) = 'T' then
+  if (VarToStr(AValue) = 'T') or (VarToStr(AValue) = '1') then
     Result := 'true';
 end;
 
@@ -97,7 +107,10 @@ var
   Sexo,DDD,Fone,TagFoneFixo,ATagFoneCelular,TagPessoaFisica,TagPessoaJuridica,TagFoneEnd: string;
 begin
     //Nome do cliente
-    SeparaNomes(VarToStr(AData.FieldValuesByName['NOME']), Primeiro, Ultimo);
+    if VarToStr(AData.FieldValuesByName['NOME']) = '' then
+      SeparaNomes(VarToStr(AData.FieldValuesByName['NOME_FANTASIA']), Primeiro, Ultimo)
+    else
+      SeparaNomes(VarToStr(AData.FieldValuesByName['NOME']), Primeiro, Ultimo);
 
     //Contato endereco
     PrimeiroContato := Primeiro;
@@ -185,6 +198,8 @@ begin
     '      }'+
     '   ]'+
     '}';
+
+    Result := UTF8Encode(Result);
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
@@ -193,16 +208,25 @@ var
   Json,JsonResp,Token,grantType: string;
   V: Variant;
   Ok,Erro: Integer;
+  Inicio,Termino,Estimado: TDateTime;
+  Ref,QtdTime: Integer;
 begin
   grantType := 'grant_type=password&username='+Edituser.Text+'&password='+Editpass.Text;
   Ok := 0;
   Erro := 0;
-
+  Ref := 0;
+  QtdTime := 30;
+  
   wtsCallEx('MILLENIUM!UPLOADORACLE.CLIENTES.LISTAR',[],[],Clientes);
+
+  lblInicio.Caption := FormatDateTime('hh:nn:ss',Now);
+  lblInicio.Refresh;
+  Inicio := Now;
   GAUGE.MaxValue := Clientes.RecordCount;
   Clientes.First;
   while not Clientes.Eof do
   begin
+    Inc(Ref);
     try
       Json := GetJson(Clientes);
       JsonResp := RestClientCenter(Token,grantType,'post',EditUrl.Text,'/ccadmin/v1/profiles',Json);
@@ -216,14 +240,33 @@ begin
     end;
     Clientes.Next;
     GAUGE.Progress := Clientes.RecNo;
-    GAUGE.Refresh;
+    //GAUGE.Refresh;
     Label4.Caption := IntToStr(Ok);
     Label5.Caption := IntToStr(Erro);
-    Label4.Refresh;
-    Label5.Refresh;
+    //Label4.Refresh;
+    //Label5.Refresh;
+    //lbltempoEstimado.Refresh;
+    if Ref >= QtdTime then
+    begin
+      Estimado := ((Now-Inicio)/Ref) * (GAUGE.MaxValue-GAUGE.Progress);
+      lbltempoEstimado.Caption := FormatDateTime('hh:nn:ss',Estimado);
+      Ref := 0;
+      Inicio := Now;
+    end;
+    Application.ProcessMessages;
   end;
+  lblTermino.Caption := FormatDateTime('hh:nn:ss',Now);
+  lblTermino.Refresh;
   ShowMessage('FIM');
+end;
 
+procedure TForm1.Button2Click(Sender: TObject);
+var
+  JsonResp,Token,grantType: string;
+begin                      //client_credentials
+  grantType := 'grant_type=password&username='+Edituser.Text+'&password='+Editpass.Text;
+  JsonResp := RestClientCenter(Token,grantType,'delete',EditUrl.Text,'/ccagent/v1/profiles/'+edtIDClie.Text,'');
+  ShowMessage(JsonResp);
 end;
 
 end.

@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PRODUCAO">
+    <METHOD NAME="ListaPacotes" DESCRIPTION="" VERSION="25" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="PRODUCAO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Producao" CTAB="0"/>
+        <PARAM NAME="LOTE" FORMAT="R" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Lote" NESTEDNAME="WTSSYSTEM.INTERNALTYPES.STRINGARRAY" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="PRODUTO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" ORDER="10" FIELDLABEL="Produto" CTAB="0"/>
+        <FIELD NAME="COD_PRODUTO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="4" FIELDLABEL="Cor" CTAB="0"/>
+        <FIELD NAME="DESCRICAO1" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="6" FIELDLABEL="Estampa" CTAB="0"/>
+        <FIELD NAME="ESTAMPAS" FORMAT="R" FLAGS="1" PROJECTION="0" ORDER="8" FIELDLABEL="Tamanho" NESTEDNAME="millenium!mpitbulljeans.PRODUCAO.ESTAMPA" CTAB="0"/>
+        <FIELD NAME="CORES" FORMAT="R" FLAGS="1" PROJECTION="0" ORDER="5" FIELDLABEL="Cores" NESTEDNAME="millenium!mpitbulljeans.PRODUCAO.COR" CTAB="0"/>
+        <FIELD NAME="TAMANHOS" FORMAT="R" FLAGS="1" PROJECTION="0" ORDER="9" FIELDLABEL="Tamanhos" NESTEDNAME="millenium!mpitbulljeans.PRODUCAO.TAMANHO" CTAB="0"/>
+        <FIELD NAME="PRODUCOES" FORMAT="R" FLAGS="1" PROJECTION="0" ORDER="7" FIELDLABEL="Producao" NESTEDNAME="millenium!mpitbulljeans.PRODUCAO.PRODUCAO" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT:MAIN
+       PRO.PRODUTO,
+       PRO.COD_PRODUTO,
+       PRO.DESCRICAO1
+      
+      #ROWSET({SELECT:ESTAMPAS
+                      E.ESTAMPA,
+                      E.DESCRICAO
+               FROM PRODUTOS P
+               INNER JOIN ESTAMPA_PROD EP ON (EP.PRODUTO = P.PRODUTO)
+               INNER JOIN ESTAMPAS E ON (E.ESTAMPA = EP.ESTAMPA)
+               WHERE
+                    P.PRODUTO = :MAIN.PRODUTO})
+                    
+      #ROWSET({SELECT:CORES
+                      C.COR,
+                      C.DESCRICAO
+               FROM PRODUTOS P
+               INNER JOIN COR_PROD CP ON (CP.PRODUTO = P.PRODUTO)
+               INNER JOIN CORES C ON (C.COR = CP.COR)
+               WHERE
+                    P.PRODUTO = :MAIN.PRODUTO})
+
+      #ROWSET({SELECT:TAMANHOS
+                      T.TAMANHO
+               FROM PRODUTOS P
+               INNER JOIN GRADES G ON (G.GRADE = P.GRADE)
+               INNER JOIN TAMANHOS T ON (T.GRADE = G.GRADE)
+               WHERE
+                    P.PRODUTO = :MAIN.PRODUTO
+               GROUP BY T.TAMANHO
+               ORDER BY T.CTAMANHO})
+
+       #ROWSET({SELECT:PRODUCOES
+                       SP.ESTAMPA,
+                       SP.COR,
+                       SP.TAMANHO,
+                       SUM(SP.QUANTIDADE) AS QUANTIDADE,
+                       LIST(SP.LOTE) AS LOTES,
+                       LIST(CAST(SP.QUANTIDADE AS INTEGER)) AS QUANTIDADES,
+                       LIST(CAST(SP.SITUACAO AS INTEGER)) AS SITUACOES
+                FROM PRODUCAO PD
+                INNER JOIN SITUACAO_PRODUCAO SP ON (SP.PRODUCAO = PD.PRODUCAO)
+                WHERE PD.PRODUCAO=:PRODUCAO
+                GROUP BY SP.PRODUTO,
+                         SP.COR,
+                         SP.ESTAMPA,
+                         SP.TAMANHO})
+
+FROM PRODUCAO PD
+INNER JOIN PRODUTOS PRO ON (PRO.PRODUTO = PD.PRODUTO)
+WHERE PD.PRODUCAO=:PRODUCAO;
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

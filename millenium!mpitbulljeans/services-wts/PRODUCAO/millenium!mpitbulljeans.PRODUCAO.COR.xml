@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PRODUCAO">
+    <METHOD NAME="COR" DESCRIPTION="" VERSION="3" INTFTYPE="9" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="COR" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Cor" CTAB="0"/>
+        <PARAM NAME="DESCRICAO" SIZE="100" PROJECTION="0" FIELDLABEL="Descricao" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

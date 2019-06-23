@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<root>
+  <fact size="0" transforms="">
+    <tables>
+      <table name="PIT_CANAIS_VENDA_PRODUCAO"/>
+    </tables>
+
+   <relations>
+      <relation cardinality="N-1">
+        <condition left="PIT_CANAIS_VENDA_PRODUCAO.SITUACAO" right="SITUACAO_PRODUCAO.SITUACAO"/>
+      </relation>
+    </relations>
+	
+	<outriggers>
+		<outrigger fullname="PIT_CANAIS_VENDA$PIT_CANAIS_VENDA">
+            <relation cardinality="1-1">
+                <condition left="PIT_CANAIS_VENDA.CANAL_VENDA" right="PIT_CANAIS_VENDA_PRODUCAO$PIT_CANAIS_VENDA_PRODUCAO.CANAL_VENDA"/>
+            </relation>
+        </outrigger>					
+	</outriggers>	
+	
+    <attributes name="PIT_CANAIS_VENDA_PRODUCAO" >
+      <attribute name="CANAL_VENDA_PRODUCAO" cangroup="1" tablename="PIT_CANAIS_VENDA_PRODUCAO"/>
+      <attribute name="PRODUCAO" cangroup="1"  tablename="PIT_CANAIS_VENDA_PRODUCAO"/>
+      <attribute name="CANAL_VENDA" cangroup="1"  tablename="PIT_CANAIS_VENDA_PRODUCAO"/>
+      <attribute name="ESTAMPA" cangroup="1"  tablename="PIT_CANAIS_VENDA_PRODUCAO"/>
+      <attribute name="COR" cangroup="1"  tablename="PIT_CANAIS_VENDA_PRODUCAO"/>
+      <attribute name="TAMANHO" cangroup="1"  tablename="PIT_CANAIS_VENDA_PRODUCAO"/>
+      <attribute name="LOTE" cangroup="1"  tablename="PIT_CANAIS_VENDA_PRODUCAO"/>	  
+    </attributes>
+  </fact>
+</root>
