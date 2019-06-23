@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<root>
+	<_currentid>ORARES_3</_currentid>
+	<_name>RULES.ORARES</_name>
+  
+	<link category="Utilitários\Oracle\Responsys" target="standard.tdataedit" _id="ORARES_1">
+		 <OBJECT>MILLENIUM!ORA_RESPONSYS.PUSHER</OBJECT>
+		 
+		<link target="standard.tdataedit" _id="ORARES_2" caption="Publicar">
+			<METHOD>MILLENIUM!ORA_RESPONSYS.PUSHER.PUBLISHER</METHOD>
+			<PARAM DATA="{$data.ORARES_PUSHER}" >ORARES_PUSHER</PARAM>
+			<Option>CloseOnSubmit</Option>          
+		</link>		 
+
+		<link target="standard.tdataedit" _id="ORARES_3" caption="Logs">
+			<METHOD>MILLENIUM!ORA_RESPONSYS.PUSHER.LOGLIST</METHOD>
+			<PARAM DATA="{$data.ORARES_PUSHER}" >ORARES_PUSHER</PARAM>
+			<Option>ReadOnly</Option>
+            <Option>AutoRefresh</Option>
+		</link>		         		
+	</link>		
+		
+	</link>
+	
+</root>

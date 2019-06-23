@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="API.LIST">
+    <METHOD NAME="FIELD" DESCRIPTION="" VERSION="2" INTFTYPE="9" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="fieldName" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Fieldname" CTAB="0"/>
+        <PARAM NAME="fieldType" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Fieldtype" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

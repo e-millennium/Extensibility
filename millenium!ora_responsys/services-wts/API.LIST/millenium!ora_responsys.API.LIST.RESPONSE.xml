@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="API.LIST">
+    <METHOD NAME="RESPONSE" DESCRIPTION="" VERSION="6" INTFTYPE="9" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="name" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Name" CTAB="0"/>
+        <PARAM NAME="folderName" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Foldername" CTAB="0"/>
+        <PARAM NAME="fields" FORMAT="R" FLAGS="1" PROJECTION="0" FIELDLABEL="Fields" NESTEDNAME="MILLENIUM!ORA_RESPONSYS.API.LIST.FIELD" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

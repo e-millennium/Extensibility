@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="API.LIST.DATA">
+    <METHOD NAME="RULE" DESCRIPTION="" VERSION="5" INTFTYPE="9" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="htmlValue" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Htmlvalue" CTAB="0"/>
+        <PARAM NAME="optinValue" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Optinvalue" CTAB="0"/>
+        <PARAM NAME="textValue" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Textvalue" CTAB="0"/>
+        <PARAM NAME="insertOnNoMatch" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Insertonnomatch" CTAB="0"/>
+        <PARAM NAME="updateOnMatch" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Updateonmatch" CTAB="0"/>
+        <PARAM NAME="matchColumnName1" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Matchcolumnname1" CTAB="0"/>
+        <PARAM NAME="matchColumnName2" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Matchcolumnname2" CTAB="0"/>
+        <PARAM NAME="matchOperator" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Matchoperator" CTAB="0"/>
+        <PARAM NAME="optoutValue" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Optoutvalue" CTAB="0"/>
+        <PARAM NAME="rejectRecordIfChannelEmpty" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Rejectrecordifchannelempty" CTAB="0"/>
+        <PARAM NAME="defaultPermissionStatus" SIZE="100" FLAGS="1" PROJECTION="0" FIELDLABEL="Defaultpermissionstatus" CTAB="0"/>
+      </PARAMS>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

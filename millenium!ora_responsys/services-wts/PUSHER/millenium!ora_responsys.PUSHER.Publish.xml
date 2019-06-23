@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PUSHER">
+    <METHOD NAME="Publish" DESCRIPTION="" VERSION="3" THREADSAFE="1">
+      <PARAMS/>
+      <FIELDS/>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

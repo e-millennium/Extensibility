@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PUSHER">
+    <METHOD NAME="Delete" DESCRIPTION="Excluir" VERSION="30" INTFTYPE="3" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="ORARES_PUSHER" FORMAT="+" SIZE="8" FLAGS="1024" PROJECTION="0" FIELDLABEL="Pusher" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+          <GROUP NAME="SQL Principal" STYLE="1"/>
+          <GROUP NAME="SQL Log" STYLE="1"/>
+        </GROUPS>
+      </FIELDS>
+      <ACTIONSCRIPT>DELETE FROM ORARES_PUSHER WHERE ORARES_PUSHER =:ORARES_PUSHER;
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

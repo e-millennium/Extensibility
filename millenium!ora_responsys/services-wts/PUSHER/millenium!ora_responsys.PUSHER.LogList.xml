@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="PUSHER">
+    <METHOD NAME="LogList" DESCRIPTION="Logs - Publica&#231;&#227;o" VERSION="9" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="ORARES_PUSHER" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Orares Pusher" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="CODIGO" SIZE="20" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="C&#243;digo" CTAB="0"/>
+        <FIELD NAME="DESCRICAO" SIZE="100" FLAGS="1" PROJECTION="0" ORDER="2" FIELDLABEL="Descri&#231;&#227;o" CTAB="0"/>
+        <FIELD NAME="LOGS" SIZE="300" FLAGS="1" PROJECTION="0" ORDER="3" FIELDLABEL="Logs" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT></ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>
