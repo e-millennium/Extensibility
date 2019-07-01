@@ -6,12 +6,11 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, DMBase,
   ComCtrls, StdCtrls, Db, wtsMethodView, DBCtrls, ExtCtrls, GeneralProd,
   LinkList, Menus, DOM, wtsClient, Grids, PalGrid, wtsMethodFrame, Buttons,
-  wtsPainter, dmPanel, wtsStream;
+  wtsPainter, dmPanel, wtsStream, uRetornoPcte, ImpOficina, ClientConfigs, uSQAnda,
+  MethodInput,Resunit,HBCrc;          
 
 type
   TFLotes = class(TDMBase)
-    Label2: TLabel;
-    LinkList1: TLinkList;
     pmLote: TPopupMenu;
     Andamento1: TMenuItem;
     N1: TMenuItem;
@@ -23,17 +22,33 @@ type
     AlteraOficina1: TMenuItem;
     wtsLotes: TwtsMethodView;
     dsLotes: TDataSource;
-    pgPacks: TPalGrid;
+    dmPanel1: TdmPanel;
+    wtsMethodView1: TwtsMethodView;
+    wtsFases: TwtsMethodView;
+    Label3: TLabel;
+    Label4: TLabel;
+    dmPanel2: TdmPanel;
+    CMFrame: TwtsMethodFrame;
+    dmPanel3: TdmPanel;
     Panel5: TPanel;
     AnteriorTit: TSpeedButton;
     ProximoTit: TSpeedButton;
     InverteTodosTit: TSpeedButton;
     btdesmarca: TSpeedButton;
     btmarca: TSpeedButton;
-    dmPanel1: TdmPanel;
-    CMFrame: TwtsMethodFrame;
-    wtsMethodView1: TwtsMethodView;
-    wtsFases: TwtsMethodView;
+    Panel1: TPanel;
+    pgPacks: TPalGrid;
+    Panel2: TPanel;
+    Label1: TLabel;
+    lblPecasSel: TLabel;
+    Label5: TLabel;
+    lblPecas: TLabel;
+    Label7: TLabel;
+    lblPerdas: TLabel;
+    Label9: TLabel;
+    lblDefeitos: TLabel;
+    Label6: TLabel;
+    LinkList1: TLinkList;
     procedure AtualizaLotes(Sender :TObject);
     procedure AndamentoLote(Sender :TObject);
     procedure LiberaEstoque(Sender :TObject);
@@ -69,6 +84,8 @@ type
       var FieldInfo: TFieldInfo);
     procedure LinkList1Links5Click(Sender: TObject);
     procedure LinkList1Links6Click(Sender: TObject);
+    procedure LinkList1Links7Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     FProducao:Integer;     // Ordem de Produção Atual
@@ -84,6 +101,9 @@ type
     Procedure GetQtdes(Line:Integer;out qt,df,pd:Integer);
     Procedure AtualizaColWidth;
     procedure CarregaDadosPedido;
+    function PermiteAlterarData:Boolean;
+    function HasAccess(Id, Value: String): Boolean;
+    procedure AtualizaPecasSelecionadas;
   public
     { Public declarations }
   end;
@@ -128,7 +148,7 @@ begin
      Pecas := 0;
      Perdas := 0;
      Defeitos := 0;
-     
+
      if fInternalChanged then Exit;
 
      wtsLotes.Close;
@@ -218,6 +238,7 @@ begin
                    li.parte   := FieldByName('PARTE').AsInteger;
                    li.grupo_ordem := FieldByName('GRUPO_ORDEM').AsString;
                    li.canal_venda := FieldByName('DESC_CANAL_VENDA').AsString;
+                   li.iOficina := FieldByName('FORNECEDOR').AsInteger;
                    // Termino Pendência 6641
 
                    Pecas := Pecas + li.Quantidade;
@@ -268,23 +289,27 @@ begin
      End;
      SetLinks(True);
      AtualizaColWidth;
-     pgPacks.FooterValues.Clear;
-     with pgPacks.FooterValues.Add do
-     begin
-       col := l_quantidade;
-       value := FloatToStr(Pecas);
-     end;
-     with pgPacks.FooterValues.Add do
-     begin
-       col := l_perdas;
-       value := FloatToStr(Perdas);
-     end;
-     with pgPacks.FooterValues.Add do
-     begin
-       col := l_defeitos;
-       value := FloatToStr(Defeitos);
-     end;
+     lblPecasSel.Caption := '0';
+     lblPecas.Caption := FormatFloat('0',Pecas);
+     lblPerdas.Caption := FormatFloat('0',Perdas);
+     lblDefeitos.Caption := FormatFloat('0',Defeitos);
+end;
 
+procedure TFLotes.AtualizaPecasSelecionadas;
+var x:Integer;
+    qtd: Extended;
+    li: TLoteInfo;
+begin
+  qtd := 0;
+  for x:=1 To Pred(pgPacks.RowCount) do
+  begin
+    if (pgPacks.Cells[l_selecionado,x]<>'0') and (pgPacks.Cells[l_ordem,x]<>'') Then
+    begin
+      li := TLoteInfo(ListLotes.Objects[x-1]);
+      qtd := qtd + li.Quantidade;
+    end;
+  end;
+  lblPecasSel.Caption := FormatFloat('0',qtd);
 end;
 
 procedure TFLotes.FormCreate(Sender: TObject);
@@ -316,7 +341,6 @@ begin
      LinkList1.Links[1].Visible := Window.HasAccess('PROD_49')=atGrant;
      LinkList1.Links[2].Visible := Window.HasAccess('PROD_50')=atGrant;
      LinkList1.Links[3].Visible := Window.HasAccess('PROD_51')=atGrant;
-
 end;
 
 procedure TFLotes.FormDestroy(Sender: TObject);
@@ -616,6 +640,7 @@ begin
           pgPacks.Cells[l_selecionado,ARow] := '1';
           FastMove := True;
      End;
+     AtualizaPecasSelecionadas;
 end;
 
 procedure TFLotes.pgPacksGetEditStyle(Sender: TObject; Col, Row: Integer;
@@ -855,8 +880,10 @@ procedure TFLotes.LinkList1Links5Click(Sender: TObject);
 var
   FDistribuicaoCanalVenda: TFDistribuicaoCanalVenda;
 begin
+  if (GetSelected<>0)  then
+    Raise Exception.Create('Operação não suportada com lote selecionado');
+
   FDistribuicaoCanalVenda := TFDistribuicaoCanalVenda.Create(FProducao);
-  //enviar os lotes e nao misturar as fases
   try
     if FDistribuicaoCanalVenda.ShowModal = mrOk then
       AtualizaLotes(Sender)
@@ -894,6 +921,208 @@ begin
   finally
     FAlterarCanalVenda.Free;
   end;
+end;
+
+procedure TFLotes.LinkList1Links7Click(Sender: TObject);
+var
+  l: TStringList;
+  li: TLoteInfo;
+  i: Integer;
+  m : TwtsMethodView;
+  r:TwtsRecordset;
+  DoIt,CanQtde,ajusta: Boolean;
+  vl: TStringList;
+  fMInput : TfrmMethodInput;
+  c,q: Extended;
+  v  : Variant;
+  iTipoPagto: Integer;
+  custoZeroNoEnvio : Boolean;
+
+  Function QtdRet(var GOk:Boolean):Extended;
+  var x:Integer;
+      lt:TLoteInfo;
+  begin
+    GOk := True;
+    li := TLoteInfo(l.Objects[0]);
+    Result := 0;
+    For x:=0 To Pred(l.Count) do
+    Begin
+         lt := TLoteInfo(l.Objects[x]);
+         If GOk Then
+            GOk := (li.produto = lt.produto)
+                and (li.estampa = lt.estampa)
+                and (li.cor = lt.cor)
+                and (li.tamanho = lt.tamanho);
+         Result := Result + lt.Quantidade;
+    End;
+  End;
+
+begin
+  l := TStringList.Create;
+
+  For i:=0 To (GetCount-1) do
+    If IsSelected(i) Then
+      l.AddObject('',ListLotes.Objects[i]);
+
+  if l.Count=0  then
+    Raise Exception.Create('Selecione a pacote.');
+
+  m := TwtsMethodView.Create(nil);
+  m.Transaction := 'millenium.producao.retornooficina';
+
+  r := TwtsRecordset.CreateFromStream(TMemoryStream.Create);
+  r.Transaction := 'millenium.producao.grade';
+
+  iTipoPagto:= Config.ReadParamInt('TIPO_PAGTO_OFICINA',0);
+
+  wtsCall('millenium.producao.Custo_oficina',['producao'],[TLoteInfo(l.Objects[0]).Ordem],v);
+  If not VarIsNull(v[0]) and not VarIsEmpty(v[0]) Then
+    c := v[0]
+  Else
+    c := 0;
+
+  custoZeroNoEnvio := False;
+  if VarIsValid(v[0]) then
+  begin
+    custoZeroNoEnvio := VarToFloat(v[0]) = 0;
+  end;
+
+  doIt := True;
+  If SysParam('ANDAEMGRADE').AsBoolean Then
+  Begin
+    doIt := TFSQAnda.Execute(l, True);
+    q := QtdRet(CanQtde);
+    CanQtde := False;
+  End Else
+  begin
+    q := QtdRet(CanQtde); { Verifica se os lotes são iguais }
+    CanQtde := (l.Count=1); // Pendência 26033 25-ago-2010 Douglas Rissi
+  end;
+
+  If doIt Then
+  Begin
+    if VarIsNull(TLoteInfo(l.Objects[0]).iOficina) and VarIsEmpty(TLoteInfo(l.Objects[0]).iOficina) then //Pendência nº 7586
+      Raise Exception.Create('Este pacote não está em oficina para ser retornado');
+
+    vl:= TStringList.Create;
+    vl.Add('N_ORDEM');
+    If not CanQtde Then
+      vl.Add('QUANTIDADE');
+
+    fMInput := TfrmMethodInput.Create(nil);
+
+    Try
+      // fMInput.DataChanged:= mfDataChanged; {Não pode ser tirado se precisar criar um parametro}
+      fMInput.NotVisList := vl;
+      fMInput.Method     := m;
+
+      fMInput.Param['N_ORDEM'].Value      := TLoteInfo(l.Objects[0]).n_ordem;// txtOrdem.KeyValue;
+      fMInput.Param['OFICINA'].AsInteger  := TLoteInfo(l.Objects[0]).iOficina;
+      fMInput.Param['CUSTO'].AsCurrency   := c;
+      fMInput.Param['QUANTIDADE'].AsFloat := q;
+      //CalcDataVen(fMInput.Param['DATA'].AsDateTime,Venc);
+      //fMInput.Param['VENCTO'].AsDateTime  := Venc;
+      fMInput.Param['TIPO_PGTO'].AsInteger:= iTipoPagto;
+      fMInput.Param['PRODUCAO'].AsInteger := TLoteInfo(l.Objects[0]).Ordem;
+      fMInput.Param['NALTERA_DATA'].AsBoolean := not PermiteAlterarData;
+
+      if (VarToFloat(c) = 0) then
+      begin
+        fMinput.CMFrame.ParamsView.FieldValues['CUSTO'] := null;
+      end;
+
+      if custoZeroNoEnvio then
+        fMinput.CMFrame.ParamsView.FieldValues['CUSTO'] := '0';
+
+      // Invoca método de RetornoOficina ( "Producao.RetornoOficina" )
+      if (fMInput.ShowModal=mrOk) then
+      begin
+        fMInput.Post;
+        If CanQtde Then
+          q := fMInput.Param['QUANTIDADE'].AsFloat;
+
+          For i:=0 To Pred(l.Count) do
+          Begin
+            li:= TLoteInfo(l.Objects[i]);
+            li.Custo:= fMInput.Param['CUSTO'].AsCurrency;
+            If q > 0 Then
+            Begin
+              r.DirtyNew;
+              ajusta := true;
+              r.FieldValues[0] := li.Situacao;
+              // >> O Código abaixo NÃO deve ser mexido
+              // ele deve levar em consideração que só
+              // pode ligar o ajusta se o usuario pode mexer
+              // na quantidade e se mexeu para aumentá-la
+              If CanQtde Then
+              Begin
+                If li.Quantidade>q Then
+                //Pendência 5817 M3 - Início
+                begin
+                  li.Quantidade := q;
+                  ajusta := false;
+                end else
+                If i=Pred(l.Count) Then
+                  li.quantidade := q;
+                //Pendência 5817 M3 - Fim
+                q := q - li.Quantidade;
+              End Else
+                Ajusta := False;
+              r.FieldValues[1] := li.Quantidade;
+              r.FieldValues[2] := fMInput.Param['CUSTO'].AsCurrency;
+              r.FieldValues[3] := ajusta;
+              r.Add;
+            End Else
+             li.Quantidade := 0;
+          End;
+
+          m.ParamsByName['RETORNO'] := r.Data;
+          try
+            m.Refresh;
+          except
+            AtualizaLotes(Self);
+            raise;
+          end;
+
+          TIOficina.Execute(fMInput.Param['OFICINA'].AsInteger, TLoteInfo(l.Objects[0]).Fase,
+            TLoteInfo(l.Objects[0]).Parte, fMInput.Param['DATA'].AsDateTime, fMInput.Param['VENCTO'].AsDateTime, l, True);
+
+          AndamentoLote(Self);
+      end;
+
+    Finally
+      fMInput.Free;
+      vl.Free;
+      l.Free;
+      r.Free;
+      m.Free;
+    End;
+  End;
+end;
+
+function TFLotes.HasAccess(Id,Value: String): Boolean;
+   function CalcCrc(const v:String):LongWord;
+   var x:Integer;
+   begin
+        InitC32(Result);
+        for x:=1 to Length(v) do
+            Result := UpdC32(Byte(UpCase(v[x])),Result);
+   end;
+begin
+     If Value<>'' Then
+        Value := Id+'.'+IntToStr(CalcCrc('{'+Value+'}'))
+     Else Value := Id;
+     Result := Window.HasAccess(PChar(Value))=DOM.atGrant;
+end;
+
+function TFLotes.PermiteAlterarData: Boolean;
+begin
+     Result := HasAccess( 'PROD_52','')
+end;
+
+procedure TFLotes.FormShow(Sender: TObject);
+begin
+  AtualizaLotes(nil);
 end;
 
 initialization
