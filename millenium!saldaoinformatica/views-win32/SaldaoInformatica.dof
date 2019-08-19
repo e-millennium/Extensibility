@@ -51,10 +51,6 @@ UsePackages=0
 [Parameters]
 RunParams=
 HostApplication=c:\millenium\binbrowser.exe
-[Language]
-ActiveLang=
-ProjectLang=$00000416
-RootDir=
 [Version Info]
 IncludeVerInfo=0
 AutoIncBuild=0

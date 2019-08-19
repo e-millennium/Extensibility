@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
   <OBJECT NAME="ORDENS_SERVICO">
-    <METHOD NAME="Alterar" DESCRIPTION="Alterar" VERSION="142" INTFTYPE="2" THREADSAFE="0">
+    <METHOD NAME="Alterar" DESCRIPTION="Alterar" VERSION="143" INTFTYPE="2" THREADSAFE="0">
       <PARAMS>
         <GROUPS>
           <GROUP/>

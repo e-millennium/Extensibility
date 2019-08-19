@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<root>
+  <OBJECT NAME="SIGEP">
+    <METHOD NAME="LISTA_OS_ACER_SIGEP" DESCRIPTION="LISTA" VERSION="5" INTFTYPE="5" TRIGGEROF="EMBARQUES.Lista_Sigep" TRIGGERTYPE="0" THREADSAFE="1">
+      <PARAMS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <PARAM NAME="COD_OPERACAO" FORMAT="N" SIZE="8" FLAGS="1" PROJECTION="0" FIELDLABEL="Void" CTAB="0"/>
+        <PARAM NAME="TIPO_OPERACAO" SIZE="1" FLAGS="1" PROJECTION="0" FIELDLABEL="Tipo Operacao" CTAB="0"/>
+      </PARAMS>
+      <FIELDS>
+        <GROUPS>
+          <GROUP/>
+        </GROUPS>
+        <FIELD NAME="OS_ACER" SIZE="200" FLAGS="1" PROJECTION="0" FIELDLABEL="Os Acer" CTAB="0"/>
+      </FIELDS>
+      <ACTIONSCRIPT>SELECT TMP.*,
+(select list(distinct SSI.COD_ORDEM_SERVICO) as OS_ACER1
+        from SI_ORDENS_SERVICO_NFS SSN
+        inner join SI_ORDENS_SERVICO SSI on ssi.ordem_servico = ssn.ordem_servico
+        where
+              SSN.COD_OPERACAO = TMP.cod_operacao and
+              SSN.TIPO_OPERACAO = TMP.TIPO_OPERACAO
+) as OS_ACER
+
+FROM #REPLACE(PARENT_RESULT) TMP
+
+
+
+</ACTIONSCRIPT>
+    </METHOD>
+  </OBJECT>
+</root>

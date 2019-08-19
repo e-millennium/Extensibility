@@ -208,6 +208,32 @@ begin
 
 end;
 
+function TratarStrings(const AValue:string):string;
+begin
+  Result := RemoveAcentos(AValue);
+  Result := UpperCase(Result);
+end;
+
+function RemoveChar(const AValue:string):string;
+var
+  I: Integer;
+begin
+  Result := '';
+  for I := 1 to Length(AValue) do
+    if AValue[I] in ['0'..'9'] then
+      Result := Result + AValue[I];
+end;
+
+function ExtrairDDDNumeroTelefone(const AValue:string):string;
+begin
+  Result := Copy(AValue,1,2);
+end;
+
+function ExtrairNumeroTelefone(const AValue:string):string;
+begin
+  Result := Unformat(AValue);
+  Result := Copy(Result,3,Length(Result));
+end;
 
 procedure ReavaliarRelacionamentos(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
 var
@@ -220,34 +246,6 @@ var
   Prod,Cor,Est,Tam,ClassCli:Variant;
   Problemas: TStringList;
   CPFCNPJFormartado: string;
-
-  function RemoveChar(const AValue:string):string;
-  var
-    I: Integer;
-  begin
-    Result := '';
-    for I := 1 to Length(AValue) do
-      if AValue[I] in ['0'..'9'] then
-        Result := Result + AValue[I];
-  end;
-
-  function ExtrairDDDNumeroTelefone(const AValue:string):string;
-  begin
-    Result := Copy(AValue,1,2);
-  end;
-
-  function ExtrairNumeroTelefone(const AValue:string):string;
-  begin
-    Result := Unformat(AValue);
-    Result := Copy(Result,3,Length(Result));
-  end;
-
-  function TratarStrings(const AValue:string):string;
-  begin
-    Result := RemoveAcentos(AValue);
-    Result := UpperCase(Result);
-  end;
-
 
   function FormatarCPFCNPJ(const AValue:string):string;
   var
@@ -353,15 +351,16 @@ begin
         Endereco.SetFieldByName('ENDERECO',0);
         Endereco.SetFieldByName('LOGRADOURO2',TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS')));
         Endereco.SetFieldByName('BAIRRO',TratarStrings(T.GetFieldAsString('DISTRICT')));
-        Endereco.SetFieldByName('CIDADE2',TratarStrings(T.GetFieldAsString('CITY')));
-        Endereco.SetFieldByName('ESTADO2',TratarStrings(T.GetFieldAsString('CUSTOMERSTATE')));
+        Endereco.SetFieldByName('CIDADE',TratarStrings(T.GetFieldAsString('CITY')));
+        Endereco.SetFieldByName('ESTADO',TratarStrings(T.GetFieldAsString('CUSTOMERSTATE')));
         Endereco.SetFieldByName('COMPLEMENTO',TratarStrings(T.GetFieldAsString('ADDRESS2')));
-        Endereco.SetFieldByName('CEP',T.GetFieldAsString('ZIPCODE'));
+        Endereco.SetFieldByName('CEP',RemoveChar(T.GetFieldAsString('ZIPCODE')));
         Endereco.SetFieldByName('DDD',ExtrairDDDNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
         Endereco.SetFieldByName('FONE',ExtrairNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
         Endereco.SetFieldByName('ENDERECO_ENTREGA',True);
         Endereco.SetFieldByName('ENDERECO_NOTA',True);
         Endereco.SetFieldByName('ENDERECO_COBRANCA',True);
+        Endereco.SetFieldByName('PAIS',0);
         if not UpdEnd then
           Endereco.Add
         else
@@ -507,6 +506,9 @@ end;
 procedure ImportarFechamento(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
 var
   C,T: IwtsCommand;
+  Gerador,Cliente,Endereco: IwtsWriteData;
+  ExisteEndereco: Boolean;
+  CodEndereco: Integer;
 begin
   C := DataPool.Open('MILLENIUM');
   T := DataPool.Open('MILLENIUM');
@@ -514,7 +516,7 @@ begin
   //Por garantia do processo, só vou fechar a ordem de serviço, se ela estiver com status=2,3 (AG. REPARO ou EM REPARO)
   //AG. REPARO. Porque podemos fechar sem o reparo.
   //Caso exista Issue e UnIssue ñão processado, não vamos importar os OutBound 
-  T.Execute('SELECT T.EVENTHEADER,OS.ORDEM_SERVICO '+
+  T.Execute('SELECT T.EVENTHEADER,T.CUSTOMERADDRESS, T.DISTRICT,T.CITY,T.CUSTOMERSTATE,T.ADDRESS2,T.ZIPCODE,T.PHONENUMBER,OS.ORDEM_SERVICO, OS.CLIENTE '+
             'FROM ACER_TICKETEVENTHEADER T '+
             'INNER JOIN ACER_TICKETEVENTDETAIL D ON (D.EVENTHEADER = T.EVENTHEADER) '+
             'INNER JOIN SI_ORDENS_SERVICO OS ON (OS.COD_ORDEM_SERVICO = T.CSSTICKETNUMBER) '+
@@ -535,6 +537,56 @@ begin
     C.Dim('ORDEM_SERVICO',T.GetFieldByName('ORDEM_SERVICO'));
     C.Execute('UPDATE ACER_TICKETEVENTHEADER SET ORDEM_SERVICO=:ORDEM_SERVICO WHERE EVENTHEADER=:EVENTHEADER');
 
+    //Atualizar o endereco do cliente
+    C.Dim('CLIENTE',T.GetFieldByName('CLIENTE'));
+    C.Execute('#CALL MILLENIUM.CLIENTES.CONSULTA(CLIENTE=:CLIENTE);');
+    Cliente := DataPool.CreateRecordset('MILLENIUM.CLIENTES.ALTERAR');
+    Cliente.CopyFrom(C);
+
+    Gerador := Cliente.GetFieldAsData('GERADORES') as IwtsWriteData;
+    Endereco := Gerador.GetFieldAsData('ENDERECOS') as IwtsWriteData;
+
+    ExisteEndereco := Endereco.Locate(['LOGRADOURO2'],[TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS'))]);
+
+    //Temos esse endereco no cliente?
+    if not ExisteEndereco then
+    begin
+      Endereco.First;
+      while not Endereco.EOF do
+      begin
+        Endereco.SetFieldByName('ENDERECO',1);
+        Endereco.SetFieldByName('ENDERECO_ENTREGA',False);
+        Endereco.SetFieldByName('ENDERECO_NOTA',False);
+        Endereco.SetFieldByName('ENDERECO_COBRANCA',False);
+        Endereco.Update;
+        Endereco.Next;
+      end;
+
+      C.Execute('#CALL millenium.utils.default(NOME="COD_ENDERECO",TAM_REQUESTED=FALSE)');
+      CodEndereco := C.GetField(0);
+      Endereco.New;
+      Endereco.SetFieldByName('COD_ENDERECO',CodEndereco);
+      Endereco.SetFieldByName('ENDERECO',0);
+      Endereco.SetFieldByName('LOGRADOURO2',TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS')));
+      Endereco.SetFieldByName('BAIRRO',TratarStrings(T.GetFieldAsString('DISTRICT')));
+      Endereco.SetFieldByName('CIDADE',TratarStrings(T.GetFieldAsString('CITY')));
+      Endereco.SetFieldByName('ESTADO',TratarStrings(T.GetFieldAsString('CUSTOMERSTATE')));
+      Endereco.SetFieldByName('COMPLEMENTO',TratarStrings(T.GetFieldAsString('ADDRESS2')));
+      Endereco.SetFieldByName('CEP',RemoveChar(T.GetFieldAsString('ZIPCODE')));
+      Endereco.SetFieldByName('DDD',ExtrairDDDNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
+      Endereco.SetFieldByName('FONE',ExtrairNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
+      Endereco.SetFieldByName('ENDERECO_ENTREGA',True);
+      Endereco.SetFieldByName('ENDERECO_NOTA',True);
+      Endereco.SetFieldByName('ENDERECO_COBRANCA',True);
+      Endereco.SetFieldByName('PAIS',0);
+      Endereco.Add;
+
+      Gerador.SetFieldByName('ENDERECOS',Endereco);
+      Cliente.SetFieldByName('GERADORES',Gerador);
+      Cliente.Update;
+
+      Call('MILLENIUM.CLIENTES.ALTERAR',Cliente,'',False);
+    end;
     T.Next;
   end;
 end;

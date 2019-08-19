@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <root>
   <OBJECT NAME="MOVIMENTACAO">
-    <METHOD NAME="Executa" DESCRIPTION="" VERSION="28" TRIGGEROF="MOVIMENTACAO.EXECUTA" TRIGGERTYPE="0" THREADSAFE="1">
+    <METHOD NAME="Executa" DESCRIPTION="" VERSION="31" TRIGGEROF="MOVIMENTACAO.EXECUTA" TRIGGERTYPE="0" THREADSAFE="1">
       <PARAMS>
         <GROUPS>
           <GROUP/>
         </GROUPS>
-        <PARAM NAME="SI_ORDENS_SERVICO" FORMAT="R" FLAGS="1" PROJECTION="0" FIELDLABEL="Ordens Servico" NESTEDNAME="WTSSYSTEM.INTERNALTYPES.INTEGERARRAY" CTAB="0"/>
+        <PARAM NAME="SI_ORDENS_SERVICO" FORMAT="R" FLAGS="1" PROJECTION="0" ORDER="1" FIELDLABEL="Ordens Servico" NESTEDNAME="WTSSYSTEM.INTERNALTYPES.INTEGERARRAY" CTAB="0"/>
         <PARAM NAME="EVENTO" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Evento" CTAB="0"/>
         <PARAM NAME="ROMANEIO" FORMAT="N" SIZE="8" PROJECTION="0" FIELDLABEL="Romaneio" CTAB="0"/>
         <PARAM NAME="CLIENTE" FORMAT="N" SIZE="8" PROJECTION="0" LOOKUP="MILLENIUM.CLIENTES.Lista_FiltroPopup" LOOKUPKEY="CLIENTE" LOOKUPDISPLAY="NOME" LOOKUPCODE="COD_CLIENTE" FIELDLABEL="Cliente" CTAB="0"/>
@@ -16,14 +16,14 @@
 WHERE ROMANEIO=:ROMANEIO AND
       EVENTO=:EVENTO AND
       CLIENTE=:CLIENTE AND
-	  FILIAL = 5;
-      
+      FILIAL = 5;
+
 #EACH() SI_ORDENS_SERVICO AS OS
 #BEGIN
   INSERT INTO SI_ORDENS_SERVICO_NFS (ORDEM_SERVICO,TIPO_OPERACAO,COD_OPERACAO)
                              VALUES (:OS.ITEM,:MOV.TIPO_OPERACAO,:MOV.COD_OPERACAO)
                              #RETURN(ORDEM_SERVICO_NF);
-                             
+
   #CALL MILLENIUM!SALDAOINFORMATICA.MOVIMENTACAO.AlteraStatusOrdem(ORDEM_SERVICO=:OS.ITEM);
 #END;
 
@@ -39,10 +39,10 @@ WHERE ROMANEIO=:ROMANEIO AND
                                                                                                         (PE.ESTAMPA = OSP.ESTAMPA) AND
                                                                                                         (PE.TAMANHO = OSP.TAMANHO)
                                                                       WHERE OSP.EQUIPAMENTO = 'T' AND
-                                                                            OSN.ORDEM_SERVICO IN #MAKELIST(SI_ORDENS_SERVICO,ITEM) AND
                                                                             PE.COD_OPERACAO = :MOV.COD_OPERACAO AND
                                                                             PE.TIPO_OPERACAO = :MOV.TIPO_OPERACAO;
                                                                         UPDATE SI_ORDENS_SERVICO_PRODUTOS SET PRECO=:PRE.PRECO WHERE ORDENS_SERVICO_PRODUTO=:PRE.ORDENS_SERVICO_PRODUTO;},ELSE:{})});
+
 </ACTIONSCRIPT>
     </METHOD>
   </OBJECT>

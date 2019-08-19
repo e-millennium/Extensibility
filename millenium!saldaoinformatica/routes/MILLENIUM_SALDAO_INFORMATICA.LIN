@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <root>
-	<_currentid>SALDAO_11</_currentid>
+	<_currentid>SALDAO_12</_currentid>
 	<_name>RULES.SALDAO</_name>
   
 	<link category="Saldão da Informática\Ordens Serviço" target="standard.tdataedit" _id="SALDAO_1">
 		<OBJECT>MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO</OBJECT>
 	 
-		<link target="_blank,Eventos.TExecutaEvento" _id="SALDAO_2" caption="Emitir Nota Fiscal">
-			<EVENT>{$data.EVENTO}</EVENT>
+		<link target="_blank,SaldaoInformatica.TFFaturamentoOS" _id="SALDAO_2" caption="Emitir Nota Fiscal">
+			<EVENT>{$ data.EVENTO}</EVENT>
 			<ID_DOCFATGENERICO>{$data.ORDEM_SERVICO}</ID_DOCFATGENERICO>
 			<Option>CloseOnSubmit</Option>
 	    </link>	 
@@ -44,7 +44,15 @@
 	        <PARAM DATA="{$data.ORDEM_SERVICO}">ORDEM_SERVICO</PARAM>
 	        <Message>Confirmar Permissão de Edição de Faturamento?</Message>
 	        <Option>CloseOnSubmit</Option>
+	    </link>		
+
+		<link target="_blank,standard.tdataedit" _id="SALDAO_12" caption="Finalizar(Forçar)">
+			<METHOD>MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.FINALIZAR</METHOD>
+	        <PARAM DATA="{$data.ORDEM_SERVICO[]}">ORDENS_SERVICO.ITEM</PARAM>
+	        <Message>Confirmar finalizaçao das ordens selecionadas?</Message>
+	        <Option>CloseOnSubmit</Option>
 	    </link>			
+				
 		
 	</link>
 	

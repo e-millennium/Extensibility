@@ -51,10 +51,6 @@ UsePackages=0
 [Parameters]
 RunParams=-nomsg -singleprocess
 HostApplication=c:\wts\wtsBroker.exe
-[Language]
-ActiveLang=
-ProjectLang=$00000416
-RootDir=
 [Version Info]
 IncludeVerInfo=0
 AutoIncBuild=0
@@ -86,9 +82,6 @@ $(DELPHI)\Bin\dcldss50.bpl=Borland Decision Cube Components
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
-[HistoryLists\hlSearchPath]
-Count=1
-Item0=z:\modules\millenium_eco\services-dll\
 [HistoryLists\hlOutputDirectorry]
 Count=1
-Item0=c:\wts\
+Item0=c:\millenium
