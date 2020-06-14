@@ -1,0 +1,10 @@
+library millenium_pdf_reports;
+
+uses
+  SysUtils,
+  Classes;
+
+{$R *.res}
+
+begin
+end.

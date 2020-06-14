@@ -595,14 +595,15 @@ procedure DadosFaturamentoGenerico(Input:IwtsInput;Output:IwtsOutput;DataPool:Iw
 var
   Itens,C: IwtsCommand;
   OSBaixa, OS,Movimento, Produtos, EstoqueLote, PrioridadeLotes: IwtsWriteData;
-  Cliente,Status,TabelaPreco,Filial,Evento: Integer;
+  Cliente,Status,TabelaPreco,Filial,Evento,Fornecedor: Integer;
   Preco: Real;
   CFOP:Variant;
   EstadoFilial,EstadoCliente,Grupo,Lote,UltimaGrupoCFOP,S:string;
   EmGarantia,DentroDoEstado,ComErro,FaturamentoEntrada,IsEquipamento,ContribuinteICMS,
   Devolucao,AcessaLote,EventoPorClassCliente,ControlaLote:Boolean;
   PecasFaturamento:TPecasFaturamento;
-
+  AcessaFornecedor: Boolean;
+  
   function BoolToStr(const AValue:Boolean): string;
   begin
     Result := 'N';
@@ -714,9 +715,10 @@ begin
 
   //Dados do evento
   C.Dim('EVENTO',Evento);
-  C.Execute('SELECT TIPO_EVENTO,ACESSA_LOTE FROM EVENTOS WHERE EVENTO=:EVENTO');
+  C.Execute('SELECT TIPO_EVENTO,ACESSA_LOTE,FORNECEDOR FROM EVENTOS WHERE EVENTO=:EVENTO');
   AcessaLote := VarToBool(C.GetFieldByName('ACESSA_LOTE'));
   FaturamentoEntrada := C.GetFieldAsString('TIPO_EVENTO')='E';
+  AcessaFornecedor := C.GetFieldAsString('FORNECEDOR')='T';
 
   //Ordem de Servico ou Grupo de Ordem de Serviço
   C.Dim('ID',Input.GetParamByName('ID'));
@@ -724,6 +726,7 @@ begin
   OS := C.CreateRecordset;
   Cliente := OS.GetFieldByName('CLIENTE');
   Grupo := OS.GetFieldAsString('GRUPO');
+  Fornecedor := 40130841;
 
   EventoPorClassCliente := False;
   if FaturamentoEntrada then
@@ -854,11 +857,21 @@ begin
   if EstadoFilial='' then
     raise Exception.Create('Filial '+C.GetFieldAsString('NOME')+' com endereço sem estado para faturamento.');
 
-  //Dados do cliente  
-  C.Dim('CLIENTE',Cliente);
-  C.Execute('SELECT C.NOME, C.CONTRIBUINTE_ICMS, EC.ESTADO FROM CLIENTES C '+
-            'LEFT JOIN ENDERECOS_CADASTRO EC ON (EC.GERADOR = C.GERADOR) AND (EC.ENDERECO_NOTA = "T") '+
-            'WHERE C.CLIENTE=:CLIENTE');
+  if AcessaFornecedor then
+  begin
+    //Dados do fornecedor
+    C.Dim('FORNECEDOR',Fornecedor);
+    C.Execute('SELECT F.NOME, F.CONTRIBUINTE_ICMS, EC.ESTADO FROM FORNECEDORES F '+
+              'LEFT JOIN ENDERECOS_CADASTRO EC ON (EC.GERADOR = F.GERADOR) AND (EC.ENDERECO_NOTA = "T") '+
+              'WHERE F.FORNECEDOR=:FORNECEDOR');
+  end else
+  begin
+    //Dados do cliente
+    C.Dim('CLIENTE',Cliente);
+    C.Execute('SELECT C.NOME, C.CONTRIBUINTE_ICMS, EC.ESTADO FROM CLIENTES C '+
+              'LEFT JOIN ENDERECOS_CADASTRO EC ON (EC.GERADOR = C.GERADOR) AND (EC.ENDERECO_NOTA = "T") '+
+              'WHERE C.CLIENTE=:CLIENTE');
+  end;
 
   EstadoCliente := C.GetFieldAsString('ESTADO');
   if EstadoCliente='' then
@@ -1000,7 +1013,12 @@ begin
   Movimento.New;
   Movimento.SetFieldByName('TABELA',TabelaPreco);
   Movimento.SetFieldByName('FILIAL',Filial);
-  Movimento.SetFieldByName('CLIENTE',Cliente);
+
+  if AcessaFornecedor then
+    Movimento.SetFieldByName('FORNECEDOR',Fornecedor)
+  else
+    Movimento.SetFieldByName('CLIENTE',Cliente);
+
   Movimento.SetFieldByName('PRODUTOS',Produtos);
   Movimento.SetFieldByName('SI_ORDENS_SERVICO',OSBaixa);
   Movimento.Add;
