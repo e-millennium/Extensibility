@@ -602,8 +602,9 @@ var
   EmGarantia,DentroDoEstado,ComErro,FaturamentoEntrada,IsEquipamento,ContribuinteICMS,
   Devolucao,AcessaLote,EventoPorClassCliente,ControlaLote:Boolean;
   PecasFaturamento:TPecasFaturamento;
-  AcessaFornecedor: Boolean;
-  
+  AcessaFornecedor, Lancado: Boolean;
+  Quantidade: Integer;
+
   function BoolToStr(const AValue:Boolean): string;
   begin
     Result := 'N';
@@ -704,6 +705,24 @@ var
     Result := AClassificaoProduto+'|'+ALote+'|'+BoolToStr(AContribuinte)+'|'+BoolToStr(ADentroDoEstado)+'|'+BoolToStr(ADevolucao);
   end;
 
+  function  JaLancado(AProdutos: IwtsWriteData; AProduto,ACor,AEstampa,ATamanho, ALote: string): Boolean;
+  begin
+    Result := False;
+    AProdutos.First;
+    while not AProdutos.EOF do
+    begin
+      if SameText(AProdutos.AsString['PRODUTO'],AProduto) and
+         SameText(AProdutos.AsString['COR'],ACor) and
+         SameText(AProdutos.AsString['ESTAMPA'],AEstampa) and
+         SameText(AProdutos.AsString['TAMANHO'],ATamanho) and
+         SameText(AProdutos.AsString['LOTE'],ALote) then
+      begin
+        Result := True;
+        Break;
+      end;
+      AProdutos.Next;
+    end;
+  end;
 begin
   C := DataPool.Open('MILLENIUM');
   Itens  := DataPool.Open('MILLENIUM');
@@ -957,6 +976,7 @@ begin
     IsEquipamento := SameText(Itens.GetFieldAsString('EQUIPAMENTO'),'T');
     Devolucao := (not FaturamentoEntrada) and IsEquipamento;
     ControlaLote := Itens.GetFieldAsString('CONTROLA_LOTE') = 'T';
+    Quantidade := Itens.GetFieldByName('QUANTIDADE');
 
     Lote := '';
     if IsEquipamento then
@@ -996,16 +1016,25 @@ begin
     if Preco = 0 then
       raise Exception.Create('Produto '+Itens.GetFieldAsString('NUMERO_PRODUTO')+' sem preço.');
 
-    Produtos.New;
+    Lancado := JaLancado(Produtos,Itens.GetFieldByName('PRODUTO'),Itens.GetFieldByName('COR'),Itens.GetFieldByName('ESTAMPA'),Itens.GetFieldByName('TAMANHO'),Lote);
+
+    if Lancado then
+      Quantidade := Quantidade + Produtos.GetFieldByName('QUANTIDADE')
+    else
+      Produtos.New;
     Produtos.SetFieldByName('PRODUTO',Itens.GetFieldByName('PRODUTO'));
     Produtos.SetFieldByName('COR',Itens.GetFieldByName('COR'));
     Produtos.SetFieldByName('ESTAMPA',Itens.GetFieldByName('ESTAMPA'));
     Produtos.SetFieldByName('TAMANHO',Itens.GetFieldByName('TAMANHO'));
-    Produtos.SetFieldByName('QUANTIDADE',Itens.GetFieldByName('QUANTIDADE'));
+    Produtos.SetFieldByName('QUANTIDADE',Quantidade);
     Produtos.SetFieldByName('PRECO',Preco);
     Produtos.SetFieldByName('CFOP',CFOP);
     Produtos.SetFieldByName('LOTE',Lote);
-    Produtos.Add;
+
+    if Lancado then
+      Produtos.Update
+    else
+      Produtos.Add;  
 
     Itens.Next;
   end;
