@@ -662,7 +662,7 @@ var
   CFOP:Variant;
   EstadoFilial,EstadoCliente,Grupo,UltimaGrupoCFOP,S:string;
   EmGarantia,DentroDoEstado,ComErro,FaturamentoEntrada,IsEquipamento,ContribuinteICMS,
-  Devolucao,AcessaLote,EventoPorClassCliente,ControlaLote:Boolean;
+  Devolucao,AcessaLote,EventoPorClassCliente,ControlaLote, ControlaLoteGeral:Boolean;
   PecasFaturamento:TPecasFaturamento;
   AcessaFornecedor, Lancado: Boolean;
   Quantidade, I: Integer;
@@ -767,9 +767,6 @@ var
         end;
       PrioridadeLotes.Next;
     end;
-
-    //validar pela quantidade
-
     Result := (Saldo = 0);
   end;
 
@@ -804,6 +801,8 @@ begin
   Movimento := DataPool.CreateRecordset('MILLENIUM.MOVIMENTACAO.EXECUTA');
   Produtos := DataPool.CreateRecordset('Millenium.EVENTOS.PRODUTOS');
   OSBaixa := DataPool.CreateRecordset('WTSSYSTEM.INTERNALTYPES.INTEGERARRAY');
+
+  ControlaLoteGeral := GetConfigSrv.ReadParamBol('SI_CONTROLA_LOTE',False);
 
   //Dados do evento
   C.Dim('EVENTO',Evento);
@@ -1062,7 +1061,7 @@ begin
         Lotes.Clear;
         Lotes.Add(Copy(Itens.GetFieldAsString('NUMERO_SERIE'),1,20), Quantidade)
       end else
-      if AcessaLote and ControlaLote then
+      if ControlaLoteGeral and AcessaLote and ControlaLote then
       begin
         if not EncontraLOTE(Itens.GetFieldByName('PRODUTO'),Itens.GetFieldByName('COR'),Itens.GetFieldByName('ESTAMPA'),Itens.GetFieldAsString('TAMANHO'),Quantidade,Lotes) then
           raise Exception.Create('Não há estoque com lote disponível para o produto '+Itens.GetFieldAsString('NUMERO_PRODUTO'));
@@ -1493,6 +1492,46 @@ begin
   end;
 end;
 
+procedure EVMvimentacaoExecutaAntesNF(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
+var
+  C: IwtsCommand;
+  ControlaFilialProduto: Boolean;
+  SL: TStringList;
+begin
+  ControlaFilialProduto := GetConfigSrv.ReadParamBol('SI_CONTROLA_FILIAL_PRODUTO',False);
+
+  if not ControlaFilialProduto then
+    Exit;
+
+  C := DataPool.Open('MILLENIUM');  
+
+  C.Dim('TIPO_OPERACAO', Input.Value['TIPO_OPERACAO']);
+  C.Dim('COD_OPERACAO', Input.Value['COD_OPERACAO']);
+  C.Execute('SELECT P.COD_PRODUTO '+
+            'FROM MOVIMENTO M '+
+            'INNER JOIN PRODUTOS_EVENTOS PE ON (PE.COD_OPERACAO = M.COD_OPERACAO) AND '+
+            '                                  (PE.TIPO_OPERACAO = M.TIPO_OPERACAO) '+
+            'INNER JOIN PRODUTOS P ON (P.PRODUTO = PE.PRODUTO) '+
+            'WHERE M.TIPO_OPERACAO =:TIPO_OPERACAO AND '+
+            '      M.COD_OPERACAO =:COD_OPERACAO AND '+
+            '      NOT EXISTS (SELECT 1 FROM FILIAIS_PROD FP '+
+            '                  WHERE FP.FILIAL = M.FILIAL AND '+
+            '                        FP.PRODUTO = P.PRODUTO) '+
+            'GROUP BY P.COD_PRODUTO');
+  SL := TStringList.Create;
+  try
+    while not C.EOF do
+    begin
+      SL.Add(C.AsString['COD_PRODUTO']);
+      C.Next;
+    end;
+
+    if SL.Count > 0 then
+      raise Exception.Create('Produto(s) '+SL.Text+' não pertecem a filial desse movimento'); 
+  finally
+    SL.Free;
+  end;
+end;
 
 { TLotes }
 
@@ -1521,6 +1560,7 @@ initialization
 
    wtsRegisterProc('MOVIMENTACAO.DadosFaturamentoGenerico', DadosFaturamentoGenerico);
    wtsRegisterProc('MOVIMENTACAO.AlteraStatusOrdem', AlteraStatusOrdem);
+   wtsRegisterProc('MOVIMENTACAO.ev_movimentacao_executa_antes_nf', EVMvimentacaoExecutaAntesNF);
 
    wtsRegisterProc('ESTOQUES.GerarExcelConciliacao',GerarExcelConciliacao);
 end.
