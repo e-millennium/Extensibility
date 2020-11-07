@@ -4,11 +4,25 @@ interface
 
 uses
   Windows, Classes, wtsServerObjs, SysUtils, ServerCfgs, millenium_variants,
-  XMLAcer,wtsIntf,EcoUtils,ComObj,ActiveX,Excel2000,millennium_uteis,checkcgc;
+  XMLAcer,wtsIntf,EcoUtils,ComObj,ActiveX,Excel2000,millennium_uteis,checkcgc,
+  logfiles, Variants, contnrs;
 
 type
   TPecaFaturamento = (pfEquipamentos,ptPecasGarantia,ptPecasForaGarantia);
   TPecasFaturamento = set of TPecaFaturamento;
+
+  TLote = class
+    Numero: string;
+    Quantidade: Integer;
+  end;
+
+  TLotes = class(TObjectList)
+  private
+    function GetItem(Index: Integer): TLote;
+  public
+    function Add(ANumero: string; AQuantidade: Integer): TLote;
+    property Items[Index: Integer]: TLote read GetItem; default;
+  end;
 
 implementation
 
@@ -235,6 +249,20 @@ begin
   Result := Copy(Result,3,Length(Result));
 end;
 
+procedure SplitLogradouroNumero(const AEndereco: string; var ALogradouro: string; var ANumero: string);
+var
+  I: Integer;
+begin
+  ALogradouro := AEndereco;
+  ANumero := '';
+  I := LastDelimiter(',',AEndereco);
+  if (I > 0) then
+  begin
+    ALogradouro := Copy(AEndereco, 1, I-1);
+    ANumero := Copy(AEndereco, I+1, MaxInt);
+  end;
+end;
+
 procedure ReavaliarRelacionamentos(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
 var
   C,T,P: IwtsCommand;
@@ -246,6 +274,7 @@ var
   Prod,Cor,Est,Tam,ClassCli:Variant;
   Problemas: TStringList;
   CPFCNPJFormartado: string;
+  Logradouro, Numero: string;
 
   function FormatarCPFCNPJ(const AValue:string):string;
   var
@@ -268,6 +297,9 @@ begin
     T.Execute('SELECT * FROM ACER_TICKETEVENTHEADER T '+
               'INNER JOIN ACER_TICKETEVENTDETAIL D ON (D.EVENTHEADER = T.EVENTHEADER) '+
               'WHERE ORDEM_SERVICO=:ORDEM_SERVICO ');
+
+   SplitLogradouroNumero(TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS')),Logradouro, Numero);
+
 
     ClassCli := Unassigned;
     C.Dim('COD_CLSCLIENTE',T.GetFieldAsString('CUSTOMERTYPE'));
@@ -339,7 +371,7 @@ begin
         end;
 
         UpdCli := VarToStr(Cli) <> '';
-        UpdEnd := Endereco.Locate(['LOGRADOURO2'],[TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS'))]);
+        UpdEnd := Endereco.Locate(['LOGRADOURO2'],[TratarStrings(Logradouro)]);
 
         if not UpdEnd then
         begin
@@ -349,10 +381,11 @@ begin
           Endereco.SetFieldByName('COD_ENDERECO',CodEndereco);
         end;
         Endereco.SetFieldByName('ENDERECO',0);
-        Endereco.SetFieldByName('LOGRADOURO2',TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS')));
+        Endereco.SetFieldByName('LOGRADOURO2',Logradouro);
         Endereco.SetFieldByName('BAIRRO',TratarStrings(T.GetFieldAsString('DISTRICT')));
         Endereco.SetFieldByName('CIDADE',TratarStrings(T.GetFieldAsString('CITY')));
         Endereco.SetFieldByName('ESTADO',TratarStrings(T.GetFieldAsString('CUSTOMERSTATE')));
+        Endereco.SetFieldByName('NUMERO',Numero);
         Endereco.SetFieldByName('COMPLEMENTO',TratarStrings(T.GetFieldAsString('ADDRESS2')));
         Endereco.SetFieldByName('CEP',RemoveChar(T.GetFieldAsString('ZIPCODE')));
         Endereco.SetFieldByName('DDD',ExtrairDDDNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
@@ -505,12 +538,15 @@ end;
 
 procedure ImportarFechamento(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
 var
-  C,T: IwtsCommand;
+  E,C,T: IwtsCommand;
   Gerador,Cliente,Endereco: IwtsWriteData;
   ExisteEndereco: Boolean;
   CodEndereco: Integer;
+  Logradouro, Numero: string;
 begin
   C := DataPool.Open('MILLENIUM');
+  E := DataPool.Open('MILLENIUM');
+
   T := DataPool.Open('MILLENIUM');
 
   //Por garantia do processo, só vou fechar a ordem de serviço, se ela estiver com status=2,3 (AG. REPARO ou EM REPARO)
@@ -524,68 +560,94 @@ begin
             '      T.ORDEM_SERVICO IS NULL AND '+
             '      OS.STATUS IN (2,3) AND '+
             '      OS.ERRO = FALSE AND '+
-            '      NOT EXISTS (SELECT 1 #TOP(1) FROM ACER_TICKETEVENTHEADER I '+
+            '      NOT EXISTS (SELECT 1 FROM ACER_TICKETEVENTHEADER I '+
             '                  WHERE I.CSSTICKETNUMBER = T.CSSTICKETNUMBER AND '+
             '                        UPPER(I.EVENTTYPE) IN ("ISSUE","UNISSUE") AND '+
             '                        I.ORDEM_SERVICO IS NULL)');
+  T.First;
   while not T.EOF do
   begin
-    C.Dim('ORDEM_SERVICO',T.GetFieldByName('ORDEM_SERVICO'));//4=AG. FATURAMENTO
-    C.Execute('UPDATE SI_ORDENS_SERVICO SET STATUS = 4 WHERE ORDEM_SERVICO=:ORDEM_SERVICO');
+    try
+      AddLog(0,'Processando fechamento ='+T.AsString['ORDEM_SERVICO'],'SI');
 
-    C.Dim('EVENTHEADER',T.GetFieldByName('EVENTHEADER'));
-    C.Dim('ORDEM_SERVICO',T.GetFieldByName('ORDEM_SERVICO'));
-    C.Execute('UPDATE ACER_TICKETEVENTHEADER SET ORDEM_SERVICO=:ORDEM_SERVICO WHERE EVENTHEADER=:EVENTHEADER');
+      SplitLogradouroNumero(TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS')),Logradouro, Numero);
+      AddLog(0,'Processando Logradouro ='+Logradouro,'SI');
 
-    //Atualizar o endereco do cliente
-    C.Dim('CLIENTE',T.GetFieldByName('CLIENTE'));
-    C.Execute('#CALL MILLENIUM.CLIENTES.CONSULTA(CLIENTE=:CLIENTE);');
-    Cliente := DataPool.CreateRecordset('MILLENIUM.CLIENTES.ALTERAR');
-    Cliente.CopyFrom(C);
+      //Atualizar o endereco do cliente
+      C.Dim('CLIENTE',T.GetFieldByName('CLIENTE'));
+      C.Execute('#CALL MILLENIUM.CLIENTES.CONSULTA(CLIENTE=:CLIENTE);');
+      Cliente := DataPool.CreateRecordset('MILLENIUM.CLIENTES.ALTERAR');
+      Cliente.CopyFrom(C);
 
-    Gerador := Cliente.GetFieldAsData('GERADORES') as IwtsWriteData;
-    Endereco := Gerador.GetFieldAsData('ENDERECOS') as IwtsWriteData;
+      Gerador := Cliente.GetFieldAsData('GERADORES') as IwtsWriteData;
+      Endereco := Gerador.GetFieldAsData('ENDERECOS') as IwtsWriteData;
 
-    ExisteEndereco := Endereco.Locate(['LOGRADOURO2'],[TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS'))]);
 
-    //Temos esse endereco no cliente?
-    if not ExisteEndereco then
-    begin
-      Endereco.First;
-      while not Endereco.EOF do
+      ExisteEndereco := Endereco.Locate(['LOGRADOURO2'],[TratarStrings(Logradouro)]);
+
+      AddLog(0,'Processando ExisteEndereco ='+VarToStr(ExisteEndereco),'SI');
+
+
+      //Temos esse endereco no cliente?
+      if not ExisteEndereco then
       begin
-        Endereco.SetFieldByName('ENDERECO',1);
-        Endereco.SetFieldByName('ENDERECO_ENTREGA',False);
-        Endereco.SetFieldByName('ENDERECO_NOTA',False);
-        Endereco.SetFieldByName('ENDERECO_COBRANCA',False);
-        Endereco.Update;
-        Endereco.Next;
+        AddLog(0,'Endereço não existe','SI');
+
+        Endereco.First;
+        while not Endereco.EOF do
+        begin
+          Endereco.SetFieldByName('ENDERECO',1);
+          Endereco.SetFieldByName('ENDERECO_ENTREGA',False);
+          Endereco.SetFieldByName('ENDERECO_NOTA',False);
+          Endereco.SetFieldByName('ENDERECO_COBRANCA',False);
+          Endereco.Update;
+          Endereco.Next;
+        end;
+
+        C.Execute('#CALL millenium.utils.default(NOME="COD_ENDERECO",TAM_REQUESTED=FALSE)');
+        CodEndereco := C.GetField(0);
+        Endereco.New;
+        Endereco.SetFieldByName('COD_ENDERECO',CodEndereco);
+        Endereco.SetFieldByName('ENDERECO',0);
+        Endereco.SetFieldByName('LOGRADOURO2',Logradouro);
+        Endereco.SetFieldByName('BAIRRO',TratarStrings(T.GetFieldAsString('DISTRICT')));
+        Endereco.SetFieldByName('CIDADE',TratarStrings(T.GetFieldAsString('CITY')));
+        Endereco.SetFieldByName('ESTADO',TratarStrings(T.GetFieldAsString('CUSTOMERSTATE')));
+        Endereco.SetFieldByName('COMPLEMENTO',TratarStrings(T.GetFieldAsString('ADDRESS2')));
+        Endereco.SetFieldByName('NUMERO',Numero);
+        Endereco.SetFieldByName('CEP',RemoveChar(T.GetFieldAsString('ZIPCODE')));
+        Endereco.SetFieldByName('DDD',ExtrairDDDNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
+        Endereco.SetFieldByName('FONE',ExtrairNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
+        Endereco.SetFieldByName('ENDERECO_ENTREGA',True);
+        Endereco.SetFieldByName('ENDERECO_NOTA',True);
+        Endereco.SetFieldByName('ENDERECO_COBRANCA',True);
+        Endereco.SetFieldByName('PAIS',0);
+        Endereco.Add;
+
+        Gerador.SetFieldByName('ENDERECOS',Endereco);
+        Cliente.SetFieldByName('GERADORES',Gerador);
+        Cliente.Update;
+
+
+        AddLog(0,'Alterar cliente','SI');
+        Call('MILLENIUM.CLIENTES.ALTERAR',Cliente,'',False);
+        AddLog(0,'Cliente alterado','SI');
+        AddLog(0,'Processado fechamento ='+T.AsString['ORDEM_SERVICO'],'SI');
       end;
+      C.Dim('ORDEM_SERVICO',T.GetFieldByName('ORDEM_SERVICO'));//4=AG. FATURAMENTO
+      C.Execute('UPDATE SI_ORDENS_SERVICO SET STATUS = 4 WHERE ORDEM_SERVICO=:ORDEM_SERVICO');
 
-      C.Execute('#CALL millenium.utils.default(NOME="COD_ENDERECO",TAM_REQUESTED=FALSE)');
-      CodEndereco := C.GetField(0);
-      Endereco.New;
-      Endereco.SetFieldByName('COD_ENDERECO',CodEndereco);
-      Endereco.SetFieldByName('ENDERECO',0);
-      Endereco.SetFieldByName('LOGRADOURO2',TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS')));
-      Endereco.SetFieldByName('BAIRRO',TratarStrings(T.GetFieldAsString('DISTRICT')));
-      Endereco.SetFieldByName('CIDADE',TratarStrings(T.GetFieldAsString('CITY')));
-      Endereco.SetFieldByName('ESTADO',TratarStrings(T.GetFieldAsString('CUSTOMERSTATE')));
-      Endereco.SetFieldByName('COMPLEMENTO',TratarStrings(T.GetFieldAsString('ADDRESS2')));
-      Endereco.SetFieldByName('CEP',RemoveChar(T.GetFieldAsString('ZIPCODE')));
-      Endereco.SetFieldByName('DDD',ExtrairDDDNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
-      Endereco.SetFieldByName('FONE',ExtrairNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
-      Endereco.SetFieldByName('ENDERECO_ENTREGA',True);
-      Endereco.SetFieldByName('ENDERECO_NOTA',True);
-      Endereco.SetFieldByName('ENDERECO_COBRANCA',True);
-      Endereco.SetFieldByName('PAIS',0);
-      Endereco.Add;
+      C.Dim('EVENTHEADER',T.GetFieldByName('EVENTHEADER'));
+      C.Dim('ORDEM_SERVICO',T.GetFieldByName('ORDEM_SERVICO'));
+      C.Execute('UPDATE ACER_TICKETEVENTHEADER SET ORDEM_SERVICO=:ORDEM_SERVICO WHERE EVENTHEADER=:EVENTHEADER');
+    except on X: exception do
+      begin
+        AddLog(0,'Erro processando fechamento ='+T.AsString['ORDEM_SERVICO'] + ' '+X.message,'SI');
 
-      Gerador.SetFieldByName('ENDERECOS',Endereco);
-      Cliente.SetFieldByName('GERADORES',Gerador);
-      Cliente.Update;
-
-      Call('MILLENIUM.CLIENTES.ALTERAR',Cliente,'',False);
+        E.Dim('ORDEM_SERVICO',T.GetFieldByName('ORDEM_SERVICO'));
+        E.Dim('PROBLEMAS',X.Message);
+        E.Execute('UPDATE SI_ORDENS_SERVICO SET ERRO=TRUE,PROBLEMAS=:PROBLEMAS WHERE ORDEM_SERVICO=:ORDEM_SERVICO');
+      end;  
     end;
     T.Next;
   end;
@@ -598,12 +660,13 @@ var
   Cliente,Status,TabelaPreco,Filial,Evento,Fornecedor: Integer;
   Preco: Real;
   CFOP:Variant;
-  EstadoFilial,EstadoCliente,Grupo,Lote,UltimaGrupoCFOP,S:string;
+  EstadoFilial,EstadoCliente,Grupo,UltimaGrupoCFOP,S:string;
   EmGarantia,DentroDoEstado,ComErro,FaturamentoEntrada,IsEquipamento,ContribuinteICMS,
   Devolucao,AcessaLote,EventoPorClassCliente,ControlaLote:Boolean;
   PecasFaturamento:TPecasFaturamento;
   AcessaFornecedor, Lancado: Boolean;
-  Quantidade: Integer;
+  Quantidade, I: Integer;
+  Lotes: TLotes;
 
   function BoolToStr(const AValue:Boolean): string;
   begin
@@ -677,27 +740,37 @@ var
     Result := VarIsValid(CFOP);
   end;
 
-  function EncontraLote(const AProduto,ACor,AEstampa:Integer;ATamanho:string; var ALote:string): Boolean;
+  function EncontraLote(const AProduto,ACor,AEstampa:Integer;ATamanho:string;AQuantidade: Integer; var ALotes: TLotes): Boolean;
   var
     C: IwtsCommand;
-    CMDFilter:string;
+    Lote:TLote;
+    Estoque, Quantidade, Saldo: Integer;
   begin
     Result := False;
-    ALote := '';
-    //CMDFilter := '(PRODUTO="'+IntToStr(AProduto)+'") AND (COR="'+IntToStr(ACor)+'") AND (ESTAMPA="'+IntToStr(AEstampa)+'") AND (TAMANHO="'+ATamanho+'")';
-    //EstoqueLote.Filter := '';
-    //EstoqueLote.Filter := CMDFilter;
+    Saldo := AQuantidade;
+    ALotes.Clear;;
     PrioridadeLotes.First;
     while not PrioridadeLotes.EOF do
     begin
-      if EstoqueLote.Locate(['PRODUTO','COR','ESTAMPA','TAMANHO','LOTE'],[AProduto,ACor,AEstampa,ATamanho,PrioridadeLotes.GetFieldAsString('ITEM')]) then
-      begin
-        ALote := PrioridadeLotes.GetFieldAsString('ITEM');
-        Break;
-      end;
+        if EstoqueLote.Locate(['PRODUTO','COR','ESTAMPA','TAMANHO','LOTE'],[AProduto,ACor,AEstampa,ATamanho,PrioridadeLotes.GetFieldAsString('ITEM')]) then
+        begin
+          Estoque := EstoqueLote.Value['SALDO'];
+          Quantidade := Saldo;
+          if (Quantidade > Estoque) then
+            Quantidade := Estoque;
+
+          ALotes.Add(PrioridadeLotes.GetFieldAsString('ITEM'), Quantidade);
+
+          Dec(Saldo,Quantidade);
+          if Saldo = 0 then
+            Break;
+        end;
       PrioridadeLotes.Next;
-    end;  
-    Result := (ALote <> '');
+    end;
+
+    //validar pela quantidade
+
+    Result := (Saldo = 0);
   end;
 
   function MakeyKeyCFOP(const AClassificaoProduto,ALote:string;AContribuinte,ADentroDoEstado,ADevolucao:Boolean):string;
@@ -745,7 +818,7 @@ begin
   OS := C.CreateRecordset;
   Cliente := OS.GetFieldByName('CLIENTE');
   Grupo := OS.GetFieldAsString('GRUPO');
-  Fornecedor := 40130841;
+  Fornecedor := 40130843;//40130841;
 
   EventoPorClassCliente := False;
   if FaturamentoEntrada then
@@ -963,91 +1036,104 @@ begin
             '      E.FILIAL =:FILIAL AND '+
             '      E.PRODUTO IN #MAKELIST(PRODUTOS,PRODUTO) '+
             'GROUP BY FILIAL,PRODUTO,COR,ESTAMPA,TAMANHO,LOTE '+
-            'ORDER BY FILIAL,PRODUTO,COR,ESTAMPA,TAMANHO,LOTE');
+            'HAVING SUM(SALDO) > 0 '+
+            'ORDER BY FILIAL,PRODUTO,COR,ESTAMPA,TAMANHO,LOTE ');
   EstoqueLote := C.CreateRecordset;
 
-  PrioridadeLotes
-   := GetConfigSrv.CreateRecordSet('SI_ORDEM_LOTES');
+  PrioridadeLotes := GetConfigSrv.CreateRecordSet('SI_ORDEM_LOTES');
 
-  Itens.First;
-  while not Itens.EOF do
-  begin
-    Preco := VarToFloat(Itens.GetFieldByName('PRECO'));
-    IsEquipamento := SameText(Itens.GetFieldAsString('EQUIPAMENTO'),'T');
-    Devolucao := (not FaturamentoEntrada) and IsEquipamento;
-    ControlaLote := Itens.GetFieldAsString('CONTROLA_LOTE') = 'T';
-    Quantidade := Itens.GetFieldByName('QUANTIDADE');
-
-    Lote := '';
-    if IsEquipamento then
-      Lote := Copy(Itens.GetFieldAsString('NUMERO_SERIE'),1,20)
-    else
-    if AcessaLote and ControlaLote then
+  Lotes := TLotes.Create;
+  try
+    Itens.First;
+    while not Itens.EOF do
     begin
-      if not EncontraLOTE(Itens.GetFieldByName('PRODUTO'),Itens.GetFieldByName('COR'),Itens.GetFieldByName('ESTAMPA'),Itens.GetFieldAsString('TAMANHO'),Lote) then
-        raise Exception.Create('Não há estoque com lote disponível para o produto '+Itens.GetFieldAsString('NUMERO_PRODUTO'));
+      Preco := VarToFloat(Itens.GetFieldByName('PRECO'));
+      IsEquipamento := SameText(Itens.GetFieldAsString('EQUIPAMENTO'),'T');
+      Devolucao := (not FaturamentoEntrada) and IsEquipamento;
+      ControlaLote := Itens.GetFieldAsString('CONTROLA_LOTE') = 'T';
+      Quantidade := Itens.GetFieldByName('QUANTIDADE');
+
+      //Vamos sempre iniciar com lote em branco
+      Lotes.Clear;
+      Lotes.Add('',Quantidade);
+
+      if IsEquipamento then
+      begin
+        Lotes.Clear;
+        Lotes.Add(Copy(Itens.GetFieldAsString('NUMERO_SERIE'),1,20), Quantidade)
+      end else
+      if AcessaLote and ControlaLote then
+      begin
+        if not EncontraLOTE(Itens.GetFieldByName('PRODUTO'),Itens.GetFieldByName('COR'),Itens.GetFieldByName('ESTAMPA'),Itens.GetFieldAsString('TAMANHO'),Quantidade,Lotes) then
+          raise Exception.Create('Não há estoque com lote disponível para o produto '+Itens.GetFieldAsString('NUMERO_PRODUTO'));
+      end;
+
+      for I := 0 to Lotes.Count-1 do
+      begin
+        Quantidade := Lotes[I].Quantidade;
+
+        S := MakeyKeyCFOP(Itens.GetFieldAsString('CLASS_PROD'),Lotes[I].Numero,ContribuinteICMS,DentroDoEstado,Devolucao);
+        if S <> UltimaGrupoCFOP then
+        begin
+          UltimaGrupoCFOP := S;
+          if not EncontraCFOP(Evento,Itens.GetFieldAsString('CLASS_PROD'),Lotes[I].Numero,ContribuinteICMS,DentroDoEstado,Devolucao,CFOP) then
+            raise Exception.Create('CFOP não encontrada para o produto '+Itens.GetFieldAsString('NUMERO_PRODUTO'));
+        end;
+
+        if not IsEquipamento then
+        begin
+          C.Dim('TABELA',TabelaPreco);
+          C.Dim('PRODUTO',Itens.GetFieldByName('PRODUTO'));
+          C.Dim('COR',Itens.GetFieldByName('COR'));
+          C.Dim('ESTAMPA',Itens.GetFieldByName('ESTAMPA'));
+          C.Dim('TAMANHO',Itens.GetFieldByName('TAMANHO'));
+          C.Execute('SELECT #NULL_TO_Z(V.PRECO) AS PRECO '+
+                    'FROM PRECOS V '+
+                    'WHERE V.TABELA=:TABELA AND '+
+                    '      V.PRODUTO=:PRODUTO AND '+
+                    '      V.COR=:COR AND '+
+                    '      V.ESTAMPA=:ESTAMPA AND '+
+                    '      V.TAMANHO=:TAMANHO');
+          Preco := VarToFloat(C.GetFieldByName('PRECO'));
+        end;
+
+        if Preco = 0 then
+          raise Exception.Create('Produto '+Itens.GetFieldAsString('NUMERO_PRODUTO')+' sem preço.');
+
+        Lancado := JaLancado(Produtos,Itens.GetFieldByName('PRODUTO'),Itens.GetFieldByName('COR'),Itens.GetFieldByName('ESTAMPA'),Itens.GetFieldByName('TAMANHO'),Lotes[I].Numero);
+
+        if Lancado then
+          Quantidade := Lotes[I].Quantidade{Quantidade} + Produtos.GetFieldByName('QUANTIDADE')
+        else
+          Produtos.New;
+        Produtos.SetFieldByName('PRODUTO',Itens.GetFieldByName('PRODUTO'));
+        Produtos.SetFieldByName('COR',Itens.GetFieldByName('COR'));
+        Produtos.SetFieldByName('ESTAMPA',Itens.GetFieldByName('ESTAMPA'));
+        Produtos.SetFieldByName('TAMANHO',Itens.GetFieldByName('TAMANHO'));
+        Produtos.SetFieldByName('QUANTIDADE',Quantidade);
+        Produtos.SetFieldByName('PRECO',Preco);
+        Produtos.SetFieldByName('CFOP',CFOP);
+        Produtos.SetFieldByName('LOTE',Lotes[I].Numero);
+
+        if Lancado then
+          Produtos.Update
+        else
+          Produtos.Add;
+
+      end;
+      Itens.Next;
     end;
-
-    S := MakeyKeyCFOP(Itens.GetFieldAsString('CLASS_PROD'),Lote,ContribuinteICMS,DentroDoEstado,Devolucao);
-    if S <> UltimaGrupoCFOP then
-    begin
-      UltimaGrupoCFOP := S;
-      if not EncontraCFOP(Evento,Itens.GetFieldAsString('CLASS_PROD'),Lote,ContribuinteICMS,DentroDoEstado,Devolucao,CFOP) then
-        raise Exception.Create('CFOP não encontrada para o produto '+Itens.GetFieldAsString('NUMERO_PRODUTO'));
-    end;
-
-    if not IsEquipamento then
-    begin
-      C.Dim('TABELA',TabelaPreco);
-      C.Dim('PRODUTO',Itens.GetFieldByName('PRODUTO'));
-      C.Dim('COR',Itens.GetFieldByName('COR'));
-      C.Dim('ESTAMPA',Itens.GetFieldByName('ESTAMPA'));
-      C.Dim('TAMANHO',Itens.GetFieldByName('TAMANHO'));
-      C.Execute('SELECT #NULL_TO_Z(V.PRECO) AS PRECO '+
-                'FROM PRECOS V '+
-                'WHERE V.TABELA=:TABELA AND '+
-                '      V.PRODUTO=:PRODUTO AND '+
-                '      V.COR=:COR AND '+
-                '      V.ESTAMPA=:ESTAMPA AND '+
-                '      V.TAMANHO=:TAMANHO');
-      Preco := VarToFloat(C.GetFieldByName('PRECO'));
-    end;
-
-    if Preco = 0 then
-      raise Exception.Create('Produto '+Itens.GetFieldAsString('NUMERO_PRODUTO')+' sem preço.');
-
-    Lancado := JaLancado(Produtos,Itens.GetFieldByName('PRODUTO'),Itens.GetFieldByName('COR'),Itens.GetFieldByName('ESTAMPA'),Itens.GetFieldByName('TAMANHO'),Lote);
-
-    if Lancado then
-      Quantidade := Quantidade + Produtos.GetFieldByName('QUANTIDADE')
-    else
-      Produtos.New;
-    Produtos.SetFieldByName('PRODUTO',Itens.GetFieldByName('PRODUTO'));
-    Produtos.SetFieldByName('COR',Itens.GetFieldByName('COR'));
-    Produtos.SetFieldByName('ESTAMPA',Itens.GetFieldByName('ESTAMPA'));
-    Produtos.SetFieldByName('TAMANHO',Itens.GetFieldByName('TAMANHO'));
-    Produtos.SetFieldByName('QUANTIDADE',Quantidade);
-    Produtos.SetFieldByName('PRECO',Preco);
-    Produtos.SetFieldByName('CFOP',CFOP);
-    Produtos.SetFieldByName('LOTE',Lote);
-
-    if Lancado then
-      Produtos.Update
-    else
-      Produtos.Add;  
-
-    Itens.Next;
+  finally
+    Lotes.Free;
   end;
-
+  
   Movimento.New;
   Movimento.SetFieldByName('TABELA',TabelaPreco);
   Movimento.SetFieldByName('FILIAL',Filial);
-
   if AcessaFornecedor then
     Movimento.SetFieldByName('FORNECEDOR',Fornecedor)
   else
     Movimento.SetFieldByName('CLIENTE',Cliente);
-
   Movimento.SetFieldByName('PRODUTOS',Produtos);
   Movimento.SetFieldByName('SI_ORDENS_SERVICO',OSBaixa);
   Movimento.Add;
@@ -1407,6 +1493,21 @@ begin
   end;
 end;
 
+
+{ TLotes }
+
+function TLotes.Add(ANumero: string; AQuantidade: Integer): TLote;
+begin
+  Result := TLote.Create;
+  Result.Numero := ANumero;
+  Result.Quantidade := AQuantidade;
+  inherited Add(Result);
+end;
+
+function TLotes.GetItem(Index: Integer): TLote;
+begin
+  Result := TLote(inherited Items[Index])
+end;
 
 initialization
    wtsRegisterProc('ORDENS_SERVICO.ReavaliarRelacionamentos',ReavaliarRelacionamentos);
