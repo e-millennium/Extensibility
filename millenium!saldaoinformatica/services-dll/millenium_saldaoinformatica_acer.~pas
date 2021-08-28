@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Classes, wtsServerObjs, SysUtils, ServerCfgs, millenium_variants,
-  XMLAcer,wtsIntf,EcoUtils,ComObj,ActiveX,Excel2000,millennium_uteis,checkcgc;
+  XMLAcer,wtsIntf,EcoUtils,ComObj,ActiveX,Excel2000,millennium_uteis,checkcgc,
+  logfiles;
 
 type
   TPecaFaturamento = (pfEquipamentos,ptPecasGarantia,ptPecasForaGarantia);
@@ -235,6 +236,20 @@ begin
   Result := Copy(Result,3,Length(Result));
 end;
 
+procedure SplitLogradouroNumero(const AEndereco: string; var ALogradouro: string; var ANumero: string);
+var
+  I: Integer;
+begin
+  ALogradouro := AEndereco;
+  ANumero := '';
+  I := LastDelimiter(',',AEndereco);
+  if (I > 0) then
+  begin
+    ALogradouro := Copy(AEndereco, 1, I-1);
+    ANumero := Copy(AEndereco, I+1, MaxInt);
+  end;
+end;
+
 procedure ReavaliarRelacionamentos(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
 var
   C,T,P: IwtsCommand;
@@ -246,6 +261,7 @@ var
   Prod,Cor,Est,Tam,ClassCli:Variant;
   Problemas: TStringList;
   CPFCNPJFormartado: string;
+  Logradouro, Numero: string;
 
   function FormatarCPFCNPJ(const AValue:string):string;
   var
@@ -268,6 +284,9 @@ begin
     T.Execute('SELECT * FROM ACER_TICKETEVENTHEADER T '+
               'INNER JOIN ACER_TICKETEVENTDETAIL D ON (D.EVENTHEADER = T.EVENTHEADER) '+
               'WHERE ORDEM_SERVICO=:ORDEM_SERVICO ');
+
+   SplitLogradouroNumero(TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS')),Logradouro, Numero);
+
 
     ClassCli := Unassigned;
     C.Dim('COD_CLSCLIENTE',T.GetFieldAsString('CUSTOMERTYPE'));
@@ -339,7 +358,7 @@ begin
         end;
 
         UpdCli := VarToStr(Cli) <> '';
-        UpdEnd := Endereco.Locate(['LOGRADOURO2'],[TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS'))]);
+        UpdEnd := Endereco.Locate(['LOGRADOURO2'],[TratarStrings(Logradouro)]);
 
         if not UpdEnd then
         begin
@@ -348,11 +367,13 @@ begin
           Endereco.New;
           Endereco.SetFieldByName('COD_ENDERECO',CodEndereco);
         end;
+
         Endereco.SetFieldByName('ENDERECO',0);
-        Endereco.SetFieldByName('LOGRADOURO2',TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS')));
+        Endereco.SetFieldByName('LOGRADOURO2',Logradouro);
         Endereco.SetFieldByName('BAIRRO',TratarStrings(T.GetFieldAsString('DISTRICT')));
         Endereco.SetFieldByName('CIDADE',TratarStrings(T.GetFieldAsString('CITY')));
         Endereco.SetFieldByName('ESTADO',TratarStrings(T.GetFieldAsString('CUSTOMERSTATE')));
+        Endereco.SetFieldByName('NUMERO',Numero);
         Endereco.SetFieldByName('COMPLEMENTO',TratarStrings(T.GetFieldAsString('ADDRESS2')));
         Endereco.SetFieldByName('CEP',RemoveChar(T.GetFieldAsString('ZIPCODE')));
         Endereco.SetFieldByName('DDD',ExtrairDDDNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
@@ -505,12 +526,15 @@ end;
 
 procedure ImportarFechamento(Input:IwtsInput;Output:IwtsOutput;DataPool:IwtsDataPool);
 var
-  C,T: IwtsCommand;
+  E,C,T: IwtsCommand;
   Gerador,Cliente,Endereco: IwtsWriteData;
   ExisteEndereco: Boolean;
   CodEndereco: Integer;
+  Logradouro, Numero: string;
 begin
   C := DataPool.Open('MILLENIUM');
+  E := DataPool.Open('MILLENIUM');
+
   T := DataPool.Open('MILLENIUM');
 
   //Por garantia do processo, só vou fechar a ordem de serviço, se ela estiver com status=2,3 (AG. REPARO ou EM REPARO)
@@ -524,68 +548,95 @@ begin
             '      T.ORDEM_SERVICO IS NULL AND '+
             '      OS.STATUS IN (2,3) AND '+
             '      OS.ERRO = FALSE AND '+
-            '      NOT EXISTS (SELECT 1 #TOP(1) FROM ACER_TICKETEVENTHEADER I '+
+            '      NOT EXISTS (SELECT 1 FROM ACER_TICKETEVENTHEADER I '+
             '                  WHERE I.CSSTICKETNUMBER = T.CSSTICKETNUMBER AND '+
             '                        UPPER(I.EVENTTYPE) IN ("ISSUE","UNISSUE") AND '+
             '                        I.ORDEM_SERVICO IS NULL)');
+  T.First;
   while not T.EOF do
   begin
-    C.Dim('ORDEM_SERVICO',T.GetFieldByName('ORDEM_SERVICO'));//4=AG. FATURAMENTO
-    C.Execute('UPDATE SI_ORDENS_SERVICO SET STATUS = 4 WHERE ORDEM_SERVICO=:ORDEM_SERVICO');
+    try
+      AddLog(0,'Processando fechamento ='+T.AsString['ORDEM_SERVICO'],'SI');
 
-    C.Dim('EVENTHEADER',T.GetFieldByName('EVENTHEADER'));
-    C.Dim('ORDEM_SERVICO',T.GetFieldByName('ORDEM_SERVICO'));
-    C.Execute('UPDATE ACER_TICKETEVENTHEADER SET ORDEM_SERVICO=:ORDEM_SERVICO WHERE EVENTHEADER=:EVENTHEADER');
+      SplitLogradouroNumero(TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS')),Logradouro, Numero);
+      AddLog(0,'Processando Logradouro ='+Logradouro,'SI');
 
-    //Atualizar o endereco do cliente
-    C.Dim('CLIENTE',T.GetFieldByName('CLIENTE'));
-    C.Execute('#CALL MILLENIUM.CLIENTES.CONSULTA(CLIENTE=:CLIENTE);');
-    Cliente := DataPool.CreateRecordset('MILLENIUM.CLIENTES.ALTERAR');
-    Cliente.CopyFrom(C);
+      //Atualizar o endereco do cliente
+      C.Dim('CLIENTE',T.GetFieldByName('CLIENTE'));
+      C.Execute('#CALL MILLENIUM.CLIENTES.CONSULTA(CLIENTE=:CLIENTE);');
+      Cliente := DataPool.CreateRecordset('MILLENIUM.CLIENTES.ALTERAR');
+      Cliente.CopyFrom(C);
 
-    Gerador := Cliente.GetFieldAsData('GERADORES') as IwtsWriteData;
-    Endereco := Gerador.GetFieldAsData('ENDERECOS') as IwtsWriteData;
+      Gerador := Cliente.GetFieldAsData('GERADORES') as IwtsWriteData;
+      Endereco := Gerador.GetFieldAsData('ENDERECOS') as IwtsWriteData;
 
-    ExisteEndereco := Endereco.Locate(['LOGRADOURO2'],[TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS'))]);
 
-    //Temos esse endereco no cliente?
-    if not ExisteEndereco then
-    begin
-      Endereco.First;
-      while not Endereco.EOF do
+      ExisteEndereco := Endereco.Locate(['LOGRADOURO2'],[TratarStrings(Logradouro)]);
+
+      AddLog(0,'Processando ExisteEndereco ='+VarToStr(ExisteEndereco),'SI');
+
+
+      //Temos esse endereco no cliente?
+      if not ExisteEndereco then
       begin
-        Endereco.SetFieldByName('ENDERECO',1);
-        Endereco.SetFieldByName('ENDERECO_ENTREGA',False);
-        Endereco.SetFieldByName('ENDERECO_NOTA',False);
-        Endereco.SetFieldByName('ENDERECO_COBRANCA',False);
-        Endereco.Update;
-        Endereco.Next;
+        AddLog(0,'Endereço não existe','SI');
+
+        Endereco.First;
+        while not Endereco.EOF do
+        begin
+          Endereco.SetFieldByName('ENDERECO',1);
+          Endereco.SetFieldByName('ENDERECO_ENTREGA',False);
+          Endereco.SetFieldByName('ENDERECO_NOTA',False);
+          Endereco.SetFieldByName('ENDERECO_COBRANCA',False);
+          Endereco.Update;
+          Endereco.Next;
+        end;
+
+
+        C.Execute('#CALL millenium.utils.default(NOME="COD_ENDERECO",TAM_REQUESTED=FALSE)');
+        CodEndereco := C.GetField(0);
+        Endereco.New;
+        Endereco.SetFieldByName('COD_ENDERECO',CodEndereco);
+        Endereco.SetFieldByName('ENDERECO',0);
+        Endereco.SetFieldByName('LOGRADOURO2',Logradouro);
+        Endereco.SetFieldByName('BAIRRO',TratarStrings(T.GetFieldAsString('DISTRICT')));
+        Endereco.SetFieldByName('CIDADE',TratarStrings(T.GetFieldAsString('CITY')));
+        Endereco.SetFieldByName('ESTADO',TratarStrings(T.GetFieldAsString('CUSTOMERSTATE')));
+        Endereco.SetFieldByName('COMPLEMENTO',TratarStrings(T.GetFieldAsString('ADDRESS2')));
+        Endereco.SetFieldByName('NUMERO',Numero);
+        Endereco.SetFieldByName('CEP',RemoveChar(T.GetFieldAsString('ZIPCODE')));
+        Endereco.SetFieldByName('DDD',ExtrairDDDNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
+        Endereco.SetFieldByName('FONE',ExtrairNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
+        Endereco.SetFieldByName('ENDERECO_ENTREGA',True);
+        Endereco.SetFieldByName('ENDERECO_NOTA',True);
+        Endereco.SetFieldByName('ENDERECO_COBRANCA',True);
+        Endereco.SetFieldByName('PAIS',0);
+        Endereco.Add;
+
+        Gerador.SetFieldByName('ENDERECOS',Endereco);
+        Cliente.SetFieldByName('GERADORES',Gerador);
+        Cliente.Update;
+
+
+        AddLog(0,'Alterar cliente','SI');
+        Call('MILLENIUM.CLIENTES.ALTERAR',Cliente,'',False);
+        AddLog(0,'Cliente alterado','SI');
+        AddLog(0,'Processado fechamento ='+T.AsString['ORDEM_SERVICO'],'SI');
       end;
+      C.Dim('ORDEM_SERVICO',T.GetFieldByName('ORDEM_SERVICO'));//4=AG. FATURAMENTO
+      C.Execute('UPDATE SI_ORDENS_SERVICO SET STATUS = 4 WHERE ORDEM_SERVICO=:ORDEM_SERVICO');
 
-      C.Execute('#CALL millenium.utils.default(NOME="COD_ENDERECO",TAM_REQUESTED=FALSE)');
-      CodEndereco := C.GetField(0);
-      Endereco.New;
-      Endereco.SetFieldByName('COD_ENDERECO',CodEndereco);
-      Endereco.SetFieldByName('ENDERECO',0);
-      Endereco.SetFieldByName('LOGRADOURO2',TratarStrings(T.GetFieldAsString('CUSTOMERADDRESS')));
-      Endereco.SetFieldByName('BAIRRO',TratarStrings(T.GetFieldAsString('DISTRICT')));
-      Endereco.SetFieldByName('CIDADE',TratarStrings(T.GetFieldAsString('CITY')));
-      Endereco.SetFieldByName('ESTADO',TratarStrings(T.GetFieldAsString('CUSTOMERSTATE')));
-      Endereco.SetFieldByName('COMPLEMENTO',TratarStrings(T.GetFieldAsString('ADDRESS2')));
-      Endereco.SetFieldByName('CEP',RemoveChar(T.GetFieldAsString('ZIPCODE')));
-      Endereco.SetFieldByName('DDD',ExtrairDDDNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
-      Endereco.SetFieldByName('FONE',ExtrairNumeroTelefone(T.GetFieldAsString('PHONENUMBER')));
-      Endereco.SetFieldByName('ENDERECO_ENTREGA',True);
-      Endereco.SetFieldByName('ENDERECO_NOTA',True);
-      Endereco.SetFieldByName('ENDERECO_COBRANCA',True);
-      Endereco.SetFieldByName('PAIS',0);
-      Endereco.Add;
+      C.Dim('EVENTHEADER',T.GetFieldByName('EVENTHEADER'));
+      C.Dim('ORDEM_SERVICO',T.GetFieldByName('ORDEM_SERVICO'));
+      C.Execute('UPDATE ACER_TICKETEVENTHEADER SET ORDEM_SERVICO=:ORDEM_SERVICO WHERE EVENTHEADER=:EVENTHEADER');
+    except on X: exception do
+      begin
+        AddLog(0,'Erro processando fechamento ='+T.AsString['ORDEM_SERVICO'] + ' '+X.message,'SI');
 
-      Gerador.SetFieldByName('ENDERECOS',Endereco);
-      Cliente.SetFieldByName('GERADORES',Gerador);
-      Cliente.Update;
-
-      Call('MILLENIUM.CLIENTES.ALTERAR',Cliente,'',False);
+        E.Dim('ORDEM_SERVICO',T.GetFieldByName('ORDEM_SERVICO'));
+        E.Dim('PROBLEMAS',X.Message);
+        E.Execute('UPDATE SI_ORDENS_SERVICO SET ERRO=TRUE,PROBLEMAS=:PROBLEMAS WHERE ORDEM_SERVICO=:ORDEM_SERVICO');
+      end;  
     end;
     T.Next;
   end;
@@ -602,8 +653,9 @@ var
   EmGarantia,DentroDoEstado,ComErro,FaturamentoEntrada,IsEquipamento,ContribuinteICMS,
   Devolucao,AcessaLote,EventoPorClassCliente,ControlaLote:Boolean;
   PecasFaturamento:TPecasFaturamento;
-  AcessaFornecedor: Boolean;
-  
+  AcessaFornecedor, Lancado: Boolean;
+  Quantidade: Integer;
+
   function BoolToStr(const AValue:Boolean): string;
   begin
     Result := 'N';
@@ -704,6 +756,24 @@ var
     Result := AClassificaoProduto+'|'+ALote+'|'+BoolToStr(AContribuinte)+'|'+BoolToStr(ADentroDoEstado)+'|'+BoolToStr(ADevolucao);
   end;
 
+  function  JaLancado(AProdutos: IwtsWriteData; AProduto,ACor,AEstampa,ATamanho, ALote: string): Boolean;
+  begin
+    Result := False;
+    AProdutos.First;
+    while not AProdutos.EOF do
+    begin
+      if SameText(AProdutos.AsString['PRODUTO'],AProduto) and
+         SameText(AProdutos.AsString['COR'],ACor) and
+         SameText(AProdutos.AsString['ESTAMPA'],AEstampa) and
+         SameText(AProdutos.AsString['TAMANHO'],ATamanho) and
+         SameText(AProdutos.AsString['LOTE'],ALote) then
+      begin
+        Result := True;
+        Break;
+      end;
+      AProdutos.Next;
+    end;
+  end;
 begin
   C := DataPool.Open('MILLENIUM');
   Itens  := DataPool.Open('MILLENIUM');
@@ -726,7 +796,7 @@ begin
   OS := C.CreateRecordset;
   Cliente := OS.GetFieldByName('CLIENTE');
   Grupo := OS.GetFieldAsString('GRUPO');
-  Fornecedor := 40130841;
+  Fornecedor := 40130843;//40130841;
 
   EventoPorClassCliente := False;
   if FaturamentoEntrada then
@@ -957,6 +1027,7 @@ begin
     IsEquipamento := SameText(Itens.GetFieldAsString('EQUIPAMENTO'),'T');
     Devolucao := (not FaturamentoEntrada) and IsEquipamento;
     ControlaLote := Itens.GetFieldAsString('CONTROLA_LOTE') = 'T';
+    Quantidade := Itens.GetFieldByName('QUANTIDADE');
 
     Lote := '';
     if IsEquipamento then
@@ -996,16 +1067,25 @@ begin
     if Preco = 0 then
       raise Exception.Create('Produto '+Itens.GetFieldAsString('NUMERO_PRODUTO')+' sem preço.');
 
-    Produtos.New;
+    Lancado := JaLancado(Produtos,Itens.GetFieldByName('PRODUTO'),Itens.GetFieldByName('COR'),Itens.GetFieldByName('ESTAMPA'),Itens.GetFieldByName('TAMANHO'),Lote);
+
+    if Lancado then
+      Quantidade := Quantidade + Produtos.GetFieldByName('QUANTIDADE')
+    else
+      Produtos.New;
     Produtos.SetFieldByName('PRODUTO',Itens.GetFieldByName('PRODUTO'));
     Produtos.SetFieldByName('COR',Itens.GetFieldByName('COR'));
     Produtos.SetFieldByName('ESTAMPA',Itens.GetFieldByName('ESTAMPA'));
     Produtos.SetFieldByName('TAMANHO',Itens.GetFieldByName('TAMANHO'));
-    Produtos.SetFieldByName('QUANTIDADE',Itens.GetFieldByName('QUANTIDADE'));
+    Produtos.SetFieldByName('QUANTIDADE',Quantidade);
     Produtos.SetFieldByName('PRECO',Preco);
     Produtos.SetFieldByName('CFOP',CFOP);
     Produtos.SetFieldByName('LOTE',Lote);
-    Produtos.Add;
+
+    if Lancado then
+      Produtos.Update
+    else
+      Produtos.Add;  
 
     Itens.Next;
   end;

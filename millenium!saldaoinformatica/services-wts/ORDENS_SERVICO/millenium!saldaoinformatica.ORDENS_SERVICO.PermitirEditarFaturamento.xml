@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
   <OBJECT NAME="ORDENS_SERVICO">
-    <METHOD NAME="PermitirEditarFaturamento" DESCRIPTION="Permitir Editar Faturamento" VERSION="12" INTFTYPE="17" THREADSAFE="0">
+    <METHOD NAME="PermitirEditarFaturamento" DESCRIPTION="Permitir Editar Faturamento" VERSION="13" INTFTYPE="17" THREADSAFE="0">
       <PARAMS>
         <GROUPS>
           <GROUP/>

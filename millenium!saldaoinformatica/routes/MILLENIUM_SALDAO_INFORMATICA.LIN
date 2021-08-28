@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <root>
-	<_currentid>SALDAO_12</_currentid>
+	<_currentid>SALDAO_14</_currentid>
 	<_name>RULES.SALDAO</_name>
   
 	<link category="Saldão da Informática\Ordens Serviço" target="standard.tdataedit" _id="SALDAO_1">
 		<OBJECT>MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO</OBJECT>
 	 
 		<link target="_blank,SaldaoInformatica.TFFaturamentoOS" _id="SALDAO_2" caption="Emitir Nota Fiscal">
-			<EVENT>{$ data.EVENTO}</EVENT>
+			<EVENT>{$data.EVENTO}</EVENT>
 			<ID_DOCFATGENERICO>{$data.ORDEM_SERVICO}</ID_DOCFATGENERICO>
 			<Option>CloseOnSubmit</Option>
 	    </link>	 
@@ -55,6 +55,10 @@
 				
 		
 	</link>
+
+	<link category="Saldão da Informática\Consulta Ordens Serviço Notas Fiscais" target="standard.tdataedit" _id="SALDAO_13">
+		<METHOD>MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.LISTANFS</METHOD>
+	</link>	
 	
 	<link category="Saldão da Informática\Consulta Estoque" target="standard.tdataedit" _id="SALDAO_6">
 		<METHOD>MILLENIUM!SALDAOINFORMATICA.ESTOQUES.CONSULTA</METHOD>
