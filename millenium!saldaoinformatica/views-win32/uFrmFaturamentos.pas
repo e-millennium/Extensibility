@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, DMBase,
   wtsPainter, dmPanel, LinkList, wtsStream, wtsClient, StatusPanel, Db,
-  wtsMethodView;
+  wtsMethodView, variants;
 
 type
   TFFaturamentoOS = class(TDMBase)

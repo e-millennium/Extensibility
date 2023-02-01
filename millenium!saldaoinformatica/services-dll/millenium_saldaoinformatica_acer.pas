@@ -12,6 +12,7 @@ type
   TPecasFaturamento = set of TPecaFaturamento;
 
   TLote = class
+    LoteVirtual: Boolean; 
     Numero: string;
     Quantidade: Integer;
   end;
@@ -20,7 +21,7 @@ type
   private
     function GetItem(Index: Integer): TLote;
   public
-    function Add(ANumero: string; AQuantidade: Integer): TLote;
+    function Add(ANumero: string; AQuantidade: Integer; ALoteVirtual: Boolean): TLote;
     property Items[Index: Integer]: TLote read GetItem; default;
   end;
 
@@ -106,19 +107,21 @@ begin
             for J := 0 to TicketEventDetails.Count-1 do
             begin
               TicketEventDetail := TicketEventDetails.Items[J];
-
-              C.Dim('EVENTHEADER',EventHeader);
-              C.Dim('SEQUENCENO',TicketEventDetail.SequenceNo);
-              C.Dim('FROMWAREHOUSE',TicketEventDetail.FromWarehouse);
-              C.Dim('TOWAREHOUSE',TicketEventDetail.ToWareHouse);
-              C.Dim('PRODUCTNUMBER',TicketEventDetail.ProductNumber);
-              C.Dim('QUANTITY',TicketEventDetail.Quantity);
-              C.Dim('SERIALNUMBER',TicketEventDetail.SerialNumber);
-              C.Dim('UNITPRICE',TicketEventDetail.UnitPrice);
-              C.Execute('INSERT INTO ACER_TICKETEVENTDETAIL(EVENTHEADER,SEQUENCENO,FROMWAREHOUSE,TOWAREHOUSE,PRODUCTNUMBER,QUANTITY,SERIALNUMBER,UNITPRICE) '+
-                        '                           VALUES (:EVENTHEADER,:SEQUENCENO,:FROMWAREHOUSE,:TOWAREHOUSE,:PRODUCTNUMBER,:QUANTITY,:SERIALNUMBER,:UNITPRICE) '+
-                        '                           #RETURN(EVENTDETAIL)');
-            end;          
+              if not SameText(TicketEventDetail.ProductNumber,'CARTON') then
+              begin
+                C.Dim('EVENTHEADER',EventHeader);
+                C.Dim('SEQUENCENO',TicketEventDetail.SequenceNo);
+                C.Dim('FROMWAREHOUSE',TicketEventDetail.FromWarehouse);
+                C.Dim('TOWAREHOUSE',TicketEventDetail.ToWareHouse);
+                C.Dim('PRODUCTNUMBER',TicketEventDetail.ProductNumber);
+                C.Dim('QUANTITY',TicketEventDetail.Quantity);
+                C.Dim('SERIALNUMBER',TicketEventDetail.SerialNumber);
+                C.Dim('UNITPRICE',TicketEventDetail.UnitPrice);
+                C.Execute('INSERT INTO ACER_TICKETEVENTDETAIL(EVENTHEADER,SEQUENCENO,FROMWAREHOUSE,TOWAREHOUSE,PRODUCTNUMBER,QUANTITY,SERIALNUMBER,UNITPRICE) '+
+                          '                           VALUES (:EVENTHEADER,:SEQUENCENO,:FROMWAREHOUSE,:TOWAREHOUSE,:PRODUCTNUMBER,:QUANTITY,:SERIALNUMBER,:UNITPRICE) '+
+                          '                           #RETURN(EVENTDETAIL)');
+              end;
+            end;
           end;
           MoveFile(PChar(Files[X]),PChar(ExtractFilePath(ParamStr(0))+'css_files\processed\'+FormatDateTime('YYYYMMDDHHNNSSZZZ',NOW)+ExtractFileName(Files[X])));
         finally
@@ -184,40 +187,47 @@ begin
             '      NOT EXISTS(SELECT 1 FROM SI_ORDENS_SERVICO OS WHERE OS.COD_ORDEM_SERVICO = T.CSSTICKETNUMBER)');
   while not T.EOF do
   begin
-    Equipamentos.Clear;
-    Equipamentos.New;
-    Equipamentos.SetFieldByName('NUMERO_PRODUTO',T.GetFieldByName('PRODUCTNUMBER'));
-    Equipamentos.SetFieldByName('QUANTIDADE',T.GetFieldByName('QUANTITY'));
-    Equipamentos.SetFieldByName('NUMERO_SERIE',T.GetFieldByName('SERIALNUMBER'));
-    Equipamentos.SetFieldByName('PRECO', T.GetFieldByName('UNITPRICE'));
-    Equipamentos.SetFieldByName('PRODUTO',Unassigned);
-    Equipamentos.SetFieldByName('COR',Unassigned);
-    Equipamentos.SetFieldByName('ESTAMPA',Unassigned);
-    Equipamentos.SetFieldByName('TAMANHO',Unassigned);
-    Equipamentos.Add;
+    try
+      Equipamentos.Clear;
+      Equipamentos.New;
+      Equipamentos.SetFieldByName('NUMERO_PRODUTO',T.GetFieldByName('PRODUCTNUMBER'));
+      Equipamentos.SetFieldByName('QUANTIDADE',T.GetFieldByName('QUANTITY'));
+      Equipamentos.SetFieldByName('NUMERO_SERIE',T.GetFieldByName('SERIALNUMBER'));
+      Equipamentos.SetFieldByName('PRECO', T.GetFieldByName('UNITPRICE'));
+      Equipamentos.SetFieldByName('PRODUTO',Unassigned);
+      Equipamentos.SetFieldByName('COR',Unassigned);
+      Equipamentos.SetFieldByName('ESTAMPA',Unassigned);
+      Equipamentos.SetFieldByName('TAMANHO',Unassigned);
+      Equipamentos.Add;
 
-    C.Dim('COD_ORDEM_SERVICO',T.GetFieldAsString('CSSTICKETNUMBER'));
-    C.Dim('DATA_ABERTURA',Date);
-    C.Dim('CLIENTE',Unassigned);
-    C.Dim('GARANTIA',SameText(T.GetFieldAsString('WARRANTYSTATUS'),'IN WARRANTY'));
-    C.Dim('OBSERVACAO',Unassigned);
-    C.Dim('STATUS',1);//AG. FATURAMENTO ENTRADA
-    C.Dim('ORIGEM','ACER');
-    C.Dim('MSG_ERROR',T.GetFieldAsString('MSG_ERROR'));
-    C.DimAsData('EQUIPAMENTOS',Equipamentos);
-    C.DimAsData('PRODUTOS',Produtos);
-    C.Execute('#CALL MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.Incluir(COD_ORDEM_SERVICO=:COD_ORDEM_SERVICO,'+
-              '    DATA_ABERTURA=:DATA_ABERTURA,CLIENTE=:CLIENTE,GARANTIA=:GARANTIA,OBSERVACAO=:OBSERVACAO,STATUS=:STATUS,ORIGEM=:ORIGEM, '+
-              '    EQUIPAMENTOS=:EQUIPAMENTOS,PRODUTOS=:PRODUTOS,OBSERVACAO=:MSG_ERROR);');
-    OS := C.GetFieldByName('ORDEM_SERVICO');
+      C.Dim('COD_ORDEM_SERVICO',T.GetFieldAsString('CSSTICKETNUMBER'));
+      C.Dim('DATA_ABERTURA',Date);
+      C.Dim('CLIENTE',Unassigned);
+      C.Dim('GARANTIA',SameText(T.GetFieldAsString('WARRANTYSTATUS'),'IN WARRANTY'));
+      C.Dim('OBSERVACAO',Unassigned);
+      C.Dim('STATUS',1);//AG. FATURAMENTO ENTRADA
+      C.Dim('ORIGEM','ACER');
+      C.Dim('MSG_ERROR',T.GetFieldAsString('MSG_ERROR'));
+      C.DimAsData('EQUIPAMENTOS',Equipamentos);
+      C.DimAsData('PRODUTOS',Produtos);
+      C.Execute('#CALL MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.Incluir(COD_ORDEM_SERVICO=:COD_ORDEM_SERVICO,'+
+                '    DATA_ABERTURA=:DATA_ABERTURA,CLIENTE=:CLIENTE,GARANTIA=:GARANTIA,OBSERVACAO=:OBSERVACAO,STATUS=:STATUS,ORIGEM=:ORIGEM, '+
+                '    EQUIPAMENTOS=:EQUIPAMENTOS,PRODUTOS=:PRODUTOS,OBSERVACAO=:MSG_ERROR);');
+      OS := C.GetFieldByName('ORDEM_SERVICO');
 
-    C.Dim('ORDEM_SERVICO',OS);
-    C.Dim('EVENTHEADER',T.GetFieldByName('EVENTHEADER'));
-    C.Execute('UPDATE ACER_TICKETEVENTHEADER SET ORDEM_SERVICO=:ORDEM_SERVICO WHERE EVENTHEADER=:EVENTHEADER');
+      C.Dim('ORDEM_SERVICO',OS);
+      C.Dim('EVENTHEADER',T.GetFieldByName('EVENTHEADER'));
+      C.Execute('UPDATE ACER_TICKETEVENTHEADER SET ORDEM_SERVICO=:ORDEM_SERVICO WHERE EVENTHEADER=:EVENTHEADER');
 
-    C.Dim('ORDEM_SERVICO',OS);
-    C.Execute('#CALL MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.ReavaliarRelacionamentos(ORDEM_SERVICO=:ORDEM_SERVICO);');
-
+      C.Dim('ORDEM_SERVICO',OS);
+      C.Execute('#CALL MILLENIUM!SALDAOINFORMATICA.ORDENS_SERVICO.ReavaliarRelacionamentos(ORDEM_SERVICO=:ORDEM_SERVICO);');
+    except on e: Exception do
+      begin
+        C.Dim('EVENTHEADER',T.GetFieldByName('EVENTHEADER'));
+        C.Dim('MSG_ERROR',e.Message);
+        C.Execute('UPDATE ACER_TICKETEVENTHEADER SET MSG_ERROR=:MSG_ERROR WHERE EVENTHEADER=:EVENTHEADER');
+      end;
+    end;
     T.Next;
   end;
 
@@ -697,7 +707,7 @@ var
     end;
   end;
 
-  function EncontraCFOP(AEvento:Integer;const AClassificaoProduto,ALote:string;AContribuinte,ADentroDoEstado,ADevolucao:Boolean; var CFOP: Variant): Boolean;
+  function EncontraCFOP(AEvento:Integer;const AClassificaoProduto:string;ALote:TLote;AContribuinte,ADentroDoEstado,ADevolucao:Boolean; var CFOP: Variant): Boolean;
   var
     C: IwtsCommand;
     ListaCFOP: IwtsWriteData;
@@ -717,8 +727,20 @@ var
     ListaCFOP := C.CreateRecordset;
 
     ApplyFilter(ListaCFOP,'TIPO_PRODUTO',AClassificaoProduto,False);
-    ApplyFilter(ListaCFOP,'LOTE',ALote,False);
+
+    if ALote.LoteVirtual then
+      ApplyFilter(ListaCFOP,'LOTE','',True)
+    else
+      ApplyFilter(ListaCFOP,'LOTE',ALote.Numero,True);
+
     ApplyFilter(ListaCFOP,'CONTRIBUINTE',BoolToStr(AContribuinte),False);
+
+    ListaCFOP.First;
+
+    if ListaCFOP.RecordCount > 1 then
+    begin
+      raise Exception.Create('Encontrado mais de uma CFOP: '+IntToStr(ListaCFOP.RecordCount));
+    end;
 
     ListaCFOP.First;
     if ListaCFOP.RecordCount = 1 then
@@ -760,7 +782,7 @@ var
           if (Quantidade > Estoque) then
             Quantidade := Estoque;
 
-          ALotes.Add(PrioridadeLotes.GetFieldAsString('ITEM'), Quantidade);
+          ALotes.Add(PrioridadeLotes.GetFieldAsString('ITEM'), Quantidade, False);
 
           Dec(Saldo,Quantidade);
           if Saldo = 0 then
@@ -1055,12 +1077,12 @@ begin
 
       //Vamos sempre iniciar com lote em branco
       Lotes.Clear;
-      Lotes.Add('',Quantidade);
+      Lotes.Add('',Quantidade,True);
 
       if IsEquipamento then
       begin
         Lotes.Clear;
-        Lotes.Add(Copy(Itens.GetFieldAsString('NUMERO_SERIE'),1,20), Quantidade)
+        Lotes.Add(Copy(Itens.GetFieldAsString('NUMERO_SERIE'),1,20), Quantidade, True)
       end else
       if ControlaLoteGeral and AcessaLote and ControlaLote then
       begin
@@ -1076,8 +1098,8 @@ begin
         if S <> UltimaGrupoCFOP then
         begin
           UltimaGrupoCFOP := S;
-          if not EncontraCFOP(Evento,Itens.GetFieldAsString('CLASS_PROD'),Lotes[I].Numero,ContribuinteICMS,DentroDoEstado,Devolucao,CFOP) then
-            raise Exception.Create('CFOP não encontrada para o produto '+Itens.GetFieldAsString('NUMERO_PRODUTO'));
+          if not EncontraCFOP(Evento,Itens.GetFieldAsString('CLASS_PROD'),Lotes[I],ContribuinteICMS,DentroDoEstado,Devolucao,CFOP) then
+            raise Exception.Create('CFOP não encontrada para o produto '+Itens.GetFieldAsString('NUMERO_PRODUTO')+' Lote: '+Lotes[I].Numero);
         end;
 
         if not IsEquipamento then
@@ -1536,11 +1558,12 @@ end;
 
 { TLotes }
 
-function TLotes.Add(ANumero: string; AQuantidade: Integer): TLote;
+function TLotes.Add(ANumero: string; AQuantidade: Integer; ALoteVirtual: Boolean): TLote;
 begin
   Result := TLote.Create;
   Result.Numero := ANumero;
   Result.Quantidade := AQuantidade;
+  Result.LoteVirtual := ALoteVirtual;
   inherited Add(Result);
 end;
 

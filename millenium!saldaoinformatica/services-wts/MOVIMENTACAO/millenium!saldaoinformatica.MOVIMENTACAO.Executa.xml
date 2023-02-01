@@ -15,7 +15,6 @@
       <ACTIONSCRIPT>SELECT:MOV COD_OPERACAO, TIPO_OPERACAO FROM MOVIMENTO
 WHERE ROMANEIO=:ROMANEIO AND
       EVENTO=:EVENTO AND
-      CLIENTE=:CLIENTE AND
       FILIAL = 5;
 
 #EACH() SI_ORDENS_SERVICO AS OS
@@ -42,6 +41,9 @@ WHERE ROMANEIO=:ROMANEIO AND
                                                                             PE.COD_OPERACAO = :MOV.COD_OPERACAO AND
                                                                             PE.TIPO_OPERACAO = :MOV.TIPO_OPERACAO;
                                                                         UPDATE SI_ORDENS_SERVICO_PRODUTOS SET PRECO=:PRE.PRECO WHERE ORDENS_SERVICO_PRODUTO=:PRE.ORDENS_SERVICO_PRODUTO;},ELSE:{})});
+
+                                                                        
+
 
 </ACTIONSCRIPT>
     </METHOD>

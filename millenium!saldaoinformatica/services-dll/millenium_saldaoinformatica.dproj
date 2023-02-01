@@ -27,10 +27,10 @@
     <DCC_Alignment>1</DCC_Alignment>
     <DCC_WriteableConstants>True</DCC_WriteableConstants>
     <DCC_ExeOutput>c:\wts\</DCC_ExeOutput>
-    <DCC_UnitSearchPath>z:\modules\millenium_eco\services-dll\</DCC_UnitSearchPath>
-    <DCC_ResourcePath>z:\modules\millenium_eco\services-dll\</DCC_ResourcePath>
-    <DCC_ObjPath>z:\modules\millenium_eco\services-dll\</DCC_ObjPath>
-    <DCC_IncludePath>z:\modules\millenium_eco\services-dll\</DCC_IncludePath>
+    <DCC_UnitSearchPath>z:\modules\millenium_eco\services-dll\;Z:\xml\source</DCC_UnitSearchPath>
+    <DCC_ResourcePath>z:\modules\millenium_eco\services-dll\;Z:\xml\source</DCC_ResourcePath>
+    <DCC_ObjPath>z:\modules\millenium_eco\services-dll\;Z:\xml\source</DCC_ObjPath>
+    <DCC_IncludePath>z:\modules\millenium_eco\services-dll\;Z:\xml\source</DCC_IncludePath>
     <DCC_Define>DEBUG</DCC_Define>
   </PropertyGroup>
   <ProjectExtensions>

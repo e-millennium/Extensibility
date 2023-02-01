@@ -8,17 +8,7 @@
         </GROUPS>
         <PARAM NAME="ORDEM_SERVICO" FORMAT="+" SIZE="8" FLAGS="1024" PROJECTION="0" FIELDLABEL="Chamado" CTAB="0"/>
       </PARAMS>
-      <FIELDS>
-        <GROUPS>
-          <GROUP/>
-          <GROUP NAME="Status"/>
-          <GROUP NAME="Observa&#231;&#245;es"/>
-          <GROUP NAME="Equipamentos" STYLE="1"/>
-          <GROUP NAME="Pe&#231;as" STYLE="1"/>
-          <GROUP NAME="Outras Pe&#231;as" STYLE="1"/>
-          <GROUP NAME="Problemas(Integra&#231;&#227;o)" STYLE="1"/>
-        </GROUPS>
-      </FIELDS>
+      <FIELDS/>
       <ACTIONSCRIPT>DELETE FROM SI_ORDENS_SERVICO WHERE ORDEM_SERVICO=:ORDEM_SERVICO;
 DELETE FROM SI_ORDENS_SERVICO_PRODUTOS WHERE ORDEM_SERVICO=:ORDEM_SERVICO;
 </ACTIONSCRIPT>

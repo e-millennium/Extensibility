@@ -48,7 +48,7 @@ begin
     Exit;
 
   XMLText := AXMLData.XMLNode.XML;
-  if Pos('No data Found',XMLText) > 0 then
+  if Pos('No Data Found',XMLText) > 0 then
     Exit;
 
   FileName := RecursiveFindNode(AXMLData.XMLNode,'FILE_NAME');
@@ -241,6 +241,8 @@ var
   XML:WideString;
   Tickets: TStringList;
   URL,Code,Usuario,Senha,Request:string;
+  Sl1: TStringList;
+
 begin
   C := DataPool.Open('MILLENIUM');
   X := DataPool.Open('MILLENIUM');
@@ -264,13 +266,26 @@ begin
           ExtractStrings([','],[],PChar(C.GetFieldAsString('CSSTICKETNUMBER')),Tickets);
           XML := CreateXMLBodySystemAcknowledgementTicket('CNS',C.GetFieldAsString('XMLFILENAME'),Tickets);
           XMLData.LoadFomXML(XML);
+
+          Sl1 := TStringList.Create;
+          Sl1.Add(XML);
+          Sl1.SaveToFile('C:\wts\UPD-TICKET\REQ-'+FormatDateTime('DDNNYYYYHHNNZZ',Now));
+          Sl1.Free;
+
           XML := TicketEventWebService.UpdateTicketACKStatus(XMLData,Request,Usuario,Senha);
+
+          Sl1 := TStringList.Create;
+          Sl1.Add(XML);
+          Sl1.SaveToFile('C:\wts\UPD-TICKET\RES-'+FormatDateTime('DDNNYYYYHHNNZZ',Now));
+          Sl1.Free;
+
+
           if Pos('Successfully',XML) > 0 then
           begin
             X.Dim('EVENTHEADER',C.GetFieldAsString('EVENTHEADER'));
             X.Execute('UPDATE ACER_TICKETEVENTHEADER SET ACKSTATUS="1" WHERE EVENTHEADER IN (#REPLACE(:EVENTHEADER))' )
           end else
-            raise Exception.Create('XML');
+            raise Exception.Create(XML);
         except on e: exception do
           begin
             X.Dim('EVENTHEADER',C.GetFieldAsString('EVENTHEADER'));
